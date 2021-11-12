@@ -17,15 +17,13 @@ Noticing and marking anomalous data is extremely important in determining any fa
 
 
 ## Team
-<a href="https://github.com/msalloum" target="_blank"><img src="https://avatars3.githubusercontent.com/u/1790819?s=400&v=4" align="left" height="30px">Mariam Salloum </a>
+<a href="https://github.com/isis52300" target="_blank"><img src="https://avatars.githubusercontent.com/u/44241980?v=4" align="left" height="30px">Isis Dumas </a>
 
-<a href="https://github.com/isis52300" target="_blank">Isis Dumas </a>
+<a href="https://github.com/achhi002" target="_blank"><img src="https://avatars.githubusercontent.com/u/55962263?v=4" align="left" height="30px">Adhikar Chhibber </a>
 
-<a herf="https://github.com/achhi002" target="_blank">Adhikar Chhibber </a>
+<a href="https://github.com/Zycron83" target="_blank"><img src="https://avatars.githubusercontent.com/u/56176415?v=4" align="left" height="30px">Jeremy Cartwright </a>
 
-<a herf="https://github.com/Zycron83" target="_blank">Jeremy Cartwright </a>
-
-<a herf="https://github.com/dguti026" target="_blank">David Gutierrez </a>
+<a href="https://github.com/dguti026" target="_blank"><img src="https://avatars.githubusercontent.com/u/43631772?v=4" align="left" height="30px">David Gutierrez </a>
 
 ## Usage
 Demo: <Link to youtube video>
