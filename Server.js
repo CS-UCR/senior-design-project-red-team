@@ -1,6 +1,6 @@
-import http from 'http'
-import fs from 'fs'
-import csv from 'csv-parse/lib/sync'
+const http = require('http')
+const fs = require('fs')
+const csv = require('csv-parse/lib/sync')
 
 const flight_data_dir = 'flight-data/'
 
