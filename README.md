@@ -7,6 +7,8 @@
 - [How To Run](#how-to-run)
 - [Diagrams](#diagrams)
 - [Dependencies](#dependencies)
+- [Authors and Acknowledgment](#authors-and-acknowledgment)
+- [Project Status](#project-status)
 
 ## Overview
 Researchers would like to identify trends (specifically anomalies) in flight data and be able to label it as such and export it to a separate database.
