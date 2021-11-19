@@ -35,10 +35,16 @@ function refresh_chart() {
     fetch("http://" + hostname + ":" + port + "/" + ['flight', flight, par1, par2].join('/'))
         .then(response => response.json())
         .then(plot_data => {
-            plot_data.map(e => {
-                e.mode = 'markers'
-                e.type = 'scatter'
-            })
+            if (par1 == par2) {
+                plot_data.map(e => {
+                    e.type = 'histogram'
+                })
+            } else {
+                plot_data.map(e => {
+                    e.mode = 'markers'
+                    e.type = 'scatter'
+                })
+            }
             console.log(plot_data)
             var chart = document.getElementById('test-chart')
             Plotly.newPlot(chart, plot_data, {
