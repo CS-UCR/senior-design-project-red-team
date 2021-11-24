@@ -28,26 +28,31 @@ function init() {
     })
 }
 
+const chart = document.getElementById('test-chart');
+
 function refresh_chart() {
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
     fetch("http://" + hostname + ":" + port + "/" + ['flight', flight, par1, par2].join('/'))
         .then(response => response.json())
-        .then(plot_data => {
+        .then(data => {
             if (par1 == par2) {
-                plot_data.map(e => {
-                    e.type = 'histogram'
-                })
+                plot_data = {
+                    x: data.x,
+                    y: data.y,
+                    type: 'histogram'
+                };
             } else {
-                plot_data.map(e => {
-                    e.mode = 'markers'
-                    e.type = 'scatter'
-                })
+                plot_data = {
+                    x: data.x,
+                    y: data.y,
+                    mode: 'markers',
+                    type: 'scatter'
+                };
             }
-            console.log(plot_data)
-            var chart = document.getElementById('test-chart')
-            Plotly.newPlot(chart, plot_data, {
+            console.log(data);
+            Plotly.newPlot(chart, [plot_data], {
                 margin: { t: 0 }
             })
         })

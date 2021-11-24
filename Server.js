@@ -1,36 +1,38 @@
-const http = require('http')
-const fs = require('fs')
-const csv = require('csv-parse/lib/sync')
+const http = require('http');
+const fs = require('fs');
+const csv = require('csv-parse/sync');
 
-const flight_data_dir = 'flight-data/'
+const flight_data_dir = 'flight-data/';
 
-function getFlights() {
-    return fs.readdirSync(flight_data_dir)
-}
+const getFlights = () => fs.readdirSync(flight_data_dir);
 
-var csv_data = []
-var curr_csv = ''
+var csv_cols;
+var curr_csv = '';
 
 function loadCSV(filename) {
-    let data = fs.readFileSync(flight_data_dir + filename)
-    csv_data = csv(data, { columns: true })
-    curr_csv = filename
-    
-}
-
-function getColumn(colname) {
-    console.log('Column ' + colname + ' requested')
-    var result = []
-    csv_data.forEach(x => {
-        result.push(x[colname])
-    })
-    return result;
+    let data = fs.readFileSync(flight_data_dir + filename);
+    let csv_data = csv.parse(data);
+    csv_cols = {};
+    curr_csv = filename;
+    for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
+        let col_name = csv_data[0][col_num];
+        csv_cols[col_name] = [];
+        for (let i = 1; i < csv_data.length; i++) {
+            let val = csv_data[i][col_num];
+            csv_cols[col_name].push(val.includes('.') ? parseFloat(val) : parseInt(val));
+        }
+    }
 }
 
 const server = http.createServer((req, res) => {
-    res.statusCode = 200
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Content-Type', 'application/json')
+    res.statusCode = 200;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
+
+    // POSSIBLE REQUESTS
+    // GET /flights -> responds with all csv names in ./flight_data as string[]
+    // GET /flight/[flight]/[par1]/[par2] -> responds with JSON object {x: number[], y: number[]}, where x is csv_cols[par1] and y is csv_cols[par2]
+    // GET /dist/[flight]/[par1] (todo) -> responds with JSON object {x: number[], y: number[]}, where x is distances from runway and y is par1 at those respective distances
 
     if (req.method == 'GET') {
         let requested_data =
@@ -43,31 +45,29 @@ const server = http.createServer((req, res) => {
         console.log(requested_data)
         switch (requested_data[0]) {
             case 'flights':
-                res.write(JSON.stringify(getFlights()))
-                break
+                res.write(JSON.stringify(getFlights()));
+                break;
             case 'flight':
                 if (requested_data[1] != curr_csv)
-                    loadCSV(requested_data[1])
-                console.log([{
-                    x: getColumn(requested_data[2]),
-                    y: getColumn(requested_data[3])
-                }])
-                res.write(JSON.stringify([{
-                    x: getColumn(requested_data[2]),
-                    y: getColumn(requested_data[3])
-                }]))
-                break
+                    loadCSV(requested_data[1]);
+                res.write(JSON.stringify({
+                    x: csv_cols[requested_data[2]],
+                    y: csv_cols[requested_data[3]]
+                }));
+                break;
         }
             
     } else {
-        res.statusCode = 500
+        res.statusCode = 500;
     }
-    res.end()
+    res.end();
 })
 
 const hostname = '127.0.0.1';
 const port = 8080;
 server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`)
-})
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
 
+// loadCSV('654200108221320.csv');
+// console.log(csv_cols);
