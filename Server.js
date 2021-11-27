@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs')
-const csv = require('csv-parse/lib/sync')
+const csv = require('csv-parse/sync')
 
 const flight_data_dir = 'flight-data/'
 
@@ -13,9 +13,9 @@ var curr_csv = ''
 
 function loadCSV(filename) {
     let data = fs.readFileSync(flight_data_dir + filename)
-    csv_data = csv(data, { columns: true })
+    csv_data = csv.parse(data, { columns: true })
     curr_csv = filename
-    
+
 }
 
 function getColumn(colname) {
@@ -58,7 +58,7 @@ const server = http.createServer((req, res) => {
                 }]))
                 break
         }
-            
+
     } else {
         res.statusCode = 500
     }
@@ -70,4 +70,3 @@ const port = 8080;
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`)
 })
-
