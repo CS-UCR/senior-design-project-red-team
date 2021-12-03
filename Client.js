@@ -92,7 +92,6 @@ function refresh_chart_tab(){
     document.getElementById(cur_chart).style.display = "none";
     document.getElementById(chart.id).style.display = "inline";
   }
-
   cur_chart = chart.id;
 
   refresh_chart();
@@ -100,13 +99,18 @@ function refresh_chart_tab(){
 }
 
 function delete_tab(tab, chart){
+  if(cur_chart === chart){
+    cur_chart = undefined;
+  }
   document.getElementById(tab).remove();
   document.getElementById(chart).remove();
   tab_count--;
 }
 
 function display(chart){
-  document.getElementById(cur_chart).style.display = "none";
+  if(cur_chart != undefined){
+    document.getElementById(cur_chart).style.display = "none";
+  }
   cur_chart = chart;
   document.getElementById(cur_chart).style.display = "inline";
 }
