@@ -76,11 +76,11 @@ Mockup of Data:
   
 ![First Mockup](Mockup-1.png)
   
-![Second Mockup1](Mockup 2.0.png)
+![Second Mockup Part One](Mockup 2.0.png)
   
-![Second Mockup2](Mockup 2.1.png)
+![Second Mockup Part 2](Mockup 2.1.png)
   
-![Secone Mockup3](Mockup 2.2.png)
+![Secone Mockup Part 3](Mockup 2.2.png)
 
   
 Sequence Diagram
