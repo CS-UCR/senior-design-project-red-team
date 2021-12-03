@@ -89,7 +89,9 @@ function refresh_chart_tab(){
   tab_count++;
 
   if(tab_count > 1){
-    document.getElementById(cur_chart).style.display = "none";
+    if(cur_chart != undefined){
+      document.getElementById(cur_chart).style.display = "none";
+    }
     document.getElementById(chart.id).style.display = "inline";
   }
   cur_chart = chart.id;
