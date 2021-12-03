@@ -53,3 +53,22 @@ function refresh_chart() {
         })
         .catch(err => console.error(err))
 }
+
+var count = 1;
+
+function refresh_chart_tab(){
+  let tab = document.createElement('button');
+  let delete_button = document.createElement('span');
+  let text = document.createElement('span');
+
+  text.setAttribute("class", "button");
+  delete_button.setAttribute("class", "close");
+  tab.id = "tab" + count;
+  text.innerHTML = "Tab " + count;
+  delete_button.innerHTML = 'X';
+
+
+  tab.appendChild(delete_button);
+  tab.appendChild(text);
+  document.getElementById("sidebar").appendChild(tab);
+}
