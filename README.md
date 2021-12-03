@@ -75,8 +75,11 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 Mockup of Data: 
   
 ![First Mockup](Mockup-1.png)
+  
 ![Second Mockup1](Mockup 2.0.png)
+  
 ![Second Mockup2](Mockup 2.1.png)
+  
 ![Secone Mockup3](Mockup 2.2.png)
 
   
