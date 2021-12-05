@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="Client.js"></script>
         <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
         <!-- <script src="Plotly.js"></script> -->
+        <link href="tailwind.css" rel="stylesheet">
     </head>
     <body onload='init()'>
-        <select id='file-select'>Select a flight</select>
-        <select id='parameter-1'>Parameter 1</select>
-        <select id='parameter-2'>Parameter 2</select>
-        <button id='refresh' onclick='refresh_chart()'>Refresh</button>
-        <div id='test-chart' style="width:90%;height:800px;"></div>
-        <script src="Client.js"></script>
+    <body>
+        <nav class="bg-gray-800 h-16 flex items-center">
+            <div class="mx-4 space-x-4 flex items-baseline">
+                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto1()">Two Parameter Chart</button>
+                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto2()">DTR Chart</button>
+                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto3()">Time Series</button>
+            </div>
+        </nav>
+        <div class="mx-4">
+            <div id="">
+                <header class="flex items-stretch space-x-2 my-2">
+                    <select class="rounded-sm" id='file-select'>Select a flight</select>
+                    <select class="rounded-sm" id='parameter-1'>Parameter 1</select>
+                    <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Refresh</button>
+                    <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh' onclick='time_series(false)' hidden>Add</button>
+
+                </header>
+                <main>
+                    <div id='test-chart' style="width:90%;height:800px;"></div>
+                </main>
+            </div>
+            <div>
+
+            </div>
+        </div>
     </body>
 </html>
