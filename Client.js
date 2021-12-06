@@ -101,12 +101,15 @@ function refresh_chart_tab(){
 }
 
 function delete_tab(tab, chart){
-  if(cur_chart === chart){
-    cur_chart = undefined;
-  }
   document.getElementById(tab).remove();
   document.getElementById(chart).remove();
   tab_count--;
+  if(cur_chart === chart){
+    cur_chart = undefined;
+    if (tab_count) {
+      display(document.getElementsByClassName('grapher')[0].id);
+    }
+  }
 }
 
 function display(chart){
