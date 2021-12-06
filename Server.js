@@ -1,9 +1,9 @@
 const http = require('http');
 const fs = require('fs');
-// const csv = require('csv-parse/sync'); // NodeJS 16
-const csv = require('csv-parse/lib/sync.js'); // NodeJS 12
+const csv = require('csv-parse/sync'); // NodeJS 16
+// const csv = require('csv-parse/lib/sync.js'); // NodeJS 12
 
-const flight_data_dir = 'true-flight-data/';
+const flight_data_dir = 'flight-data/';
 
 const getFlights = () => fs.readdirSync(flight_data_dir);
 const getParameters = () => {
@@ -20,8 +20,8 @@ var curr_csv = '';
 
 function loadCSV(filename) {
     let data = fs.readFileSync(flight_data_dir + filename);
-    // let csv_data = csv.parse(data); // NodeJS 16
-    let csv_data = csv(data); // NodeJS 12
+    let csv_data = csv.parse(data); // NodeJS 16
+    // let csv_data = csv(data); // NodeJS 12
     csv_cols = {};
     curr_csv = filename;
     for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
