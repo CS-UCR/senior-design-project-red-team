@@ -5,6 +5,7 @@
         <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
         <!-- <script src="Plotly.js"></script> -->
         <link href="tailwind.css" rel="stylesheet">
+        <link href="tabs.css" rel="stylesheet">
     </head>
     <body onload='init()'>
     <body>
@@ -19,9 +20,9 @@
             <div id="">
                 <header class="flex items-stretch space-x-2 my-2">
                     <select class="rounded-sm" id='file-select'>Select a flight</select>
-                    <select class="rounded-sm" id='parameter-1'>Parameter 1</select>
-                    <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
-                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Refresh</button>
+                    <select class="rounded-sm" id='parameter-1' style="border:1px solid #0000ff;">Parameter 1</select>
+                    <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2' style="border:1px solid #0000ff;">Parameter 2</select>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Graph</button>
                     <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh' onclick='time_series(false)' hidden>Add</button>
 
                 </header>
