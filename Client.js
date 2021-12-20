@@ -37,16 +37,31 @@ function goto1() {
     refresh_chart = two_parameter_chart;
     document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
+    document.getElementById('parameter-2').hidden = false;
+
+    document.getElementById('TPC').style.border = "1px solid #00ff00";
+    document.getElementById('DTRC').style.border = "1px solid #000000";
+    document.getElementById('TS').style.border = "1px solid #000000";
 }
 function goto2() {
     refresh_chart = dtr_chart;
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
+    document.getElementById('parameter-2').hidden = true;
+
+    document.getElementById('TPC').style.border = "1px solid #000000";
+    document.getElementById('DTRC').style.border = "1px solid #00ff00";
+    document.getElementById('TS').style.border = "1px solid #000000";
 }
 function goto3() {
     refresh_chart = () => time_series(true);
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = false;
+    document.getElementById('parameter-2').hidden = true;
+
+    document.getElementById('TPC').style.border = "1px solid #000000";
+    document.getElementById('DTRC').style.border = "1px solid #000000";
+    document.getElementById('TS').style.border = "1px solid #00ff00";
 
 }
 

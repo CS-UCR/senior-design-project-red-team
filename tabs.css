@@ -1,0 +1,48 @@
+              .sidebar {
+                width: 100px;
+                position: fixed;
+                z-index: 1;
+                top: 40px;
+                left: 10px;
+                background: #eee;
+                overflow-x: hidden;
+                padding: 8px 0;
+              }
+              .sidebar a {
+              padding: 6px 8px 6px 16px;
+              text-decoration: none;
+              font-size: 25px;
+              color: #2196F3;
+              display: block;
+            }
+            .sidebar a:hover {
+              color: #064579;
+            }
+            @media screen and (max-height: 450px) {
+              .sidebar {padding-top: 15px;}
+              .sidebar a {font-size: 18px;}
+            }
+            .close {
+              font-size: 40px;
+              font-weight: bold;
+              color: #f1f1f1;
+              left: 10px;
+              z-index: 1;
+            }
+            .close:hover,.close:focus{
+              color: #f44336;
+              cursor: pointer;
+            }
+            .button:hover, .button:focus .buttontext {
+              color: #0000ff;
+              cursor: pointer;
+            }
+            .button{
+              z-index: 0;
+            }
+            .grapher{
+              width: 90%;
+              height: 800px;
+              margin-left: 80px;
+              margin-top: 50px;
+            }
