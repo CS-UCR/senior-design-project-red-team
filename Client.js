@@ -92,8 +92,17 @@ function goto3() {
 
 var refresh_chart = two_parameter_chart;
 
+function remove_children(p){
+
+  while(p.firstChild){
+    p.removeChild(p.firstChild);
+  }
+
+}
+
 function two_parameter_chart() {
     const chart = document.getElementById('test-chart');
+    remove_children(chart);
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
@@ -124,6 +133,7 @@ function two_parameter_chart() {
 
 function dtr_chart() {
     const chart = document.getElementById('test-chart');
+    remove_children(chart);
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, par1].join('/'))
@@ -148,9 +158,27 @@ var data_bank = [];
 
 function time_series(refresh) {
     const chart = document.getElementById('test-chart');
+    remove_children(chart);
     var flight = document.getElementById('file-select').value
-    var par1 = document.getElementById('parameter-1').value
-    fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, par1].join('/'))
+
+    const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
+    let options = [];
+    checkboxes.forEach((checkbox) => {
+    options.push(checkbox.value);
+      });
+
+      var type;
+      if(options.length > 1){
+        type = 'TS2';
+      }else{
+        type = 'TS1';
+      }
+
+    for(var i = 0; i < options.length; i++){
+      let new_chart = document.createElement('span');
+      new_chart.setAttribute('class', type);
+
+    fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
         .then(response => response.json())
         .then(data => {
             if (refresh) data_bank = [];
@@ -162,11 +190,13 @@ function time_series(refresh) {
                 type: 'scatter'
             });
             console.log(data);
-            Plotly.newPlot(chart, data_bank, {
+            Plotly.newPlot(new_chart, data_bank, {
                 margin: { t: 0 }
             })
         })
         .catch(err => console.error(err))
+        chart.appendChild(new_chart);
+      }
 }
 
 function drop(){
