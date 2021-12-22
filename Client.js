@@ -177,7 +177,7 @@ function time_series(refresh) {
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('span');
       new_chart.setAttribute('class', type);
-      
+
     fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
         .then(response => response.json())
         .then(data => {
