@@ -21,13 +21,30 @@ function init() {
         .then(flight_parameters => {
             var par1 = document.getElementById('parameter-1')
             var par2 = document.getElementById('parameter-2')
+            var par3 = document.getElementById('time_series_options')
+            var num = 0;
             flight_parameters.forEach(x => {
                 var o1 = document.createElement('option')
                 var o2 = document.createElement('option')
+                if(num != 0){
+                  let o3 = document.createElement('input')
+                  o3.type = 'checkbox'
+                  o3.id = x
+                  o3.name = "time_series_option"
+                  o3.value = x
+                  let label = document.createElement('label')
+                  label.htmlFor = x
+                  label.appendChild(document.createTextNode(x))
+                  let br = document.createElement('br')
+                  par3.appendChild(o3)
+                  par3.appendChild(label)
+                  par3.appendChild(br)
+                }
                 o1.innerHTML = x
                 o2.innerHTML = x
                 par1.appendChild(o1)
                 par2.appendChild(o2)
+                num++
             })
         })
         .catch(err => console.error(err));
@@ -38,6 +55,9 @@ function goto1() {
     document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = false;
+    document.getElementById('parameter-1').hidden = false;
+    document.getElementById('time_series_select').hidden = true;
+    document.getElementById('time_series_options').style.display = 'none';
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -48,6 +68,9 @@ function goto2() {
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
+    document.getElementById('parameter-1').hidden = false;
+    document.getElementById('time_series_select').hidden = true;
+    document.getElementById('time_series_options').style.display = 'none';
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -58,6 +81,8 @@ function goto3() {
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = false;
     document.getElementById('parameter-2').hidden = true;
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('time_series_select').hidden = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -142,4 +167,13 @@ function time_series(refresh) {
             })
         })
         .catch(err => console.error(err))
+}
+
+function drop(){
+
+  if(document.getElementById('time_series_options').hidden === true){
+    document.getElementById('time_series_options').hidden = false;
+  }else{
+    document.getElementById('time_series_options').hidden = true;
+  }
 }

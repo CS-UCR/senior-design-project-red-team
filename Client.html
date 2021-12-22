@@ -20,6 +20,7 @@
             <div id="">
                 <header class="flex items-stretch space-x-2 my-2">
                     <select class="rounded-sm" id='file-select' style="border:1px solid #0000ff;">Select a flight</select>
+                    <button class="rounded-sm" id='time_series_select' onclick = 'drop()' style="border:1px solid #0000ff;" hidden>V</button>
                     <select class="rounded-sm" id='parameter-1' style="border:1px solid #0000ff;">Parameter 1</select>
                     <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2' style="border:1px solid #0000ff;">Parameter 2</select>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Graph</button>
@@ -27,7 +28,9 @@
 
                 </header>
                 <main>
+                  <div id = 'time_series_options' style="width: 250px; height: 150px; border: 1px solid #000000; overflow: scroll; display: absolute" hidden></div>
                     <div id='test-chart' style="width:90%;height:800px;"></div>
+
                 </main>
             </div>
             <div>
