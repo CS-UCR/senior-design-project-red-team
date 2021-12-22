@@ -57,7 +57,7 @@ function goto1() {
     document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-1').hidden = false;
     document.getElementById('time_series_select').hidden = true;
-    document.getElementById('time_series_options').style.display = 'none';
+    document.getElementById('time_series_options').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -70,7 +70,7 @@ function goto2() {
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = false;
     document.getElementById('time_series_select').hidden = true;
-    document.getElementById('time_series_options').style.display = 'none';
+    document.getElementById('time_series_options').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -170,10 +170,10 @@ function time_series(refresh) {
 }
 
 function drop(){
-
-  if(document.getElementById('time_series_options').hidden === true){
-    document.getElementById('time_series_options').hidden = false;
+var x = document.getElementById('time_series_options')
+  if(x.hidden === true){
+    x.hidden = false;
   }else{
-    document.getElementById('time_series_options').hidden = true;
+    x.hidden = true;
   }
 }
