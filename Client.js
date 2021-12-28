@@ -61,6 +61,10 @@ function refresh_chart() {
       }
 }
 
+function pairwise_plot() {
+  location.href = "Pairwise.html";
+}
+
 var count = 1;
 
 function refresh_chart_tab(){
