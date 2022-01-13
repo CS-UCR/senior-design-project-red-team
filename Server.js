@@ -57,6 +57,23 @@ const server = http.createServer((req, res) => {
                     y: getColumn(requested_data[3])
                 }]))
                 break
+            case 'pairwise':
+                if (requested_data[1] != curr_csv)
+                    loadCSV(requested_data[1])
+                console.log([{
+                    w: getColumn(requested_data[2]),
+                    x: getColumn(requested_data[3]),
+                    y: getColumn(requested_data[4]),
+                    z: getColumn(requested_data[5])
+                }])
+                res.write(JSON.stringify([{
+                    w: getColumn(requested_data[2]),
+                    x: getColumn(requested_data[3]),
+                    y: getColumn(requested_data[4]),
+                    z: getColumn(requested_data[5])
+                }]))
+
+                break
         }
 
     } else {
