@@ -3,6 +3,31 @@ const port = '8080'
 
 // const flight_parameters = ['AILERON POSITION LH', 'AILERON POSITION RH', 'CORRECTED ANGLE OF ATTACK', 'BARO CORRECT ALTITUDE LSP', 'BARO CORRECT ALTITUDE LSP', 'COMPUTED AIRSPEED LSP', 'SELECTED COURSE', 'DRIFT ANGLE', 'ELEVATOR POSITION LEFT', 'ELEVATOR POSITION RIGHT', 'T.E.FLAP POSITION', 'GLIDESLOPE DEVIATION', 'SELECTED HEADING', 'SELECTED AIRSPEED', 'LOCALIZER DEVIATION', 'N1 COMMAND LSP', 'TOTAL PRESSURE LSP', 'PITCH ANGLE LSP', 'ROLL ANGLE LSP', 'RUDDER POSITION', 'TRUE HEADING LSP', 'VERTICAL ACCELERATION', 'WIND SPEED', 'AP FD STATUS', 'GEARS L & R DOWN LOCKED', 'TCAS LSP', 'WEIGHT ON WHEELS']
 
+var layout = {
+  xaxis: {
+    title: {
+      text: "Type1"
+    },
+    titlefont: {
+      family: 'Arial, sans-serif',
+      size: 18,
+      color: 'lightgrey'
+    },
+  },
+  yaxis: {
+    title: {
+      text: "Type2"
+    },
+    titlefont: {
+      family: 'Arial, sans-serif',
+      size: 18,
+      color: 'lightgrey'
+    },
+  },
+  width: 1400,
+  height: 800,
+};
+
 function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['flights'].join('/'))
         .then(response => response.json())
@@ -68,8 +93,8 @@ function goto2() {
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
-    document.getElementById('parameter-1').hidden = false;
-    document.getElementById('time_series_select').hidden = true;
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('time_series_select').hidden = false;
     document.getElementById('time_series_options').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
@@ -79,7 +104,7 @@ function goto2() {
 function goto3() {
     refresh_chart = () => time_series(true);
     document.getElementById('parameter-2').disabled = true;
-    document.getElementById('add-button').hidden = false;
+    document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
@@ -106,6 +131,7 @@ function two_parameter_chart() {
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
+    layout.xaxis.title.text = par1;
     fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
         .then(response => response.json())
         .then(data => {
@@ -122,23 +148,33 @@ function two_parameter_chart() {
                     mode: 'markers',
                     type: 'scatter'
                 };
+                layout.yaxis.title.text = par2;
             }
             console.log(data);
-            Plotly.newPlot(chart, [plot_data], {
-                margin: { t: 0 }
-            })
+            Plotly.newPlot(chart, [plot_data], layout)
         })
         .catch(err => console.error(err))
 }
 
-function dtr_chart() {
+async function dtr_chart() {
     const chart = document.getElementById('test-chart');
     remove_children(chart);
     var flight = document.getElementById('file-select').value
-    var par1 = document.getElementById('parameter-1').value
-    fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, par1].join('/'))
+    const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
+    let options = [];
+    checkboxes.forEach((checkbox) => {
+    options.push(checkbox.value);
+      });
+
+    layout.xaxis.title.tet = "Distance";
+    layout.xaxis.autorange = 'reversed';
+    for(var i = 0; i < options.length; i++){
+      let new_chart = document.createElement('div');
+      new_chart.setAttribute('class', 'TS2');
+
+    let data = await fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, options[i]].join('/'))
         .then(response => response.json())
-        .then(data => {
+        .catch(err => console.error(err))
             plot_data = {
                 x: data.x.map((x) => -x + data.x[data.x.length - 1]),
                 y: data.y,
@@ -146,21 +182,19 @@ function dtr_chart() {
                 type: 'scatter'
             };
             console.log(data);
-            Plotly.newPlot(chart, [plot_data], {
-                margin: { t: 0 },
-                xaxis: { autorange: 'reversed' }
-            })
-        })
-        .catch(err => console.error(err))
+            layout.yaxis.title.text = options[i];
+            Plotly.newPlot(new_chart, [plot_data], layout)
+
+        chart.appendChild(new_chart);
+      }
 }
 
 var data_bank = [];
 
-function time_series(refresh) {
+async function time_series(refresh) {
     const chart = document.getElementById('test-chart');
     remove_children(chart);
     var flight = document.getElementById('file-select').value
-
     const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
     let options = [];
     checkboxes.forEach((checkbox) => {
@@ -174,27 +208,33 @@ function time_series(refresh) {
         type = 'TS1';
       }
 
+      layout.xaxis.title.text = 'Time';
     for(var i = 0; i < options.length; i++){
-      let new_chart = document.createElement('span');
+      let new_chart = document.createElement('div');
       new_chart.setAttribute('class', type);
-
-    fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
+      layout.yaxis.title.text = (options[i]);   //ISSUES HERE, ALL GRAPHS HAVE THE SAME Y AXIS TITLE
+    let data = await fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
         .then(response => response.json())
-        .then(data => {
-            if (refresh) data_bank = [];
+        .catch(err => console.error(err))
+
+            data_bank = [];
             // else data.y = integral(data.y);
-            data_bank.push({
+            /*data_bank.push({
                 x: data.x,
                 y: data.y,
                 mode: 'markers',
                 type: 'scatter'
-            });
+            });*/
             console.log(data);
-            Plotly.newPlot(new_chart, data_bank, {
-                margin: { t: 0 }
-            })
-        })
-        .catch(err => console.error(err))
+
+            Plotly.newPlot(new_chart, [{
+                x: data.x,
+                y: data.y,
+                mode: 'markers',
+                type: 'scatter'
+            }], layout);
+
+
         chart.appendChild(new_chart);
       }
 }
