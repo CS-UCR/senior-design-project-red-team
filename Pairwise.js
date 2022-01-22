@@ -1,4 +1,5 @@
 var p_cur_chart
+var data_error = false
 
 function p_init() {
     fetch("http://" + hostname + ":" + port + "/" + ['flights'].join('/'))
@@ -53,6 +54,10 @@ function p_refresh_chart() {
       var par2 = document.getElementById('parameter-2').value
       var par3 = document.getElementById('parameter-3').value
       var par4 = document.getElementById('parameter-4').value
+      var data1 = []
+      var data2 = []
+      var data3 = []
+      var data4 = []
 
       if (par1 == par2 || par1 == par3 || par1 == par4 ||
         par2 == par3 || par2 == par4 || par3 == par4) {
@@ -60,22 +65,66 @@ function p_refresh_chart() {
               return;
         }
 
-      fetch("http://" + hostname + ":" + port + "/" + ['pairwise', flight, par1, par2, par3, par4].join('/'))
+      fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par1].join('/'))
           .then(response => response.json())
-          .then(plot_data => {
-                plot_data.map(e => {
-                    //e.mode = 'markers'
-                    e.type = 'splom'
-                    e.dimensions = [
-                        {label: '1', values: par1},
-                        {label: '2', values: par2},
-                        {label: '3', values: par3},
-                        {label: '4', values: par4}
-                    ]
-                })
-                
-              console.log(data)
-              var chart = document.getElementById(p_cur_chart);
+          .then(data => {
+            console.log(data)
+            data1 = data
+          })
+          .catch(err => {
+            console.error(err)
+            data_error = true
+          })
+        
+        fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par2].join('/'))
+          .then(response => response.json())
+          .then(data => {
+            console.log(data2)
+            data2 = data
+          })
+          .catch(err => {
+            console.error(err)
+            data_error = true
+          })
+
+          fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par3].join('/'))
+          .then(response => response.json())
+          .then(data => {
+            console.log(data)
+            data3 = data
+          })
+          .catch(err => {
+            console.error(err)
+            data_error = true
+          })
+
+          fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par4].join('/'))
+          .then(response => response.json())
+          .then(data => {
+            console.log(data)
+            data4 = data
+          })
+          .catch(err => {
+            console.error(err)
+            data_error = true
+          })
+
+          if (data_error === true) {
+            data_error = false 
+            return
+          }
+
+          var plot_data = [{
+            type: 'splom',
+            dimensions: [
+              {label:'1', values:data1},
+              {label:'2', values:data2},
+              {label:'3', values:data3},
+              {label:'4', values:data4}
+            ],
+          }]
+
+          var chart = document.getElementById(p_cur_chart);
               Plotly.newPlot(chart, plot_data, {
                 height: 800,
                 width: 800,
@@ -91,9 +140,7 @@ function p_refresh_chart() {
                 yaxis3:axis(),
                 yaxis4:axis()
               })
-          })
-          .catch(err => console.error(err))
-        }
+      }
   }
 
   function p_refresh_chart_tab(){
