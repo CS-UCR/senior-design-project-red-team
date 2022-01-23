@@ -14,23 +14,33 @@ function p_init() {
             })
         })
         .catch(err => console.error(err));
-    var par1 = document.getElementById('parameter-1')
+    /*var par1 = document.getElementById('parameter-1')
     var par2 = document.getElementById('parameter-2')
     var par3 = document.getElementById('parameter-3')
-    var par4 = document.getElementById('parameter-4')
+    var par4 = document.getElementById('parameter-4')*/
+    var parameters = document.getElementById('PairWise_Plot_Parameter_Box');
     flight_parameters.forEach(x => {
-        var o1 = document.createElement('option')
-        var o2 = document.createElement('option')
+        let o3 = document.createElement('input')
+        o3.type = 'checkbox'
+        o3.id = x
+        o3.name = "Pairwise_Plot_Option"
+        o3.value = x
+        let label = document.createElement('label')
+        label.htmlFor = x
+        label.appendChild(document.createTextNode(x))
+        let br = document.createElement('br')
+        parameters.appendChild(o3)
+        parameters.appendChild(label)
+        parameters.appendChild(br)
+        /*var o2 = document.createElement('option')
         var o3 = document.createElement('option')
-        var o4 = document.createElement('option')
-        o1.innerHTML = x
-        o2.innerHTML = x
+        var o4 = document.createElement('option')*/
+        /*o2.innerHTML = x
         o3.innerHTML = x
-        o4.innerHTML = x
-        par1.appendChild(o1)
-        par2.appendChild(o2)
+        o4.innerHTML = x*/
+        /*par2.appendChild(o2)
         par3.appendChild(o3)
-        par4.appendChild(o4)
+        par4.appendChild(o4)*/
     })
 }
 
@@ -75,7 +85,7 @@ function p_refresh_chart() {
             console.error(err)
             data_error = true
           })
-        
+
         fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par2].join('/'))
           .then(response => response.json())
           .then(data => {
@@ -110,7 +120,7 @@ function p_refresh_chart() {
           })
 
           if (data_error === true) {
-            data_error = false 
+            data_error = false
             return
           }
 
@@ -148,26 +158,26 @@ function p_refresh_chart() {
     let delete_button = document.createElement('span');
     let text = document.createElement('span');
     let chart = document.createElement('span');
-  
+
     text.setAttribute("class", "button");
     delete_button.setAttribute("class", "close");
     chart.setAttribute("class", "grapher");
-  
+
     chart.id = "chart" + count;
     tab.id = "tab" + count;
     text.innerHTML = "Tab " + count;
     delete_button.innerHTML = 'X';
     delete_button.onclick = () => {delete_tab(tab.id, chart.id)};
     text.onclick = () => {display(chart.id)};
-  
-  
+
+
     tab.appendChild(delete_button);
     tab.appendChild(text);
     document.getElementById("sidebar").appendChild(tab);
     document.getElementById("test-chart").appendChild(chart);
     count++;
     tab_count++;
-  
+
     if(tab_count > 1){
       if(cur_chart != undefined){
         document.getElementById(cur_chart).style.display = "none";
@@ -175,7 +185,25 @@ function p_refresh_chart() {
       document.getElementById(chart.id).style.display = "inline";
     }
     cur_chart = chart.id;
-  
+
     p_refresh_chart();
-  
+
   }
+
+function drop(){
+  var x = document.getElementById('PairWise_Plot_Parameter_Box');
+    if(x.hidden === true){
+      x.hidden = false;
+    }else{
+      x.hidden = true;
+    }
+}
+
+function GetCheckedParameters(){
+  const checkboxes = document.querySelectorAll('input[name="Pairwise_Plot_Option"]:checked');
+    var options = [];
+    checkboxes.forEach((checkbox) => {
+    options.push(checkbox.value);
+      });
+  return options;
+}

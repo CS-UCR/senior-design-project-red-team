@@ -60,15 +60,17 @@
 
         </div>
         <select id='file-select'>Select a flight</select>
-        <select id='parameter-1'>Parameter 1</select>
+        <!--select id='parameter-1'>Parameter 1</select>
         <select id='parameter-2'>Parameter 2</select>
         <select id='parameter-3'>Parameter 3</select>
-        <select id='parameter-4'>Parameter 4</select>
+        <select id='parameter-4'>Parameter 4</select>-->
+        <button class="rounded-sm" id='Drop_Down_PairWise_Parameters' onclick = 'drop()' style="border:1px solid #0000ff;">V</button>
+        <div id = 'PairWise_Plot_Parameter_Box' style="width: 250px; height: 150px; border: 1px solid #000000; overflow: scroll; position: absolute;z-index: 1;background: #ADD8E6;margin-left: 150px;"  hidden></div>
         <button id='refresh' onclick='p_refresh_chart()'>Graph</button>
         <button id='refresh' onclick='p_refresh_chart_tab()'>Graph in new tab.</button>
         <button id='single-graph' onclick='single_graph()'>Single Graphs</button>
         <div id='test-chart' class = "">
-          
+
         </div>
 
         <script src="Pairwise.js"></script>
