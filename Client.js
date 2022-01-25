@@ -19,9 +19,13 @@ function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['parameters'].join('/'))
         .then(response => response.json())
         .then(flight_parameters => {
-            var par1 = document.getElementById('parameter-1')
-            var par2 = document.getElementById('parameter-2')
+            let drop_down = document.getElementsByClassName('drop-down')
             flight_parameters.forEach(x => {
+                // drop_down.forEach(y => {
+                //     var o1 = document.createElement('option')
+                //     o1.innerHTML = x
+                //     y.appendChild(o1)
+                // })
                 var o1 = document.createElement('option')
                 var o2 = document.createElement('option')
                 o1.innerHTML = x
@@ -31,32 +35,103 @@ function init() {
             })
         })
         .catch(err => console.error(err));
+    
 }
 
 function goto1() {
-    refresh_chart = two_parameter_chart;
+    const chart = document.getElementById('test-chart');
+    // refresh_chart = 
+    two_parameter_chart(chart);
+    document.getElementById('test-chart').hidden = false;
+    document.getElementById('parameter-1').hidden = false;
+    document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
+    
+    document.getElementById('01').hidden = true;
+    document.getElementById('02').hidden = true;
+    document.getElementById('03').hidden = true;
+    document.getElementById('04').hidden = true;
+  
+    document.getElementById('graph-01').hidden =true;
+    document.getElementById('graph-02').hidden =true;
+    document.getElementById('graph-03').hidden =true;
+    document.getElementById('graph-04').hidden =true;
+
+
 }
 function goto2() {
+
     refresh_chart = dtr_chart;
+    document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
+    document.getElementById('test-chart').hidden = false;
+    document.getElementById('parameter-1').hidden = false;
+
+    document.getElementById('01').hidden = true;
+    document.getElementById('02').hidden = true;
+    document.getElementById('03').hidden = true;
+    document.getElementById('04').hidden = true;
+    
+    document.getElementById('graph-01').hidden =true;
+    document.getElementById('graph-02').hidden =true;
+    document.getElementById('graph-03').hidden =true;
+    document.getElementById('graph-04').hidden =true;
+
+    
 }
 function goto3() {
+    
     refresh_chart = () => time_series(true);
+
+    document.getElementById('test-chart').hidden = false;
+    document.getElementById('parameter-1').hidden = false;
+    document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = false;
 
+    document.getElementById('01').hidden = true;
+    document.getElementById('02').hidden = true;
+    document.getElementById('03').hidden = true;
+    document.getElementById('04').hidden = true;
+ 
+    document.getElementById('graph-01').hidden =true;
+    document.getElementById('graph-02').hidden =true;
+    document.getElementById('graph-03').hidden =true;
+    document.getElementById('graph-04').hidden =true;
+
+}
+
+function goto4(){
+
+    document.getElementById('test-chart').hidden = true;
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('parameter-2').hidden = true;
+
+    document.getElementById('01').hidden = false;
+    document.getElementById('02').hidden = false;
+    document.getElementById('03').hidden = false;
+    document.getElementById('04').hidden = false;
+ 
+    document.getElementById('graph-01').hidden =false;
+    document.getElementById('graph-02').hidden =false;
+    document.getElementById('graph-03').hidden =false;
+    document.getElementById('graph-04').hidden =false;
+    MultiSubGraphs()
 }
 
 var refresh_chart = two_parameter_chart;
 
-function two_parameter_chart() {
-    const chart = document.getElementById('test-chart');
+function two_parameter_chart(chart) {
+
+    // const chart = document.getElementById('test-chart');
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
+    const config = ButtonFunctions();
+
+
     fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
         .then(response => response.json())
         .then(data => {
@@ -66,6 +141,7 @@ function two_parameter_chart() {
                     y: data.y,
                     type: 'histogram'
                 };
+                
             } else {
                 plot_data = {
                     x: data.x,
@@ -73,16 +149,32 @@ function two_parameter_chart() {
                     mode: 'markers',
                     type: 'scatter'
                 };
+
             }
-            console.log(data);
+
+
+        
             Plotly.newPlot(chart, [plot_data], {
-                margin: { t: 0 }
-            })
+                margin: { t: 0 },
+                
+            },config)
+
+            chart.on('plotly_relayout',
+                function(eventdata){
+                   alert("zzom!!")
+                }
+            )
+            // chart.addEventListener()
+            
         })
+        
         .catch(err => console.error(err))
+        
 }
 
+
 function dtr_chart() {
+
     const chart = document.getElementById('test-chart');
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
@@ -100,6 +192,7 @@ function dtr_chart() {
                 margin: { t: 0 },
                 xaxis: { autorange: 'reversed' }
             })
+     
         })
         .catch(err => console.error(err))
 }
@@ -107,12 +200,14 @@ function dtr_chart() {
 var data_bank = [];
 
 function time_series(refresh) {
+
     const chart = document.getElementById('test-chart');
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, par1].join('/'))
         .then(response => response.json())
         .then(data => {
+            
             if (refresh) data_bank = [];
             // else data.y = integral(data.y);
             data_bank.push({
@@ -122,9 +217,59 @@ function time_series(refresh) {
                 type: 'scatter'
             });
             console.log(data);
+            
             Plotly.newPlot(chart, data_bank, {
                 margin: { t: 0 }
             })
+ 
+
+
         })
         .catch(err => console.error(err))
+
 }
+
+function MultiSubGraphs(){
+    const chart_one = document.getElementById('01')
+    var flight = document.getElementById('file-select').value
+    var parr_one = document.getElementById('m-parameter-1').value
+    var parr_two = document.getElementById('m-parameter-2').value
+
+}
+
+
+
+function ButtonFunctions(){
+    const config = {
+        modeBarButtonsToAdd: [
+            {
+                name: 'Zoom Feature',
+                icon:  Plotly.Icons.pencil,
+                click: function() {}
+
+    
+            }
+        ],
+        modeBarButtonsToRemove:[
+                'toImage',
+                'pan2d',
+                'lasso2d',
+                'zoomOut2d',
+                'zoomIn2d',
+                'autoScale2d',
+                'Zoom',
+                'select2d',
+                'resetScale2d'
+        ]
+
+    };
+    return config;
+}
+
+// https://plotly.com/javascript/zoom-events/
+// function zoomIn(chart){
+//     chart.on('plotly_relayout',source = chart,
+//     function(eventdata){
+//         alert("Zooooom!");
+//     })
+// }

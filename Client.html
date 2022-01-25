@@ -13,6 +13,7 @@
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto1()">Two Parameter Chart</button>
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto2()">DTR Chart</button>
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto3()">Time Series</button>
+                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto4()">Multi Feature</button>
             </div>
         </nav>
         <div class="mx-4">
@@ -23,10 +24,50 @@
                     <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Refresh</button>
                     <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh' onclick='time_series(false)' hidden>Add</button>
-
+                    
+                    
+                
+                    
                 </header>
                 <main>
-                    <div id='test-chart' style="width:90%;height:800px;"></div>
+                    <!-- This is the main chart display 
+                    * Make this be able to display mutliple charts like this https://codepen.io/pen/
+                     -->
+                     <!-- <div id = 'multi-chart' style="width:80%;height:800px;"></div> -->
+                    <div id='test-chart' style="width:80%;height:800px;"></div>
+
+                  
+                    <div class=" grid grid-cols-1">
+                        <div id = "graph-01"hidden>
+                            <select class="rounded-sm indent-8" id='graph-select'>Select a graph</select>
+                            <select class="rounded-sm drop-down"  id="m-parameter-1"> M-Parameter 1</select>
+                            <select class="rounded-sm drop-down" id='m-parameter-2'>M-Parameter 2</select>
+                        </div>
+                        <!-- <div id  = "01" hidden>01</div> -->
+                        <div id = "graph-02"hidden>
+                            <select class="rounded-sm indent-8" id='graph-select-2'>Select a graph</select>
+                            <select class="rounded-sm drop-down" id="m2-parameter-1"> M2-Parameter 1</select>
+                            <select class="rounded-sm drop-down" id='m2-parameter-2'>M2-Parameter 2</select>
+                        </div>
+                        <!-- <div id  = "02" hidden>02</div> -->
+                        <div id = "graph-03"hidden>
+                            <select class="rounded-sm indent-8" id='graph-select-3'>Select a graph</select>
+                            <select class="rounded-sm drop-down" id="m3-parameter-1"> M3-Parameter 1</select>
+                            <select class="rounded-sm drop-down" id='m3-parameter-2'>M3-Parameter 2</select>
+                        </div>
+                        <!-- <div id  = "03" hidden>03</div> -->
+                        <div id = "graph-04 "hidden>
+                            <select class="rounded-sm indent-8" id='graph-select-4'>Select a graph</select>
+                            <select class="rounded-sm drop-down" id="m4-parameter-1"> M4-Parameter 1</select>
+                            <select class="rounded-sm drop-down" id='m4-parameter-2'>M4-Parameter 2</select>
+                        </div>
+                    </div> 
+                    <div class=" grid grid-cols-2 gap-4">
+                        <div id  = "01" hidden>01</div>
+                        <div id  = "02" hidden>02</div>
+                        <div id  = "03" hidden>03</div>
+                        <div id  = "04" hidden>04</div>
+                    </div>
                 </main>
             </div>
             <div>
