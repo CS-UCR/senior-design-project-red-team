@@ -48,109 +48,79 @@ function single_graph() {
     location.href = "Client.html";
 }
 
-var axis = () => ({
-    showline:false,
-    zeroline:false,
-    gridcolor:'#ffff',
-    ticklen:4
-  })
+function remove_children(p){
+  while(p.firstChild){
+    p.removeChild(p.firstChild);
+  }
+}
 
 function p_refresh_chart() {
     if(tab_count === 0){
       p_refresh_chart_tab();
     }else{
+
+      const chart = document.getElementById('test-chart');
+      remove_children(chart);
+
       var flight = document.getElementById('file-select').value
-      var par1 = document.getElementById('parameter-1').value
-      var par2 = document.getElementById('parameter-2').value
-      var par3 = document.getElementById('parameter-3').value
-      var par4 = document.getElementById('parameter-4').value
-      var data1 = []
-      var data2 = []
-      var data3 = []
-      var data4 = []
+      var parameters = GetCheckedParameters();
 
-      if (par1 == par2 || par1 == par3 || par1 == par4 ||
-        par2 == par3 || par2 == par4 || par3 == par4) {
-              window.alert("All parameters need to be uniqe");
-              return;
-        }
-
-      fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par1].join('/'))
-          .then(response => response.json())
-          .then(data => {
-            console.log(data)
-            data1 = data
-          })
-          .catch(err => {
-            console.error(err)
-            data_error = true
-          })
-
-        fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par2].join('/'))
-          .then(response => response.json())
-          .then(data => {
-            console.log(data2)
-            data2 = data
-          })
-          .catch(err => {
-            console.error(err)
-            data_error = true
-          })
-
-          fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par3].join('/'))
-          .then(response => response.json())
-          .then(data => {
-            console.log(data)
-            data3 = data
-          })
-          .catch(err => {
-            console.error(err)
-            data_error = true
-          })
-
-          fetch("http://" + hostname + ":" + port + "/" + ['single', flight, par4].join('/'))
-          .then(response => response.json())
-          .then(data => {
-            console.log(data)
-            data4 = data
-          })
-          .catch(err => {
-            console.error(err)
-            data_error = true
-          })
-
-          if (data_error === true) {
-            data_error = false
-            return
-          }
-
-          var plot_data = [{
-            type: 'splom',
-            dimensions: [
-              {label:'1', values:data1},
-              {label:'2', values:data2},
-              {label:'3', values:data3},
-              {label:'4', values:data4}
-            ],
-          }]
-
-          var chart = document.getElementById(p_cur_chart);
-              Plotly.newPlot(chart, plot_data, {
-                height: 800,
-                width: 800,
-                autosize: false,
-                hovermode:'closest',
-                dragmode:'select',
-                xaxis:axis(),
-                yaxis:axis(),
-                xaxis2:axis(),
-                xaxis3:axis(),
-                xaxis4:axis(),
-                yaxis2:axis(),
-                yaxis3:axis(),
-                yaxis4:axis()
-              })
+      if (parameters.length !== 4) {
+        window.alert("You need 4 parameters");
+        return;
       }
+
+      for (let i = 0; i < parameters.length; i++) {
+        for (let k = 0; k < parameters.length; k++) {
+
+          par1 = parameters[i];
+          par2 = parameters[k];
+
+          let new_chart = document.createElement('div');
+          new_chart.setAttribute('class', 'TS2');
+          
+          if (par1 == par2) {
+            fetch("http://" + hostname + ":" + port + "/" + ['flight', flight, par1, par2].join('/'))
+            .then(response => response.json())
+            .then(plot_data => {
+            
+              plot_data.map(e => {
+                e.type = 'histogram'
+              })
+              
+              console.log(plot_data); 
+              Plotly.newPlot(new_chart, plot_data, {
+                margin: { t: 0 }
+              })
+
+              chart.appendChild(new_chart);
+            })
+            .catch(err => console.error(err))
+          }
+          else {
+            fetch("http://" + hostname + ":" + port + "/" + ['flight', flight, par1, par2].join('/'))
+            .then(response => response.json())
+            .then(plot_data => {
+              
+                plot_data.map(e => {
+                  e.mode = 'markers'
+                  e.type = 'scatter'
+                })
+
+              console.log(plot_data)
+              Plotly.newPlot(new_chart, plot_data, {
+                margin: { t: 0 }
+              })
+
+              chart.appendChild(new_chart);
+            })
+            .catch(err => console.error(err))
+          }
+          
+        }
+      }
+
+    }
   }
 
   function p_refresh_chart_tab(){
