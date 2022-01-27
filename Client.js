@@ -19,13 +19,9 @@ function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['parameters'].join('/'))
         .then(response => response.json())
         .then(flight_parameters => {
-            let drop_down = document.getElementsByClassName('drop-down')
+            var par1 = document.getElementById('parameter-1')
+            var par2 = document.getElementById('parameter-2')
             flight_parameters.forEach(x => {
-                // drop_down.forEach(y => {
-                //     var o1 = document.createElement('option')
-                //     o1.innerHTML = x
-                //     y.appendChild(o1)
-                // })
                 var o1 = document.createElement('option')
                 var o2 = document.createElement('option')
                 o1.innerHTML = x
@@ -39,24 +35,20 @@ function init() {
 }
 
 function goto1() {
-    const chart = document.getElementById('test-chart');
-    // refresh_chart = 
-    two_parameter_chart(chart);
+    
+    refresh_chart = two_parameter_chart;
     document.getElementById('test-chart').hidden = false;
     document.getElementById('parameter-1').hidden = false;
     document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
     
-    document.getElementById('01').hidden = true;
-    document.getElementById('02').hidden = true;
-    document.getElementById('03').hidden = true;
-    document.getElementById('04').hidden = true;
+
+    // Mult Feature
+    document.getElementById('buttons').hidden = true;
+
+
   
-    document.getElementById('graph-01').hidden =true;
-    document.getElementById('graph-02').hidden =true;
-    document.getElementById('graph-03').hidden =true;
-    document.getElementById('graph-04').hidden =true;
 
 
 }
@@ -69,15 +61,10 @@ function goto2() {
     document.getElementById('test-chart').hidden = false;
     document.getElementById('parameter-1').hidden = false;
 
-    document.getElementById('01').hidden = true;
-    document.getElementById('02').hidden = true;
-    document.getElementById('03').hidden = true;
-    document.getElementById('04').hidden = true;
-    
-    document.getElementById('graph-01').hidden =true;
-    document.getElementById('graph-02').hidden =true;
-    document.getElementById('graph-03').hidden =true;
-    document.getElementById('graph-04').hidden =true;
+    // Mult Feature
+    document.getElementById('buttons').hidden = true;
+
+
 
     
 }
@@ -91,15 +78,11 @@ function goto3() {
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = false;
 
-    document.getElementById('01').hidden = true;
-    document.getElementById('02').hidden = true;
-    document.getElementById('03').hidden = true;
-    document.getElementById('04').hidden = true;
- 
-    document.getElementById('graph-01').hidden =true;
-    document.getElementById('graph-02').hidden =true;
-    document.getElementById('graph-03').hidden =true;
-    document.getElementById('graph-04').hidden =true;
+    // Mult Feature
+    document.getElementById('buttons').hidden = true;
+  
+
+
 
 }
 
@@ -108,28 +91,23 @@ function goto4(){
     document.getElementById('test-chart').hidden = true;
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('parameter-2').hidden = true;
+    document.getElementById('add-button').hidden = true;
 
-    document.getElementById('01').hidden = false;
-    document.getElementById('02').hidden = false;
-    document.getElementById('03').hidden = false;
-    document.getElementById('04').hidden = false;
- 
-    document.getElementById('graph-01').hidden =false;
-    document.getElementById('graph-02').hidden =false;
-    document.getElementById('graph-03').hidden =false;
-    document.getElementById('graph-04').hidden =false;
+    // Mult Feature
+    document.getElementById('buttons').hidden = false;
     MultiSubGraphs()
+
 }
 
 var refresh_chart = two_parameter_chart;
 
-function two_parameter_chart(chart) {
+function two_parameter_chart() {
 
-    // const chart = document.getElementById('test-chart');
+    const chart = document.getElementById('test-chart');
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
-    const config = ButtonFunctions();
+    // const config = ButtonFunctions();
 
 
     fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
@@ -157,7 +135,7 @@ function two_parameter_chart(chart) {
             Plotly.newPlot(chart, [plot_data], {
                 margin: { t: 0 },
                 
-            },config)
+            },)
 
             chart.on('plotly_relayout',
                 function(eventdata){
@@ -230,41 +208,52 @@ function time_series(refresh) {
 }
 
 function MultiSubGraphs(){
-    const chart_one = document.getElementById('01')
-    var flight = document.getElementById('file-select').value
-    var parr_one = document.getElementById('m-parameter-1').value
-    var parr_two = document.getElementById('m-parameter-2').value
+    let overlay = document.getElementById("Overlay_effect")
+    let add_graph = document.getElementById("graph_button")
+    let verify_btn = document.getElementById("verify-selcetion")
 
+    add_graph.onclick = function(){
+        overlay.style.display = 'block';
+    }
+    verify_btn.onclick = function(){
+        overlay.style.display = 'none';
+    }
+    window.onclick = function(event){
+        if(event.target == overlay){
+            overlay.style.display = 'none';
+        }
+    }
+    
 }
 
 
 
-function ButtonFunctions(){
-    const config = {
-        modeBarButtonsToAdd: [
-            {
-                name: 'Zoom Feature',
-                icon:  Plotly.Icons.pencil,
-                click: function() {}
+// function ButtonFunctions(){
+//     const config = {
+//         modeBarButtonsToAdd: [
+//             {
+//                 name: 'Zoom Feature',
+//                 icon:  Plotly.Icons.pencil,
+//                 click: function() {}
 
     
-            }
-        ],
-        modeBarButtonsToRemove:[
-                'toImage',
-                'pan2d',
-                'lasso2d',
-                'zoomOut2d',
-                'zoomIn2d',
-                'autoScale2d',
-                'Zoom',
-                'select2d',
-                'resetScale2d'
-        ]
+//             }
+//         ],
+//         modeBarButtonsToRemove:[
+//                 'toImage',
+//                 'pan2d',
+//                 'lasso2d',
+//                 'zoomOut2d',
+//                 'zoomIn2d',
+//                 'autoScale2d',
+//                 'Zoom',
+//                 'select2d',
+//                 'resetScale2d'
+//         ]
 
-    };
-    return config;
-}
+//     };
+//     return config;
+// }
 
 // https://plotly.com/javascript/zoom-events/
 // function zoomIn(chart){
