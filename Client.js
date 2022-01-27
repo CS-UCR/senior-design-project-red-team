@@ -28,6 +28,8 @@ var layout = {
   height: 800,
 };
 
+
+
 function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['flights'].join('/'))
         .then(response => response.json())
@@ -116,9 +118,11 @@ function goto3() {
 }
 
 var refresh_chart = two_parameter_chart;
+var tab_count = 0;
+var cur_chart;
+var cur_tab;
 
 function remove_children(p){
-
   while(p.firstChild){
     p.removeChild(p.firstChild);
   }
@@ -126,8 +130,13 @@ function remove_children(p){
 }
 
 function two_parameter_chart() {
-    const chart = document.getElementById('test-chart');
-    remove_children(chart);
+    if(tab_count === 0){
+      refresh_chart_tab();
+      return;
+    }
+    if(cur_chart){
+    remove_children(cur_chart);
+  }
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
@@ -150,15 +159,22 @@ function two_parameter_chart() {
                 };
                 layout.yaxis.title.text = par2;
             }
-            console.log(data);
+            //console.log(data);
+            var chart = cur_chart;
             Plotly.newPlot(chart, [plot_data], layout)
         })
         .catch(err => console.error(err))
 }
 
 async function dtr_chart() {
-    const chart = document.getElementById('test-chart');
-    remove_children(chart);
+  if(tab_count === 0){
+    refresh_chart_tab();
+    return;
+  }
+  const chart = cur_chart;
+  if(chart){
+  remove_children(chart);
+}
     var flight = document.getElementById('file-select').value
     const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
     let options = [];
@@ -166,7 +182,7 @@ async function dtr_chart() {
     options.push(checkbox.value);
       });
 
-    layout.xaxis.title.tet = "Distance";
+    layout.xaxis.title.text = "Distance";
     layout.xaxis.autorange = 'reversed';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
@@ -181,7 +197,7 @@ async function dtr_chart() {
                 mode: 'markers',
                 type: 'scatter'
             };
-            console.log(data);
+          //  console.log(data);
             layout.yaxis.title.text = options[i];
             Plotly.newPlot(new_chart, [plot_data], layout)
 
@@ -192,8 +208,14 @@ async function dtr_chart() {
 var data_bank = [];
 
 async function time_series(refresh) {
-    const chart = document.getElementById('test-chart');
-    remove_children(chart);
+  if(tab_count === 0){
+    refresh_chart_tab();
+    return;
+  }
+  const chart = cur_chart;
+  if(chart){
+  remove_children(chart);
+}
     var flight = document.getElementById('file-select').value
     const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
     let options = [];
@@ -225,7 +247,7 @@ async function time_series(refresh) {
                 mode: 'markers',
                 type: 'scatter'
             });*/
-            console.log(data);
+          //  console.log(data);
 
             Plotly.newPlot(new_chart, [{
                 x: data.x,
@@ -246,4 +268,67 @@ var x = document.getElementById('time_series_options')
   }else{
     x.hidden = true;
   }
+}
+
+var count = 1;
+
+function refresh_chart_tab(){
+  let tab = document.createElement('button');
+  let delete_button = document.createElement('span');
+  let text = document.createElement('span');
+  let chart = document.createElement('div');
+
+  text.setAttribute("class", "button");
+  delete_button.setAttribute("class", "close");
+  chart.setAttribute("class", "grapher");
+
+  chart.id = "chart" + count;
+  tab.id = "tab" + count;
+  text.innerHTML = "Tab " + count;
+  delete_button.innerHTML = 'X';
+  delete_button.onclick = () => {delete_tab(tab.id, chart)};
+  text.onclick = () => {display(chart,tab)};
+
+
+  tab.appendChild(delete_button);
+  tab.appendChild(text);
+  document.getElementById("sidebar").appendChild(tab);
+  document.getElementById("test-chart").appendChild(chart);
+  count++;
+  tab_count++;
+
+  if(tab_count > 1){
+    if(cur_chart != undefined){
+      cur_chart.hidden = true;
+    }
+    chart.style.display = "inline";
+  }
+  display(chart,tab);
+
+  refresh_chart();
+
+}
+
+function delete_tab(tab, chart){
+  document.getElementById(tab).remove();
+  //document.getElementById(chart).remove();
+  chart.remove();
+  tab_count--;
+  if(cur_chart === chart){
+    cur_chart = undefined;
+    if (tab_count) {
+      display(document.getElementsByClassName('grapher')[0]);
+    }
+  }
+}
+
+function display(chart,tab){
+  if(cur_chart != undefined){
+    cur_chart.style.display = "none";
+    cur_tab.style.color = "#2196F3";
+  }
+  cur_chart = chart;
+  cur_tab = tab;
+  cur_chart.style.display = "inline";
+  cur_tab.style.color = "#000000";
 }
