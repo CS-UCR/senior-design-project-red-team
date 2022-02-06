@@ -7,26 +7,61 @@
         <link href="tailwind.css" rel="stylesheet">
     </head>
     <body onload='init()'>
-    <body>
         <nav class="bg-gray-800 h-16 flex items-center">
-            <div class="mx-4 space-x-4 flex items-baseline">
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto1()">Two Parameter Chart</button>
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto2()">DTR Chart</button>
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto3()">Time Series</button>
+            <div id="top-btns" class="mx-4 space-x-2 flex items-baseline">
+                <!-- <button class="btn-top" onclick="goto1()">Two Parameter Chart</button>
+                <button class="btn-top" onclick="goto2()">DTR Chart</button>
+                <button class="btn-top" onclick="goto3()">Time Series</button> -->
+                <span>
+                    <button class="btn-top border-white" onclick="open_tab_types()"><b>+</b></button>
+                    <div id="new-tab-opts" class="bg-orange-300 border-2 border-orange-500 px-2 w-fit z-10 absolute" hidden>
+                        <button onclick="create_new_tab(1)">two-parameter</button><br>
+                        <button onclick="create_new_tab(2)">dtr</button><br>
+                        <button onclick="create_new_tab(3)">time-series</button><br>
+                    </div>
+                    <script>
+                        function open_tab_types() {
+                            let box = document.getElementById('new-tab-opts');
+                            box.hidden = !box.hidden;
+                        }
+                    </script>
+                </span>
             </div>
         </nav>
         <div class="mx-4">
             <div id="">
-                <header class="flex items-stretch space-x-2 my-2">
-                    <select class="rounded-sm" id='file-select'>Select a flight</select>
-                    <select class="rounded-sm" id='parameter-1'>Parameter 1</select>
-                    <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
-                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Refresh</button>
-                    <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh' onclick='time_series(false)' hidden>Add</button>
-
+                <header class="space-x-2 my-2 h-6 flex flex-nowrap flex-row">
+                    <select class="bg-gray-100 rounded-sm" id='file-select'>Select a flight</select>
+                    <select class="bg-gray-100 rounded-sm" id='parameter-1'>Parameter 1</select>
+                    <select class="bg-gray-100 rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='refresh' onclick='refresh_chart()'>Refresh</button>
+                    <span id="time-series-specific" hidden>
+                        <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='add' onclick='time_series(false)'>Add</button>
+                    </span>
+                    <span id="dtr-specific" hidden>
+                        <button class="h-full" id="ptile-opts-btn" onclick="ptile_opts_btn_f(this)">
+                            <img class="h-full" src="gear.png">
+                        </button>
+                        <div id="ptile-opts" class="bg-orange-300 border-2 border-orange-500 px-2 w-fit z-10 absolute" hidden>
+                            <input class="ptile-opt" type="checkbox" id="ptile-10" value="10">
+                            <label for="ptile-10">10<sup>th</sup> percentile</label><br>
+                            <input class="ptile-opt" type="checkbox" id="ptile-50" value="50">
+                            <label for="ptile-50">50<sup>th</sup> percentile</label><br>
+                            <input class="ptile-opt" type="checkbox" id="ptile-90" value="90">
+                            <label for="ptile-90">90<sup>th</sup> percentile</label><br>
+                        </div>
+                        <script>
+                            function ptile_opts_btn_f(n) {
+                                // let box = document.evaluate('div', n.parentNode, null, XPathResult.ANY_TYPE, null).iterateNext();
+                                let box = document.getElementById('ptile-opts');
+                                box.hidden = !box.hidden;
+                            }
+                        </script>
+                    </span>
                 </header>
-                <main>
-                    <div id='test-chart' style="width:90%;height:800px;"></div>
+                <main id="tab-graphs" class="scale-y-100">
+                    <!-- <div class="grid grid-cols-2 gap-1 "> -->
+                    <!-- </div>  -->
                 </main>
             </div>
             <div>

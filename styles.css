@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+   .btn-top {
+      @apply inline-block bg-gray-600 border-white text-gray-100 px-4 py-2 rounded-md;
+   }
+}
+
