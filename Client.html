@@ -11,9 +11,9 @@
     <body>
         <nav class="bg-gray-800 h-16 flex items-center">
             <div class="mx-4 space-x-4 flex items-baseline">
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto1()" id = 'TPC'>Two Parameter Chart</button>
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto2()" id = 'DTRC'>DTR Chart</button>
-                <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto3()" id = 'TS'>Time Series</button>
+                <button class="btn-top" onclick="goto1()" id = 'TPC'>Two Parameter Chart</button>
+                <button class="btn-top" onclick="goto2()" id = 'DTRC'>DTR Chart</button>
+                <button class="btn-top" onclick="goto3()" id = 'TS'>Time Series</button>
             </div>
         </nav>
         <div class="mx-4">
@@ -24,6 +24,24 @@
                   </div>
                     <select class="rounded-sm" id='file-select' style="border:1px solid #0000ff; margin-left:115px;">Select a flight</select>
                     <button class="rounded-sm" id='time_series_select' onclick = 'drop()' style="border:1px solid #0000ff;" hidden>V</button>
+                    <button class="h-full" id="ptile-opts-btn" onclick="ptile_opts_btn_f(this)" hidden>
+                            <img class="h-full" src="gear.png">
+                        </button>
+                        <div id="ptile-opts" class="bg-orange-300 border-2 border-orange-500 px-2 w-fit z-10 absolute" style ="margin-left:180px; margin-top:40px;" hidden>
+                            <input class="ptile-opt" type="checkbox" id="ptile-10" value="10">
+                            <label for="ptile-10">10<sup>th</sup> percentile</label><br>
+                            <input class="ptile-opt" type="checkbox" id="ptile-50" value="50">
+                            <label for="ptile-50">50<sup>th</sup> percentile</label><br>
+                            <input class="ptile-opt" type="checkbox" id="ptile-90" value="90">
+                            <label for="ptile-90">90<sup>th</sup> percentile</label><br>
+                        </div>
+                        <script>
+                            function ptile_opts_btn_f(n) {
+                                // let box = document.evaluate('div', n.parentNode, null, XPathResult.ANY_TYPE, null).iterateNext();
+                                let box = document.getElementById('ptile-opts');
+                                box.hidden = !box.hidden;
+                            }
+                        </script>
                     <select class="rounded-sm" id='parameter-1' style="border:1px solid #0000ff;">Parameter 1</select>
                     <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2' style="border:1px solid #0000ff;">Parameter 2</select>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Graph</button>

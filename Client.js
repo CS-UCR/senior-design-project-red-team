@@ -85,6 +85,8 @@ function goto1() {
     document.getElementById('parameter-1').hidden = false;
     document.getElementById('time_series_select').hidden = true;
     document.getElementById('time_series_options').hidden = true;
+    document.getElementById("ptile-opts").hidden = true;
+    document.getElementById("ptile-opts-btn").hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -98,6 +100,8 @@ function goto2() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById('time_series_options').hidden = true;
+    document.getElementById("ptile-opts").hidden = true;
+    document.getElementById("ptile-opts-btn").hidden = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -110,6 +114,8 @@ function goto3() {
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
+    document.getElementById("ptile-opts").hidden = true;
+    document.getElementById("ptile-opts-btn").hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -122,6 +128,7 @@ var tab_count = 0;
 var cur_chart;
 var cur_tab;
 var first_tab;
+var dtr_current_selected_chart = undefined;
 
 function remove_children(p){
   while(p.firstChild){
@@ -182,29 +189,91 @@ async function dtr_chart() {
     checkboxes.forEach((checkbox) => {
     options.push(checkbox.value);
       });
+    let checked_ptiles = [];
+    for (let elem of document.querySelectorAll('.ptile-opt:checked')) {
+      // checked_ptiles.push(parseInt(elem.id.slice(-2)));
+      checked_ptiles.push(elem.value);
+  }
+  console.log(checked_ptiles)
 
-    layout.xaxis.title.text = "Distance";
+    layout.xaxis.title.text = "DISTANCE FROM LANDING (MILES)";
     layout.xaxis.autorange = 'reversed';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
       new_chart.setAttribute('class', 'TS2');
+      new_chart.onclick = () => {highlight(new_chart);};
 
-    let data = await fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, options[i]].join('/'))
-        .then(response => response.json())
-        .catch(err => console.error(err))
-            plot_data = {
-                x: data.x.map((x) => -x + data.x[data.x.length - 1]),
-                y: data.y,
-                mode: 'markers',
-                type: 'scatter'
-            };
-          //  console.log(data);
-            layout.yaxis.title.text = options[i];
-            Plotly.newPlot(new_chart, [plot_data], layout)
+      let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
+              .then(response => response.json())
+              .catch(err => console.error(err));
+          console.log(data);
+          var traces = [data.main];
+          for (let ptile in data.percentiles.ys) {
+              traces.push({
+                  x: data.percentiles.x,
+                  y: data.percentiles.ys[ptile]
+              });
+          }
+          for (let trace of traces) {
+              trace.type = 'scattergl';
+              trace.mode = 'markers';
+          }
+
+          layout.yaxis.title.text = options[i];
+          Plotly.newPlot(new_chart, traces, layout);
 
         chart.appendChild(new_chart);
       }
 }
+
+async function dtr_chart_selected(chart, option){
+  if(chart){
+    var flight = document.getElementById('file-select').value
+    let checked_ptiles = [];
+   for (let elem of document.querySelectorAll('.ptile-opt:checked')) {
+       // checked_ptiles.push(parseInt(elem.id.slice(-2)));
+       checked_ptiles.push(elem.value);
+   }
+   console.log(checked_ptiles)
+
+   let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, option], checked_ptiles].flat().join('/'))
+       .then(response => response.json())
+       .catch(err => console.error(err));
+   console.log(data);
+   var traces = [data.main];
+   for (let ptile in data.percentiles.ys) {
+       traces.push({
+           x: data.percentiles.x,
+           y: data.percentiles.ys[ptile]
+       });
+   }
+   for (let trace of traces) {
+       trace.type = 'scattergl';
+       trace.mode = 'markers';
+   }
+
+   layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';
+   layout.yaxis.title.text = option;
+   Plotly.react(chart, traces, layout);
+  }
+}
+
+function highlight(chart){
+  if(dtr_current_selected_chart){
+    dtr_current_selected_chart.style.border = 0;
+    if(dtr_current_selected_chart === chart){
+      dtr_current_selected_chart = undefined;
+    }else{
+      chart.style.border = "1px solid #00FF00";
+      dtr_current_selected_chart.style.border = chart;
+    }
+  }else{
+    chart.style.border = "1px solid #00FF00";
+    dtr_current_selected_chart = chart;
+  }
+}
+
+
 
 var data_bank = [];
 
@@ -327,6 +396,10 @@ function delete_tab(tab, chart){
 }
 
 function display(chart,tab){
+  if(dtr_current_selected_chart){
+    dtr_current_selected_chart.style.border = 0;
+    dtr_current_selected_chart = undefined;
+  }
   if(cur_chart != undefined){
     cur_chart.style.display = "none";
     cur_tab.style.color = "#2196F3";

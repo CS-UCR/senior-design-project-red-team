@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const csv = require('csv/sync');
 
-const flight_data_dir = 'Tail_677_CSVs/';
+const flight_data_dir = 'flight-data/';
 
 var csv_cols = {};
 
