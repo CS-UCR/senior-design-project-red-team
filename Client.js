@@ -121,6 +121,7 @@ var refresh_chart = two_parameter_chart;
 var tab_count = 0;
 var cur_chart;
 var cur_tab;
+var first_tab;
 
 function remove_children(p){
   while(p.firstChild){
@@ -295,6 +296,9 @@ function refresh_chart_tab(){
   document.getElementById("sidebar").appendChild(tab);
   document.getElementById("test-chart").appendChild(chart);
   count++;
+  if(tab_count === 0){
+    first_tab = tab;
+  }
   tab_count++;
 
   if(tab_count > 1){
@@ -317,7 +321,7 @@ function delete_tab(tab, chart){
   if(cur_chart === chart){
     cur_chart = undefined;
     if (tab_count) {
-      display(document.getElementsByClassName('grapher')[0]);
+      display(document.getElementsByClassName('grapher')[0],first_tab);
     }
   }
 }
@@ -330,5 +334,7 @@ function display(chart,tab){
   cur_chart = chart;
   cur_tab = tab;
   cur_chart.style.display = "inline";
-  cur_tab.style.color = "#000000";
+  if(cur_tab != undefined){
+    cur_tab.style.color = "#000000";
+  }
 }
