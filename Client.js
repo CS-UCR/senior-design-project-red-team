@@ -189,16 +189,15 @@ async function dtr_chart(chart) {
         .then(response => response.json())
         .catch(err => console.error(err));
     console.log(data);
+    data.main.name = "Flight trace";
     var traces = [data.main];
     for (let ptile in data.percentiles.ys) {
         traces.push({
             x: data.percentiles.x,
-            y: data.percentiles.ys[ptile]
+            y: data.percentiles.ys[ptile],
+            type: 'scattergl',
+            name: ptile.toString() + 'th percentile'
         });
-    }
-    for (let trace of traces) {
-        trace.type = 'scattergl';
-        trace.mode = 'markers';
     }
 
     layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';

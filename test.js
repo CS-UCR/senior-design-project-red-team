@@ -1,4 +1,45 @@
-const fs = require("fs");
+const fs = require('fs');
 
-const pars = Object.keys(JSON.parse(fs.readFileSync('percentiles.json')));
-console.log(pars);
+// let json = JSON.parse(fs.readFileSync('percentiles.json'))['PRESSURE ALTITUDE LSP'];
+// json.x = json.x.map(dist => dist / 5280);
+// let new_x = [];
+// for (let i = 0; i < json.x.length; i++) {
+//     if (json.x[i] > 50 && json.x[i] < 60) {
+//         new_x.push([json.x[i], json.ys[10][i], json.ys[50][i], json.ys[90][i]]);
+//     }
+// }
+// fs.writeFileSync('test.json', JSON.stringify(new_x));
+
+let l = [
+    13325.296, 13308.648, 13293.219, 13277.548, 10871.079,
+    10872.529, 10873.865, 10875.462, 10860.366, 10860.639,
+    10859.363, 10629.707, 10630.153, 10630.404, 10629.356,
+     9668.396,  9636.203,  9603.437,  9572.092, 11894.394,
+    11895.951, 11897.462, 11899.151,  8904.801,  8895.304,
+     8862.312,  9858.625,  9858.263,  9856.038, 5935.5596,
+    5929.9497, 5928.8994,  5933.165, 5928.8438, 10691.342,
+    10691.082, 10690.809, 10690.317, 6205.1987, 6179.9785,
+     6145.466,  6126.338, 6099.4067, 11939.565, 11939.048,
+    11937.938, 11938.666,  9059.833,  9059.004,  9059.913,
+     9059.135,  9058.487, 10811.471, 10811.066, 10811.027,
+     10811.94, 10811.999, 10867.687, 10868.111, 10867.242,
+    10866.821,  7987.349, 7956.8438, 7926.6147,  7896.905,
+     9853.371,   9852.01,  9853.412,  8948.014,  8938.117,
+      8928.38, 11051.307,  11051.88, 11051.728, 11052.692,
+    10455.461, 10438.157, 10420.902
+  ];
+  l.sort((a,b) => a - b);
+
+  function percentile(Ps, l) {
+    let N = l.length;
+    return Ps.map(P => l[Math.floor(P/100 * N)]);
+ }
+ 
+// let PRs = percentile([10,50,90], l);
+// console.log(PRs);
+
+let N = l.length;
+let P = 90;
+console.log(l);
+console.log(Math.floor(P/100 * N))
+console.log(percentile([10,50,90], l))

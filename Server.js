@@ -69,6 +69,7 @@ function dists_to_landing(feet = false, l_csv_cols = csv_cols) {
     return dists;
 }
 
+const DISTANCE_LIMIT = 100; // in miles
 
 function percentile_values(Ps, parameter, feet = false) {
     if (Ps.length == 0) return {};
@@ -76,9 +77,20 @@ function percentile_values(Ps, parameter, feet = false) {
     if (!feet) {
         json.x = json.x.map(dist => dist / 5280);
     }
+    let limit_index = 0;
+    for (let i = 0; i < json.x.length; i++) {
+        if (json.x[i] > DISTANCE_LIMIT) {
+            limit_index = i;
+            break;
+        }
+    }
+    console.log(limit_index);
+    json.x = json.x.slice(0, limit_index);
     for (let key in json.ys) {
         if (!Ps.includes(key)) {
             delete json.ys[key];
+        } else {
+            json.ys[key].slice(0, limit_index);
         }
     }
     return json;
