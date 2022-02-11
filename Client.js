@@ -201,7 +201,7 @@ async function dtr_chart() {
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
       new_chart.setAttribute('class', 'TS2');
-      new_chart.onclick = () => {highlight(new_chart);};
+      //new_chart.onclick = () => {highlight(new_chart,options[i]);};
 
       let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
               .then(response => response.json())
@@ -251,21 +251,26 @@ async function dtr_chart_selected(chart, option){
    layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';
    layout.yaxis.title.text = option;
    Plotly.react(chart, traces, layout);
-  }
+ }else{
+   dtr_chart();
+ }
 }
 
-function highlight(chart){
-  if(dtr_current_selected_chart){
+function highlight(chart,option){
+  if(dtr_current_selected_chart != undefined){
     dtr_current_selected_chart.style.border = 0;
     if(dtr_current_selected_chart === chart){
       dtr_current_selected_chart = undefined;
+      refresh_chart =  dtr_chart;
     }else{
       chart.style.border = "1px solid #00FF00";
       dtr_current_selected_chart.style.border = chart;
+      refresh_chart = () => dtr_chart_selected(dtr_current_selected_chart, option);
     }
   }else{
     chart.style.border = "1px solid #00FF00";
     dtr_current_selected_chart = chart;
+    refresh_chart = () => dtr_chart_selected(dtr_current_selected_chart, option);
   }
 }
 
@@ -392,7 +397,7 @@ function delete_tab(tab, chart){
 }
 
 function display(chart,tab){
-  if(dtr_current_selected_chart){
+  if(dtr_current_selected_chart != undefined){
     dtr_current_selected_chart.style.border = 0;
     dtr_current_selected_chart = undefined;
   }
