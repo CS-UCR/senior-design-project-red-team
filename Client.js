@@ -194,11 +194,11 @@ async function dtr_chart() {
   console.log(checked_ptiles)
 
     layout.xaxis.title.text = "DISTANCE FROM LANDING (MILES)";
-    layout.xaxis.autorange = 'reversed';
+  //  layout.xaxis.autorange = 'reversed';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
       new_chart.classList.add('w-fit', 'h-[800px]');
-      new_chart.onclick = () => {highlight(new_chart, options[i]);};
+      // new_chart.onclick = () => {highlight(new_chart, options[i]);};
 
       let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
               .then(response => response.json())
@@ -238,15 +238,13 @@ async function dtr_chart_selected(chart, option){
    console.log(data);
    var traces = [data.main];
    for (let ptile in data.percentiles.ys) {
-       traces.push({
-           x: data.percentiles.x,
-           y: data.percentiles.ys[ptile]
-       });
-   }
-   for (let trace of traces) {
-       trace.type = 'scattergl';
-       trace.mode = 'markers';
-   }
+           traces.push({
+               x: data.percentiles.x,
+               y: data.percentiles.ys[ptile],
+               type: 'scattergl',
+               name: ptile.toString() + 'th percentile'
+           });
+       }
 
    layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';
    layout.yaxis.title.text = option;
