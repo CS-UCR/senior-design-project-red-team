@@ -219,8 +219,7 @@ async function time_series(refresh, chart) {
             data_bank.push({
                 x: data.x,
                 y: data.y,
-                mode: 'markers',
-                type: 'scatter'
+                type: 'scattergl'
             });
             console.log(data);
             layout.xaxis.title.text = "TIME (SECONDS)";

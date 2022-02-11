@@ -4,7 +4,7 @@ const path = require('path');
 const csv = require('csv-parse/sync'); // NodeJS 16
 // const { strictEqual } = require('assert');
 
-const flight_data_dir = 'Tail_677_CSVs/';
+const flight_data_dir = 'truncated/';
 
 const getFlights = () => fs.readdirSync(flight_data_dir);
 const getParameters = () => {
@@ -19,21 +19,25 @@ var csv_cols = {};
 var curr_csv = '';
 
 
+// function loadCSV(filename) {
+//     let data = fs.readFileSync(flight_data_dir + filename);
+//     let csv_data = csv.parse(data);
+//     csv_cols = {};
+//     curr_csv = filename;
+//     for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
+//         let col_name = csv_data[0][col_num];
+//         csv_cols[col_name] = [];
+//         for (let i = 1; i < csv_data.length; i++) {
+//             let val = csv_data[i][col_num];
+//             csv_cols[col_name].push(val.includes('.') ? parseFloat(val) : parseInt(val));
+//         }
+//     }
+//     // console.log(csv_cols);
+//     // console.log(l_csv_cols)
+// }
+
 function loadCSV(filename) {
-    let data = fs.readFileSync(flight_data_dir + filename);
-    let csv_data = csv.parse(data);
-    csv_cols = {};
-    curr_csv = filename;
-    for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
-        let col_name = csv_data[0][col_num];
-        csv_cols[col_name] = [];
-        for (let i = 1; i < csv_data.length; i++) {
-            let val = csv_data[i][col_num];
-            csv_cols[col_name].push(val.includes('.') ? parseFloat(val) : parseInt(val));
-        }
-    }
-    // console.log(csv_cols);
-    // console.log(l_csv_cols)
+    csv_cols = JSON.parse(fs.readFileSync(flight_data_dir + filename));
 }
 
 function range(start, end) {
@@ -44,53 +48,37 @@ function range(start, end) {
     return res;
 }
 
-function dists_to_landing(feet = false, l_csv_cols = csv_cols) {
-    if (l_csv_cols['Dists']) return l_csv_cols['Dists'];
-    var dists = new Array(l_csv_cols['GROUND SPEED LSP'].length);
-    // let q = sql('SELECT touchdown-index FROM meta-data M WHERE flight-number = ${flightnum}');
-    let touchdown_index = ((l) => {
-        for (let i = l.length - 1; i >= 0; i--) {
-            if (l[i] == 1) return i;
-        }
-        return -1;
-    })(l_csv_cols['WEIGHT ON WHEELS']);
-    let converter = feet ? 1.68780986 : 0.000319660958; // 1.68780986 for ft, 0.000319660958 for miles
-    let sum = 0;
-    for (let i = touchdown_index; i >= 0; i--) {
-        dists[i] = sum;
-        sum += l_csv_cols['GROUND SPEED LSP'][i] * converter;
-    }
-    sum = 0;
-    for (let i = touchdown_index; i < l_csv_cols['GROUND SPEED LSP'].length; i++) {
-        dists[i] = sum;
-        sum -= l_csv_cols['GROUND SPEED LSP'][i] * converter;
-    }
-    l_csv_cols['Dists'] = dists;
-    return dists;
-}
+// function dists_to_landing(feet = false, l_csv_cols = csv_cols) {
+//     if (l_csv_cols['Dists']) return l_csv_cols['Dists'];
+//     var dists = new Array(l_csv_cols['GROUND SPEED LSP'].length);
+//     // let q = sql('SELECT touchdown-index FROM meta-data M WHERE flight-number = ${flightnum}');
+//     let touchdown_index = ((l) => {
+//         for (let i = l.length - 1; i >= 0; i--) {
+//             if (l[i] == 1) return i;
+//         }
+//         return -1;
+//     })(l_csv_cols['WEIGHT ON WHEELS']);
+//     let converter = feet ? 1.68780986 : 0.000319660958; // 1.68780986 for ft, 0.000319660958 for miles
+//     let sum = 0;
+//     for (let i = touchdown_index; i >= 0; i--) {
+//         dists[i] = sum;
+//         sum += l_csv_cols['GROUND SPEED LSP'][i] * converter;
+//     }
+//     sum = 0;
+//     for (let i = touchdown_index; i < l_csv_cols['GROUND SPEED LSP'].length; i++) {
+//         dists[i] = sum;
+//         sum -= l_csv_cols['GROUND SPEED LSP'][i] * converter;
+//     }
+//     l_csv_cols['Dists'] = dists;
+//     return dists;
+// }
 
-const DISTANCE_LIMIT = 100; // in miles
-
-function percentile_values(Ps, parameter, feet = false) {
+function percentile_values(Ps, parameter) {
     if (Ps.length == 0) return {};
     let json = JSON.parse(fs.readFileSync('percentiles.json'))[parameter];
-    if (!feet) {
-        json.x = json.x.map(dist => dist / 5280);
-    }
-    let limit_index = 0;
-    for (let i = 0; i < json.x.length; i++) {
-        if (json.x[i] > DISTANCE_LIMIT) {
-            limit_index = i;
-            break;
-        }
-    }
-    console.log(limit_index);
-    json.x = json.x.slice(0, limit_index);
     for (let key in json.ys) {
         if (!Ps.includes(key)) {
             delete json.ys[key];
-        } else {
-            json.ys[key].slice(0, limit_index);
         }
     }
     return json;
@@ -139,7 +127,7 @@ const server = http.createServer((req, res) => {
                     loadCSV(requested_data[1]);
                 res.end(JSON.stringify({
                     main: {
-                        x: dists_to_landing(),
+                        x: csv_cols['MILES FROM TOUCHDOWN'],
                         y: csv_cols[requested_data[2]]
                     },
                     percentiles: percentile_values(Ps, requested_data[2])
@@ -186,7 +174,6 @@ const port = 8080;
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
-
 // function loglist(l) { for (let e of l) console.log(e); }
 
 // loadCSV('677200105090350');
