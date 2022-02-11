@@ -1,0 +1,99 @@
+.open-button{
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  /* top: 87px; */
+  bottom: 15px;
+  right:28px;
+  /* left: 28px; */
+  width: 200px;
+}
+.anomaly-btn{
+  background-color: #555;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  /* top: 87px; */
+  bottom: 75px;
+  right:28px;
+  /* left: 28px; */
+  width: 200px;
+}
+
+
+
+.form-popup{
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+.form-container input[type = text],
+.form-container input[type = graph],
+.form-container input[type = anomaly],
+.form-container input[type = class],
+.form-container input[type = parameters]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+.form-container input[type = text]:focus,
+.form-container input[type = graph]:focus,
+.form-container input[type = anomaly]:focus,
+.form-container input[type = class]:focus,
+.form-container input[type = parameters]:focus{
+  background-color: #ddd;
+  outline: none;
+}
+
+.form-container .btn{
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+.form-container .ano-btn{
+  background-color: #04AA6D;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+.form-container .btn:hover, .anomaly-button:hover {
+  opacity: 1;
+}
+
+
+.form-container .cancel{
+    background-color: red;
+}
+
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}

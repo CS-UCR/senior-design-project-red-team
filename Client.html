@@ -5,6 +5,7 @@
         <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
         <!-- <script src="Plotly.js"></script> -->
         <link href="tailwind.css" rel="stylesheet">
+        <link rel="stylesheet" href="form_styles.css">
     </head>
     <body onload='init()'>
     <body>
@@ -13,20 +14,89 @@
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto1()">Two Parameter Chart</button>
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto2()">DTR Chart</button>
                 <button class="inline-block bg-gray-600 text-gray-100 px-4 py-2 rounded-md" onclick="goto3()">Time Series</button>
+                
             </div>
         </nav>
         <div class="mx-4">
             <div id="">
-                <header class="flex items-stretch space-x-2 my-2">
+                <header class="flex items-stretch space-x-3 my-2">
                     <select class="rounded-sm" id='file-select'>Select a flight</select>
                     <select class="rounded-sm" id='parameter-1'>Parameter 1</select>
                     <select class="rounded-sm disabled:bg-red-600 disabled:text-gray-100" id='parameter-2'>Parameter 2</select>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2"id='refresh' onclick='refresh_chart()'>Refresh</button>
                     <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh' onclick='time_series(false)' hidden>Add</button>
+                    <!-- <button class="bg-red-400 text-black-50 rounded-sm px-2" id = "zoom-btn">Zoom</button> -->
+
 
                 </header>
                 <main>
+
+                    <!-- <button class="bg-green-500 text-white rounded-md px-8 py-2 text-base font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300" id = "zoom-btn">SELECT</button> -->
                     <div id='test-chart' style="width:90%;height:800px;"></div>
+
+                    <!-- <button class="anomaly-btn" onclick="Log_Display()" >Log Anomaly </button> -->
+                    
+                    <button class="open-button" onclick="openForm()" id = 'log-id'> Save Anomaly </button>
+                    
+                    <div class="form-popup" id = 'logForm' >
+                        <form  class="form-container">
+                            <h1>Log Info</h1>
+
+                            <label for="flight">
+                                <b>Flight</b>
+                            </label>
+                            <input type="text" name="flight-select"  id="fid" value="" >
+                            <!-- <select name="flight-select" aria-placeholder="Select Flight" id="fid" required></select> -->
+
+                            <label for="graph">
+                                <b>Graph</b>
+                            </label>
+                            <input type="text" name="graph-select" id="gid" value="" >
+                            <!-- <select name="graph-select" aria-placeholder="Select Graph" id="gid" class = "py-16"required></select> -->
+
+                            <!-- <label for="anomaly">
+                                <b>Anomaly</b>
+                            </label>
+                            <input type="text" name="anomaly-select" id="aid" value="" >
+                            <select name="anomaly-select" aria-placeholder="Select Anomaly" id="aid" required></select> -->
+
+                            <label for="class-anomaly">
+                                <b>Class of Anomaly</b>
+                                <!-- <button id = 't-btn'>Set</button> -->
+                            </label>
+                            <!-- <input type="text" name="class-anomaly" id="caid"  > -->
+                            <!-- <button id = 't-btn'>Set</button> -->
+                            
+                            <select name="class-anomaly" aria-placeholder="Select Class of Anomaly" id="class-id" onchange="type_Anomally()" required>
+                                <option value='Flap Slate'>Flap Slate</option>
+                                <option value='Path High'>Path High</option>
+                                <option value='Speed High'>Speed High</option>
+                            </select>
+                            <input type="text" id = 'demo'>
+
+                            <label for="param" >
+                                <b>Parameters</b>
+                             </label>
+                             <input type="text" name="param-select" id="pid" value="" >
+                             <input type="text" name="param-select-2" id="pid2" value="" >
+                            <!-- <select name="param-select" id="pid" aria-placeholder="Select Parameters" required></select> -->
+
+                            <button type="button" class="btn" id = 'save_btn'> Save </button>
+                            <button type="button" class="btn cancel" onclick="closeForm()"> Close</button>
+                        </form>
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+
+
                 </main>
             </div>
             <div>
