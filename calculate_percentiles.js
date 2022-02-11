@@ -46,7 +46,7 @@ function dists_to_landing(feet = true) {
    return dists;
 }
 
-const bucket_size = 100;
+const bucket_size = 2000;
 
 function squares(percent, N) {
     let blocks = Math.floor(percent * N);
@@ -114,7 +114,7 @@ function percentile_values(Ps, parameter) {
    for (let i = 0; i < par_buckets.length; i++) {
        if (par_buckets[i]) {
            result.x.push(i * bucket_size);
-            let PRs = percentile(Ps, par_buckets[i].sort());
+            let PRs = percentile(Ps, par_buckets[i].sort((a,b) => a - b));
             for (let j = 0; j < PRs.length; j++) {
                 result.ys[Ps[j]].push(PRs[j]);
             }
