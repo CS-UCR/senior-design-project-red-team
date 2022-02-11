@@ -85,8 +85,7 @@ function goto1() {
     document.getElementById('parameter-1').hidden = false;
     document.getElementById('time_series_select').hidden = true;
     document.getElementById('time_series_options').hidden = true;
-    document.getElementById("ptile-opts").hidden = true;
-    document.getElementById("ptile-opts-btn").hidden = true;
+    document.getElementById("dtr-specific").hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -100,8 +99,7 @@ function goto2() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById('time_series_options').hidden = true;
-    document.getElementById("ptile-opts").hidden = true;
-    document.getElementById("ptile-opts-btn").hidden = false;
+    document.getElementById("dtr-specific").hidden = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -114,8 +112,7 @@ function goto3() {
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
-    document.getElementById("ptile-opts").hidden = true;
-    document.getElementById("ptile-opts-btn").hidden = true;
+    document.getElementById("dtr-specific").hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -200,23 +197,22 @@ async function dtr_chart() {
     layout.xaxis.autorange = 'reversed';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
-      new_chart.setAttribute('class', 'TS2');
-      new_chart.onclick = () => {highlight(new_chart);};
+      new_chart.classList.add('w-fit', 'h-[800px]');
+      new_chart.onclick = () => {highlight(new_chart, options[i]);};
 
       let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
               .then(response => response.json())
               .catch(err => console.error(err));
           console.log(data);
+          data.main.name = "Main"
           var traces = [data.main];
           for (let ptile in data.percentiles.ys) {
               traces.push({
-                  x: data.percentiles.x,
-                  y: data.percentiles.ys[ptile]
+                x: data.percentiles.x,
+                y: data.percentiles.ys[ptile],
+                type: 'scattergl',
+                name: ptile.toString() + 'th Percentile'
               });
-          }
-          for (let trace of traces) {
-              trace.type = 'scattergl';
-              trace.mode = 'markers';
           }
 
           layout.yaxis.title.text = options[i];
@@ -255,21 +251,26 @@ async function dtr_chart_selected(chart, option){
    layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';
    layout.yaxis.title.text = option;
    Plotly.react(chart, traces, layout);
+  } else {
+    dtr_chart();
   }
 }
 
-function highlight(chart){
-  if(dtr_current_selected_chart){
+function highlight(chart, option){
+  if(dtr_current_selected_chart != undefined){
     dtr_current_selected_chart.style.border = 0;
     if(dtr_current_selected_chart === chart){
       dtr_current_selected_chart = undefined;
+      refresh_chart = dtr_chart;
     }else{
       chart.style.border = "1px solid #00FF00";
       dtr_current_selected_chart.style.border = chart;
+      refresh_chart = () => dtr_chart_selected(dtr_current_selected_chart, option);
     }
   }else{
     chart.style.border = "1px solid #00FF00";
     dtr_current_selected_chart = chart;
+    refresh_chart = () => dtr_chart_selected(dtr_current_selected_chart, option);
   }
 }
 
@@ -293,17 +294,17 @@ async function time_series(refresh) {
     options.push(checkbox.value);
       });
 
-      var type;
+      var type_css;
       if(options.length > 1){
-        type = 'TS2';
+        type_css = 'w-full h-[800px]'; // TS2
       }else{
-        type = 'TS1';
+        type_css = 'w-[1600px] h-[800px]'; // TS1
       }
 
       layout.xaxis.title.text = 'Time';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
-      new_chart.setAttribute('class', type);
+      new_chart.classList(type_css);
       layout.yaxis.title.text = (options[i]);   //ISSUES HERE, ALL GRAPHS HAVE THE SAME Y AXIS TITLE
     let data = await fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
         .then(response => response.json())
@@ -348,9 +349,9 @@ function refresh_chart_tab(){
   let text = document.createElement('span');
   let chart = document.createElement('div');
 
-  text.setAttribute("class", "button");
-  delete_button.setAttribute("class", "close");
-  chart.setAttribute("class", "grapher");
+  text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
+  delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
+  chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2")
 
   chart.id = "chart" + count;
   tab.id = "tab" + count;
@@ -396,7 +397,7 @@ function delete_tab(tab, chart){
 }
 
 function display(chart,tab){
-  if(dtr_current_selected_chart){
+  if(dtr_current_selected_chart != undefined){
     dtr_current_selected_chart.style.border = 0;
     dtr_current_selected_chart = undefined;
   }

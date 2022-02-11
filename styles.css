@@ -7,3 +7,15 @@
       @apply inline-block bg-gray-600 border-white text-gray-100 px-4 py-2 rounded-md;
    }
 }
+
+@layer utilities {
+   .blue-trim {
+      @apply border-[1px] border-solid border-[#0000ff]
+   }
+   .black-trim {
+      @apply border-[1px] border-solid border-[#000000]
+   }
+   .green-trim {
+      @apply border-[1px] border-solid border-[#00ff00]
+   }
+}

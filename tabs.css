@@ -1,54 +1,45 @@
-              .sidebar {
-                width: 100px;
-                position: fixed;
-                z-index: 1;
-                background: #ADD8E6;
-                overflow-x: hidden;
-                padding: 8px 0;
-              }
-              .sidebar a {
-              padding: 6px 8px 6px 16px;
-              text-decoration: none;
-              font-size: 25px;
-              color: #2196F3;
-              display: block;
-            }
-            .sidebar a:hover {
-              color: #064579;
-            }
-            @media screen and (max-height: 450px) {
-              .sidebar {padding-top: 15px;}
-              .sidebar a {font-size: 18px;}
-            }
-            .close {
-              font-size: 40px;
-              font-weight: bold;
-              color: #f1f1f1;
-              left: 10px;
-              z-index: 1;
-            }
-            .close:hover,.close:focus{
-              color: #f44336;
-              cursor: pointer;
-            }
-            .button:hover, .button:focus .buttontext {
-              color: #0000ff;
-              cursor: pointer;
-            }
-            .button{
-              z-index: 0;
-            }
-            .grapher{
-              width: 70%;
-              height: 800px;
-              margin-left: 20px;
-              margin-top: 10px;
-            }
-            .TS1{
-              width: 1600px;
-              height: 800px;
-            }
-            .TS2{
-              width: 100%;
-              height: 800px;
-            }
+.sidebar a {
+padding: 6px 8px 6px 16px;
+text-decoration: none;
+font-size: 25px;
+color: #2196F3;
+display: block;
+}
+.sidebar a:hover {
+color: #064579;
+}
+@media screen and (max-height: 450px) {
+.sidebar {padding-top: 15px;}
+.sidebar a {font-size: 18px;}
+}
+/* .close {
+font-size: 40px;
+font-weight: bold;
+color: #f1f1f1;
+left: 10px;
+z-index: 1;
+}
+.close:hover,.close:focus{
+color: #f44336;
+cursor: pointer;
+} */
+/* .button:hover, .button:focus .buttontext {
+color: #0000ff;
+} */
+/* .button {
+    z-index: 0;
+} */
+/* .grapher{
+width: 70%;
+height: 800px;
+margin-left: 20px;
+margin-top: 10px;
+} */
+/* .TS1{
+width: 1600px;
+height: 800px;
+}
+.TS2{
+width: 100%;
+height: 800px;
+} */
