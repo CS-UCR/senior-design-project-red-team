@@ -194,11 +194,11 @@ async function dtr_chart() {
   console.log(checked_ptiles)
 
     layout.xaxis.title.text = "DISTANCE FROM LANDING (MILES)";
-  //  layout.xaxis.autorange = 'reversed';
+    layout.xaxis.autorange = 'reversed';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
       new_chart.classList.add('w-fit', 'h-[800px]');
-      // new_chart.onclick = () => {highlight(new_chart, options[i]);};
+      new_chart.onclick = () => {highlight(new_chart, options[i]);};
 
       let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
               .then(response => response.json())
@@ -238,13 +238,15 @@ async function dtr_chart_selected(chart, option){
    console.log(data);
    var traces = [data.main];
    for (let ptile in data.percentiles.ys) {
-           traces.push({
-               x: data.percentiles.x,
-               y: data.percentiles.ys[ptile],
-               type: 'scattergl',
-               name: ptile.toString() + 'th percentile'
-           });
-       }
+       traces.push({
+           x: data.percentiles.x,
+           y: data.percentiles.ys[ptile]
+       });
+   }
+   for (let trace of traces) {
+       trace.type = 'scattergl';
+       trace.mode = 'markers';
+   }
 
    layout.xaxis.title.text = 'DISTANCE FROM LANDING (MILES)';
    layout.yaxis.title.text = option;
@@ -294,15 +296,15 @@ async function time_series(refresh) {
 
       var type_css;
       if(options.length > 1){
-        type_css = 'w-full h-[800px]'; // TS2
+        type_css = ['w-full', 'h-[800px]']; // TS2
       }else{
-        type_css = 'w-[1600px] h-[800px]'; // TS1
+        type_css = ['w-[1600px]', 'h-[800px]']; // TS1
       }
 
       layout.xaxis.title.text = 'Time';
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
-      new_chart.classList(type_css);
+      for (let t of type_css) new_chart.classList.add(t);
       layout.yaxis.title.text = (options[i]);   //ISSUES HERE, ALL GRAPHS HAVE THE SAME Y AXIS TITLE
     let data = await fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
         .then(response => response.json())
