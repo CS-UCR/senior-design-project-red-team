@@ -4,7 +4,7 @@ const path = require('path');
 const csv = require('csv-parse/sync'); // NodeJS 16
 // const { strictEqual } = require('assert');
 
-const flight_data_dir = 'flight-data/';
+const flight_data_dir = 'truncated/';
 
 const getFlights = () => fs.readdirSync(flight_data_dir);
 const getParameters = () => {
@@ -20,20 +20,22 @@ var curr_csv = '';
 
 
 function loadCSV(filename) {
-    let data = fs.readFileSync(flight_data_dir + filename);
-    let csv_data = csv.parse(data);
-    csv_cols = {};
+    // let data = fs.readFileSync(flight_data_dir + filename);
+    // let csv_data = csv.parse(data);
+    // csv_cols = {};
+    // curr_csv = filename;
+    // for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
+    //     let col_name = csv_data[0][col_num];
+    //     csv_cols[col_name] = [];
+    //     for (let i = 1; i < csv_data.length; i++) {
+    //         let val = csv_data[i][col_num];
+    //         csv_cols[col_name].push(val.includes('.') ? parseFloat(val) : parseInt(val));
+    //     }
+    // }
+    // // console.log(csv_cols);
+    // // console.log(l_csv_cols)
+    csv_cols = JSON.parse(fs.readFileSync(flight_data_dir + filename));
     curr_csv = filename;
-    for (let col_num = 0; col_num < csv_data[0].length; col_num++) {
-        let col_name = csv_data[0][col_num];
-        csv_cols[col_name] = [];
-        for (let i = 1; i < csv_data.length; i++) {
-            let val = csv_data[i][col_num];
-            csv_cols[col_name].push(val.includes('.') ? parseFloat(val) : parseInt(val));
-        }
-    }
-    // console.log(csv_cols);
-    // console.log(l_csv_cols)
 }
 
 function range(start, end) {
@@ -70,12 +72,9 @@ function dists_to_landing(feet = false, l_csv_cols = csv_cols) {
 }
 
 
-function percentile_values(Ps, parameter, feet = false) {
+function percentile_values(Ps, parameter) {
     if (Ps.length == 0) return {};
     let json = JSON.parse(fs.readFileSync('percentiles.json'))[parameter];
-    if (!feet) {
-        json.x = json.x.map(dist => dist / 5280);
-    }
     for (let key in json.ys) {
         if (!Ps.includes(key)) {
             delete json.ys[key];
