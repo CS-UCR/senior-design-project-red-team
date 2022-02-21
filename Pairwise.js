@@ -82,8 +82,9 @@ function goto4() {
       p_refresh_chart_tab();
     }else{
 
-      const chart = document.getElementById('test-chart');
-      remove_children(chart);
+      if(cur_chart){
+      remove_children(cur_chart);
+      }
 
       var flight = document.getElementById('file-select').value
       var parameters = GetCheckedParameters();
@@ -124,8 +125,7 @@ function goto4() {
                  yaxis4:axis()
                }
            //console.log(data);
-           var chart = document.getElementById(p_cur_chart);
-           Plotly.newPlot(chart, plot_data, layout);
+           Plotly.newPlot(cur_chart, plot_data, layout);
            console.log("here");
        })
        .catch(err => console.error(err))
@@ -141,7 +141,7 @@ function goto4() {
 
     text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
     delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
-    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2")
+    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
 
     chart.id = "chart" + count;
     tab.id = "tab" + count;
@@ -173,14 +173,7 @@ function goto4() {
 
   }
 
-function drop(){
-  var x = document.getElementById('PairWise_Plot_Parameter_Box');
-    if(x.hidden === true){
-      x.hidden = false;
-    }else{
-      x.hidden = true;
-    }
-}
+
 
 function GetCheckedParameters(){
   const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
@@ -190,3 +183,19 @@ function GetCheckedParameters(){
       });
   return options;
 }
+/*function display(chart,tab){
+  if(dtr_current_selected_chart != undefined){
+    dtr_current_selected_chart.style.border = 0;
+    dtr_current_selected_chart = undefined;
+  }
+  if(cur_chart != undefined){
+    cur_chart.style.display = "none";
+    cur_tab.style.color = "#2196F3";
+  }
+  cur_chart = chart;
+  cur_tab = tab;
+  cur_chart.style.display = "inline";
+  if(cur_tab != undefined){
+    cur_tab.style.color = "#000000";
+  }
+}*/

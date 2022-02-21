@@ -370,7 +370,7 @@ function refresh_chart_tab(){
 
   text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
   delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
-  chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2")
+  chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
 
   chart.id = "chart" + count;
   tab.id = "tab" + count;
@@ -416,10 +416,6 @@ function delete_tab(tab, chart){
 }
 
 function display(chart,tab){
-  if(dtr_current_selected_chart != undefined){
-    dtr_current_selected_chart.style.border = 0;
-    dtr_current_selected_chart = undefined;
-  }
   if(cur_chart != undefined){
     cur_chart.style.display = "none";
     cur_tab.style.color = "#2196F3";
