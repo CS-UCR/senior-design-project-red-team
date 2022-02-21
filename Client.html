@@ -5,6 +5,7 @@
     <script src="Client.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
     <!-- <script src="Plotly.js"></script> -->
+    <script  src="Pairwise.js"></script>
     <link href="tailwind.css" rel="stylesheet">
     <link href="tabs.css" rel="stylesheet">
 </head>
@@ -17,11 +18,12 @@
                 <button class="btn-top" onclick="goto1()" id='TPC'>Two Parameter Chart</button>
                 <button class="btn-top" onclick="goto2()" id='DTRC'>DTR Chart</button>
                 <button class="btn-top" onclick="goto3()" id='TS'>Time Series</button>
+                <button class="btn-top" onclick="goto4()" id='PAIR'>Pairwise Plots</button>
             </div>
         </nav>
         <div class="mx-4">
             <div class="w-24 fixed z-10 bg-[#ADD8E6] overflow-x-hidden py-2" id="sidebar">
-                
+
             </div>
             <div id="">
                 <header class="flex flex-nowrap flex-row items-stretch space-x-2 my-2 h-6">
@@ -50,7 +52,7 @@
                     <select class="rounded-sm blue-trim" id='parameter-1'>Parameter
                         1</select>
                     <select
-                        class="rounded-sm  disabled:bg-red-600 disabled:text-gray-100"
+                        class="rounded-sm blue-trim"
                         id='parameter-2'>Parameter 2</select>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='refresh'
                         onclick='refresh_chart()'>Graph</button>

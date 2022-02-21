@@ -90,6 +90,7 @@ function goto1() {
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
+    document.getElementById('PAIR').style.border = "1px solid #000000";
 }
 function goto2() {
     refresh_chart = dtr_chart;
@@ -104,6 +105,7 @@ function goto2() {
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
     document.getElementById('TS').style.border = "1px solid #000000";
+    document.getElementById('PAIR').style.border = "1px solid #000000";
 }
 function goto3() {
     refresh_chart = () => time_series(true);
@@ -117,8 +119,25 @@ function goto3() {
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #00ff00";
+    document.getElementById('PAIR').style.border = "1px solid #000000";
 
 }
+/*function goto4() {
+    refresh_chart = () =>  p_refresh_chart();
+    import p_refresh_chart() from './Pairwise.js';
+    document.getElementById('parameter-2').disabled = true;
+    document.getElementById('add-button').hidden = true;
+    document.getElementById('parameter-2').hidden = true;
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('time_series_select').hidden = false;
+    document.getElementById("dtr-specific").hidden = true;
+
+    document.getElementById('TPC').style.border = "1px solid #000000";
+    document.getElementById('DTRC').style.border = "1px solid #000000";
+    document.getElementById('TS').style.border = "1px solid #000000";
+    document.getElementById('PAIR').style.border = "1px solid #00ff00";
+
+}*/
 
 var refresh_chart = two_parameter_chart;
 var tab_count = 0;
