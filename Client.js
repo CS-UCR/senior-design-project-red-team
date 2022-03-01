@@ -86,6 +86,9 @@ function goto1() {
     document.getElementById('time_series_select').hidden = true;
     document.getElementById('time_series_options').hidden = true;
     document.getElementById("dtr-specific").hidden = true;
+    document.getElementById("summary_select").hidden = true;
+    document.getElementById("summary_display").hidden = true;
+    clear_summary();
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -101,6 +104,9 @@ function goto2() {
     document.getElementById('time_series_select').hidden = false;
     document.getElementById('time_series_options').hidden = true;
     document.getElementById("dtr-specific").hidden = false;
+    document.getElementById("summary_select").hidden = true;
+    document.getElementById("summary_display").hidden = true;
+    clear_summary();
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -115,6 +121,9 @@ function goto3() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
+    document.getElementById("summary_select").hidden = false;
+    document.getElementById("summary_display").hidden = true;
+    clear_summary();
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -425,5 +434,70 @@ function display(chart,tab){
   cur_chart.style.display = "inline";
   if(cur_tab != undefined){
     cur_tab.style.color = "#000000";
+  }
+}
+
+function calc_summary() {
+
+  var box = document.getElementById('summary_display');
+
+  var flight = document.getElementById('file-select').value;
+  const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
+  let options = [];
+  checkboxes.forEach((checkbox) => {
+    options.push(checkbox.value);
+  });
+
+  /*let data = await fetch("http://" + hostname + ":" + port + "/" + ['time-series', flight, options[i]].join('/'))
+    .then(response => response.json())
+    .catch(err => console.error(err))*/
+
+  var num = 1;
+
+  let label = document.createElement('label');
+  var text = "Minimum: " + num;
+  label.appendChild(document.createTextNode(text));
+  let br = document.createElement('br');
+
+  box.appendChild(label);
+  box.appendChild(br);
+  
+  label = document.createElement('label');
+  text = "Maximum: " + num;
+  label.appendChild(document.createTextNode(text));
+  br = document.createElement('br');
+
+  box.appendChild(label);
+  box.appendChild(br);
+
+  label = document.createElement('label');
+  text = "Average: " + num;
+  label.appendChild(document.createTextNode(text));
+  br = document.createElement('br');
+
+  box.appendChild(label);
+  box.appendChild(br);
+
+
+
+
+
+}
+
+function clear_summary() {
+  var x = document.getElementById('summary_display')
+  while(x.firstChild){
+    x.removeChild(x.firstChild);
+  }
+}
+
+function summary(){
+  var x = document.getElementById('summary_display')
+  if(x.hidden === true){
+    x.hidden = false;
+    calc_summary();
+  }else{
+    x.hidden = true;
+    clear_summary();
   }
 }

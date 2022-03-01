@@ -525,6 +525,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: 11rem;
 }
 
+.ml-60{
+  margin-left: 32.8rem;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
 }

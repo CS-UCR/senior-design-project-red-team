@@ -60,12 +60,19 @@
                         onclick='refresh_chart_tab()'>Graph in new tab.</button>
                     <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh'
                         onclick='time_series(false)' hidden>Add</button>
+                    <button id='summary_select' class="bg-blue-500 text-gray-50 rounded-sm px-2" 
+                        onclick='summary()' hidden>Flight Summary</button>
 
                 </header>
                 <main>
                     <div id='time_series_options'
                         class="h-40 border-2 border-solid border-black overflow-scroll absolute z-10 bg-[#ADD8E6] ml-28"
-                        hidden></div>
+                        hidden>
+                    </div>
+                    <div id='summary_display'
+                        class="h-40 border-2 border-solid border-black overflow-scroll absolute z-10 bg-[#ADD8E6] ml-60"
+                        hidden>
+                    </div>
                     <div id='test-chart' class="w-fit h-[800px] ml-28"></div>
 
                 </main>

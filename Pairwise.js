@@ -68,6 +68,9 @@ function goto4() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
+    document.getElementById("summary_select").hidden = false;
+    document.getElementById("summary_display").hidden = true;
+    clear_summary();
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
