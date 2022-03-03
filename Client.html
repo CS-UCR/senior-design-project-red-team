@@ -4,13 +4,15 @@
 <head>
     <script src="Client.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
     <!-- <script src="Plotly.js"></script> -->
     <script  src="Pairwise.js"></script>
+    <script  src="Stat.js"></script>
     <link href="tailwind.css" rel="stylesheet">
     <link href="tabs.css" rel="stylesheet">
 </head>
 
-<body onload='init()'>
+<body onload='init(); goto1();'>
 
     <body>
         <nav class="bg-gray-800 h-16 flex items-center">
@@ -19,6 +21,7 @@
                 <button class="btn-top" onclick="goto2()" id='DTRC'>DTR Chart</button>
                 <button class="btn-top" onclick="goto3()" id='TS'>Time Series</button>
                 <button class="btn-top" onclick="goto4()" id='PAIR'>Pairwise Plots</button>
+                <button class="btn-top" onclick="goto5()" id='STAT'>Satsitics</button>
             </div>
         </nav>
         <div class="mx-4">
@@ -54,14 +57,18 @@
                     <select
                         class="rounded-sm blue-trim"
                         id='parameter-2'>Parameter 2</select>
-                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='refresh'
-                        onclick='refresh_chart()'>Graph</button>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='Refresh'
+                        onclick='refresh_chart()' hidden='false'>Graph</button>
                     <button id='refresh' class="bg-blue-500 text-gray-50 rounded-sm px-2"
-                        onclick='refresh_chart_tab()'>Graph in new tab.</button>
+                        onclick='refresh_chart_tab()' hidden='false'>Graph in new tab</button>
                     <button id="add-button" class="bg-green-400 text-gray-50 rounded-sm px-2" id='refresh'
                         onclick='time_series(false)' hidden>Add</button>
-                    <button id='summary_select' class="bg-blue-500 text-gray-50 rounded-sm px-2" 
-                        onclick='summary()' hidden>Flight Summary</button>
+                    <button id='DISPLAY_SATSTICS' class="bg-blue-500 text-gray-50 rounded-sm px-2"
+                        onclick='goto5(); s_refresh_chart_tab();' hidden>Display Satsitics</button>
+                    <button id='DISPLAY_SATSTICS_NORMAL' class="bg-blue-500 text-gray-50 rounded-sm px-2"
+                            onclick='Satsitics()' hidden>Display Satsitics</button>
+                    <button id='DISPLAY_SATSTICS_NORMAL_NEW_TAB' class="bg-blue-500 text-gray-50 rounded-sm px-2"
+                                onclick='s_refresh_chart_tab()' hidden>Display Satsitics in new tab</button>
 
                 </header>
                 <main>
@@ -69,10 +76,7 @@
                         class="h-40 border-2 border-solid border-black overflow-scroll absolute z-10 bg-[#ADD8E6] ml-28"
                         hidden>
                     </div>
-                    <div id='summary_display'
-                        class="h-40 border-2 border-solid border-black overflow-scroll absolute z-10 bg-[#ADD8E6] ml-60"
-                        hidden>
-                    </div>
+
                     <div id='test-chart' class="w-fit h-[800px] ml-28"></div>
 
                 </main>

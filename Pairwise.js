@@ -68,14 +68,18 @@ function goto4() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
-    document.getElementById("summary_select").hidden = false;
-    document.getElementById("summary_display").hidden = true;
-    clear_summary();
+    document.getElementById("DISPLAY_SATSTICS").hidden = true;
+    document.getElementById("DISPLAY_SATSTICS_NORMAL").hidden = true;
+    document.getElementById("DISPLAY_SATSTICS_NORMAL_NEW_TAB").hidden = true;
+    document.getElementById('Refresh').hidden = false;
+    document.getElementById('refresh').hidden = false;
+
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
+      document.getElementById('STAT').style.border = "1px solid #000000";
 
 }
 

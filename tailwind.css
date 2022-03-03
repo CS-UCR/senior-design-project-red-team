@@ -732,3 +732,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-text-opacity: 1;
   color: rgb(243 244 246 / var(--tw-text-opacity));
 }
+
+.pc{
+  white-space: pre;
+  font-size: 20px;
+}
