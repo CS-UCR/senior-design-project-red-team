@@ -146,7 +146,8 @@ const server = http.createServer((req, res) => {
                 res.end(html);
                 break;
             default:
-                let file = requested_data[0];
+                //let file = requested_data[0];
+                let file = requested_data.join('/')
                 fs.readFile(file, (err, data) => {
                     if (err) {
                         res.statusCode = 500;
@@ -155,6 +156,7 @@ const server = http.createServer((req, res) => {
                         switch (path.extname(file)) {
                             case '.js': res.setHeader('Content-Type', 'application/javascript'); break;
                             case '.css': res.setHeader('Content-Type', 'text/css'); break;
+                            case '.json': res.setHeader('Content-Type', 'application/json'); break;
                         }
                         res.write(data);
                     }
