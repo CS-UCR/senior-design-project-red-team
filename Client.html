@@ -11,6 +11,7 @@
     <script  src="Stat.js"></script>
     <link href="tailwind.css" rel="stylesheet">
     <link href="tabs.css" rel="stylesheet">
+    <link rel="stylesheet" href="form_styles.css">
 </head>
 
 <body onload='init(); goto1();'>
@@ -79,7 +80,53 @@
                     </div>
 
                     <div id='test-chart' class="w-fit h-[800px] ml-28"></div>
+                    <button class="open-button" onclick="openForm()" id = 'log-id'> Save Anomaly </button>
+                   <div class="form-popup" id = 'logForm' >
+                       <form  class="form-container">
+                           <h1>Log Info</h1>
 
+                           <label for="flight">
+                               <b>Flight</b>
+                           </label>
+                           <input type="text" name="flight-select"  id="fid" value="" >
+                           <!-- <select name="flight-select" aria-placeholder="Select Flight" id="fid" required></select> -->
+
+                           <label for="graph">
+                               <b>Graph</b>
+                           </label>
+                           <input type="text" name="graph-select" id="gid" value="" >
+                           <!-- <select name="graph-select" aria-placeholder="Select Graph" id="gid" class = "py-16"required></select> -->
+
+                           <label for="class-anomaly">
+                               <b>Class of Anomaly</b>
+                               <!-- <button id = 't-btn'>Set</button> -->
+                           </label>
+                           <!-- <input type="text" name="class-anomaly" id="caid"  > -->
+                           <!-- <button id = 't-btn'>Set</button> -->
+
+                           <select name="class-anomaly" aria-placeholder="Select Class of Anomaly" id="class-id" onchange="type_Anomally()" required>
+                               <option value='Flap Slate'>Flap Slate</option>
+                               <option value='Path High'>Path High</option>
+                               <option value='Speed High'>Speed High</option>
+                           </select>
+                           <input type="text" id = 'demo'>
+
+                           <label for="param"  >
+                               <b>Parameters</b>
+                            </label>
+
+                            <div name="class-param" aria-placeholder="Select Parameters" id="param-id"  >
+                            </div>
+                            <select name="param-select" id="p-pid" aria-placeholder="Select Parameters" onchange="type_Parameter()">
+                           </select>
+                            <input type="text" name="param-select" id="pid" value="" >
+                            <input type="text" name="param-select-2" id="pid2" value="" >
+                           <!-- <select name="param-select" id="o-pid" aria-placeholder="Select Parameters" onchange="parameter_Selection()"></select> -->
+
+                           <button type="button" class="btn" id = 'save_btn'> Save </button>
+                           <button type="button" class="btn cancel" onclick="closeForm()"> Close</button>
+                       </form>
+                   </div>
                 </main>
             </div>
             <div>
