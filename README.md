@@ -19,11 +19,12 @@ Noticing and marking anomalous data is extremely important in determining any fa
 
 
 ## Team
-<a href="https://github.com/isis52300" target="_blank"><img src="https://avatars.githubusercontent.com/u/44241980?v=4" align="left" height="30px">Isis Dumas </a>
+
+<a href="https://github.com/Zycron83" target="_blank"><img src="https://avatars.githubusercontent.com/u/56176415?v=4" align="left" height="30px">Jeremy Cartwright </a>
 
 <a href="https://github.com/achhi002" target="_blank"><img src="https://avatars.githubusercontent.com/u/55962263?v=4" align="left" height="30px">Adhikar Chhibber </a>
 
-<a href="https://github.com/Zycron83" target="_blank"><img src="https://avatars.githubusercontent.com/u/56176415?v=4" align="left" height="30px">Jeremy Cartwright </a>
+<a href="https://github.com/isis52300" target="_blank"><img src="https://avatars.githubusercontent.com/u/44241980?v=4" align="left" height="30px">Isis Dumas </a>
 
 <a href="https://github.com/dguti026" target="_blank"><img src="https://avatars.githubusercontent.com/u/43631772?v=4" align="left" height="30px">David Gutierrez </a>
 
@@ -36,9 +37,7 @@ TBD
 
 ## How To Run
 Ensure the dependencies are met.
-Then in the project directory, you can run:
-
-#### `node Server.js`
+Then in the project directory, you can run: `node Server.js`
 
 This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
 
@@ -54,12 +53,6 @@ Mockup of Data:
   
 ![Secone Mockup Part 3](Mockup%202.2.png)
 
-  
-Sequence Diagram
-
-Frontend Structure
-
-Overall System Diagram
 
 ## Dependencies
 Install NodeJS. Ensure the version is 16. You can install directly from their website [here](https://nodejs.org/en/). 
@@ -67,9 +60,9 @@ Install Node Package Manager (npm). Usually comes with NodeJS.
 Install the CSV-Parse package with the command `npm i csv` in the project directory.
 
 ## Authors and Acknowledgment
-Thank you to Professor Mariam Salloum and our Teaching Assistant Jakapun Tachaiya for all of their assistance throughout this process. We would also like to thank NASA for giving us this opportunity to work on a project for them. 
+Thank you to Professor Mariam Salloum and our Teaching Assistants, Jakapun Tachaiya and Shirin Haji Amin Shirazi, for all of their assistance throughout this process. We would also like to thank NASA for giving us this opportunity to work on a project for them. 
 
 ## Project Status
-We are still in the process of developing this project. We plan to be done sometime in March 2022. 
+Most of the project is completed, but we plan to continue working on it to add additional features. 
 
 
