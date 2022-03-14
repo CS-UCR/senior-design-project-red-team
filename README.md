@@ -123,35 +123,35 @@ Most of the project is completed, but we plan to continue working on it to add a
 Contrabutions: 
 
 Jeremey Cartwright:
--Implementing Two parameter graph
--Implementing DTR graph
--Implementing percentiles
--Implementing pairwise graphs
--Made the server
--Styling of HTML elements
--Documentation
--Truncation of data
--Time series graph 
--Made initial mockup design
+- Implementing Two parameter graph
+- Implementing DTR graph
+- Implementing percentiles
+- Implementing pairwise graphs
+- Made the server
+- Styling of HTML elements
+- Documentation
+- Truncation of data
+- Time series graph 
+- Made initial mockup design
 
 Adhikar Chhibber:
--Implementing tabs
--Implementing full time series
--Implementing statistics page
--Implementing multi-graph
--Implementing graph labels
--Documentation
--Merging features
--Made second mockup design
+- Implementing tabs
+- Implementing full time series
+- Implementing statistics page
+- Implementing multi-graph
+- Implementing graph labels
+- Documentation
+- Merging features
+- Made second mockup design
 
 Isis Dumas:
--Made second mockup design
--Documentation
--Helped with pairwise logic 
--Helped design the Statistics page
--Managed meeting with the group and the professor/client 
+- Made second mockup design
+- Documentation
+- Helped with pairwise logic 
+- Helped design the Statistics page
+- Managed meeting with the group and the professor/client 
 
 David Gutierrez:
--Made initial mockup design
--Implementing Point selection
--Documentation
+- Made initial mockup design
+- Implementing Point selection
+- Documentation
