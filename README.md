@@ -9,6 +9,7 @@
 - [Dependencies](#dependencies)
 - [Authors and Acknowledgment](#authors-and-acknowledgment)
 - [Project Status](#project-status)
+- [Contrabutions](#contrabutions)
 
 ## Overview
 Researchers would like to identify trends (specifically anomalies) in flight data and be able to label it as such and export it to a separate database.
@@ -120,7 +121,7 @@ Thank you to Professor Mariam Salloum and our Teaching Assistants, Jakapun Tacha
 ## Project Status
 Most of the project is completed, but we plan to continue working on it to add additional features. 
 
-Contrabutions: 
+## Contrabutions
 
 Jeremey Cartwright:
 - Implementing Two parameter graph
