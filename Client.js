@@ -166,6 +166,8 @@ var cur_chart;
 var cur_tab;
 var first_tab;
 var dtr_current_selected_chart = undefined;
+var selected_chart_for_point_selection = undefined;
+var data_to_be_selected;
 
 function remove_children(p){
   while(p.firstChild){
@@ -207,8 +209,16 @@ function two_parameter_chart() {
             }
             //console.log(data);
             var chart = cur_chart;
+            chart.id = flight;
             Plotly.newPlot(chart, [plot_data], layout)
-            selectDisplay(chart);
+            //selectDisplay(chart);
+
+            chart.on('plotly_selected' , function(eventData){
+              selected_chart_for_point_selection = chart;
+              data_to_be_selected = eventData;
+              Log_Display();
+            });
+
         })
         .catch(err => console.error(err))
 }
@@ -242,14 +252,16 @@ async function dtr_chart() {
     for(var i = 0; i < options.length; i++){
       let new_chart = document.createElement('div');
       new_chart.classList.add('w-fit', 'h-[800px]');
-      new_chart.onclick = () => {highlight(new_chart, options[i]);}; // THIS IS WHERRE THE DTR SLECTION FEATURE IS STARTED
+      //new_chart.onclick = () => {highlight(new_chart, options[i]);}; // THIS IS WHERRE THE DTR SLECTION FEATURE IS STARTED
 
       let data = await fetch("http://" + hostname + ":" + port + "/" + [['dtr', flight, options[i]], checked_ptiles].flat().join('/'))
               .then(response => response.json())
               .catch(err => console.error(err));
           console.log(data);
           data.main.name = "Main"
+          data.main.mode = 'markers'
           var traces = [data.main];
+
           for (let ptile in data.percentiles.ys) {
               traces.push({
                 x: data.percentiles.x,
@@ -260,12 +272,21 @@ async function dtr_chart() {
           }
 
           layout.yaxis.title.text = options[i];
+          new_chart.id = flight;
           Plotly.newPlot(new_chart, traces, layout);
+
+          new_chart.on('plotly_selected' , function(eventData){
+            selected_chart_for_point_selection = new_chart;
+            data_to_be_selected = eventData;
+            console.log(new_chart.layout.yaxis.title.text , "\n");
+
+            Log_Display();
+          });
 
         chart.appendChild(new_chart);
       }
 }
-
+/*
 async function dtr_chart_selected(chart, option){
   if(chart){
     var flight = document.getElementById('file-select').value
@@ -319,7 +340,7 @@ function highlight(chart, option){ //SELECTION HAPPENS HERE
   }
 }
 
-
+*/
 
 var data_bank = [];
 
@@ -368,7 +389,7 @@ async function time_series(refresh) {
                 type: 'scatter'
             });*/
           //  console.log(data);
-
+          new_chart.id = flight;
             Plotly.newPlot(new_chart, [{
                 x: data.x,
                 y: data.y,
@@ -376,8 +397,21 @@ async function time_series(refresh) {
                 type: 'scatter'
             }], layout);
 
-        selectDisplay(new_chart);
+            /*new_chart.on('plotly_selected' , function(eventData){
+              selected_chart_for_point_selection = new_chart;
+              data_to_be_selected = eventData;
+              console.log( "SELECTED: " , selected_chart_for_point_selection.layout.yaxis.title.text , "\n");
+              Log_Display();
+            });*/
+
+        //selectDisplay(new_chart);
         chart.appendChild(new_chart);
+        chart.lastChild.on('plotly_selected' , function(eventData){
+          selected_chart_for_point_selection = new_chart;
+          data_to_be_selected = eventData;
+          console.log( "SELECTED: " , selected_chart_for_point_selection.layout.yaxis.title.text , "\n");
+          Log_Display();
+        });
       }
 }
 
@@ -458,6 +492,11 @@ function display(chart,tab){
   }
 }
 
+
+
+
+
+
 "SELECTION PART"
 function openForm(){
   document.getElementById('logForm').style.display = 'block'
@@ -472,57 +511,8 @@ function closeForm(){
 var Anomaly_list = []
 var Parameters_options = []
 var Charts = []
-async function selectDisplay(chart){
-  // console.log(cur_chart)
-
-  console.log('clicked')
-  console.log(chart)
-  Charts.push(chart)
-  // const chart = document.getElementById('test-chart');
-
-  var x_start = 0
-  var x_end = 0
-  var y_start = 0
-  var y_end = 0
-
-  var x_values = []
-  var y_values = []
-  chart.on('plotly_selected',
-      function(data){
-          console.log('here',data)
-
-          x_start =  data.range.x[0]
-          x_end   =  data.range.x[1]
-          y_start =  data.range.y[0]
-          y_end   =  data.range.y[1]
-
-          for(var i = 0; i < data.points.length; i++){
-              x_values.push(data.points[i].x)
-              y_values.push(data.points[i].y)
-          }
-          // console.log(x_values,y_values)
-          selected_values = {
-              x: x_values,
-              y: y_values,
-              xaxis: {range: [x_start,x_end]},
-              yaxis: {range: [y_start,y_end]}
 
 
-          }
-          Chart_Data.push(selected_values)
-          Anomaly_list.push(selected_values)
-          console.log(Anomaly_list)
-          Log_Display()
-          x_values = []
-          y_values = []
-
-
-
-
-      })
-
-
-}
 var v_test = ''
 function type_Anomally(){
     var mylist = document.getElementById("class-id")
@@ -532,33 +522,41 @@ function type_Anomally(){
 var parameter_two = ''
 function Log_Display(){
 
-  var flight = document.getElementById('file-select').value
-  var par1 = document.getElementById('parameter-1').value
-  var par2 = document.getElementById('parameter-2').value
 
 
-  var s_flight = document.getElementById('fid').value = String(flight)
-  console.log(flight + "\n");
-  var type = document.getElementById('gid').value = type_of_graph
+  var s_flight = document.getElementById('fid').value = String(selected_chart_for_point_selection.id)
+  console.log(s_flight + "\n");
+  var type;
   var par = ''
   var parr =  ''
   // console.log('parpar1)
-  switch(type){
-    case 'time-series':
-      console.log('time')
-      par = document.getElementById('pid').value = par1
-      parr = document.getElementById('pid2').value =  parameter_two
-      break
-    case 'dtr':
-      console.log('dtr')
-      par = document.getElementById('pid').value = par1
-      parr = document.getElementById('pid2').value =  parameter_two
-     break
-    case 'two-parameter':
-      console.log('two')
-      par = document.getElementById('pid').value = par1
-      parr =  document.getElementById('pid2').value = par2
+  switch(selected_chart_for_point_selection.layout.xaxis.title.text){
 
+    case 'Time':
+      console.log('time')
+      type = 'time-series'
+      parameter_Options()
+      par = document.getElementById('pid').value = document.getElementById('p-pid').value;
+      //par = document.getElementById('pid').value = selected_chart_for_point_selection.layout.yaxis.title.text
+      parr =  document.getElementById('pid2').value = selected_chart_for_point_selection.layout.xaxis.title.text;
+      document.getElementById('gid').value = "Time Series";
+      break
+
+    case 'DISTANCE FROM LANDING (MILES)':
+      console.log('dtr')
+      type = 'dtr';
+      parameter_Options()
+      par = document.getElementById('pid').value = selected_chart_for_point_selection.layout.yaxis.title.text
+      parr =  document.getElementById('pid2').value = selected_chart_for_point_selection.layout.xaxis.title.text;
+      document.getElementById('gid').value = "DTR";
+     break
+
+    default:
+      console.log('two')
+      type = 'two-parameter'
+      par = document.getElementById('pid').value = selected_chart_for_point_selection.layout.yaxis.title.text
+      parr =  document.getElementById('pid2').value = selected_chart_for_point_selection.layout.xaxis.title.text;
+      document.getElementById('gid').value = "Two Parameter";
       break
   }
 
@@ -566,59 +564,32 @@ function Log_Display(){
   // if(parr === '' && par === ''){
   //   console.log("Parameters Not Declared")
   // }
-  parameter_Options()
 
-  var graph_values
-  if(Anomaly_list.length <= 1){
-      graph_values = Anomaly_list[0]
-  }
-  else{
-      graph_values  = Anomaly_list[Anomaly_list.length-1]
-  }
 
-  console.log(graph_values)
+
+  //console.log(graph_values)
   // console.log(v)
-  saveForm(graph_values,s_flight,type,par,parr)
+  saveForm(s_flight,type,par,parr)
 }
 
 "PARAMETER SELECTION WORKS FOR MULT GRAPH SELECTION"
 function parameter_Options(){
 
   var select = document.getElementById('p-pid')
+  select.length = 0;
 
-  // console.log(select.length)
-  console.log("i length: ", Parameters_options.length)
-  for(var i = 0; i < Parameters_options.length; i++){
-
-    console.log('Parameters_options[i].length: ', Parameters_options[i].length)
-    if(select.length < Parameters_options[i].length ){
-      // console.log("Parameters are in ")
-      for(var j = 0; j < Parameters_options[i].length; j++){
-
-        if(Parameters_options.length > 0 && i > 0 && Parameters_options[i-1][j] == Parameters_options[i][j] ){
-          console.log("Parameter is already in option selection")
-        }
-
-        else{
-          var option = document.createElement('option')
-          // console.log("i: ",i, 'j: ', j,Parameters_options[i][j] )
-          option.value = Parameters_options[i][j]
-          option.innerHTML = Parameters_options[i][j]
-          select.appendChild(option)
-        }
-
-      }
-
-
-    }
-
-  }
+  const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
+  let options = [];
+  checkboxes.forEach((checkbox) => {
+  select.options[select.options.length] = new Option(checkbox.value , checkbox.value);
+    });
 
 }
+
 var parameter_selected_value = ' '
 function type_Parameter(){
   var select = document.getElementById('p-pid')
-  parameter_selected_value = document.getElementById('pid').value = select.options[select.selectedIndex].text
+  parameter_selected_value = document.getElementById('pid').value = select.value;
 }
 
 function Parameter_Outputs(graph_type,parameter_one, parameter_two){
@@ -646,22 +617,35 @@ var set_anomaly  = new Map([
   ['Path High', '#FFA500'],
   ['Speed High','#F08080']
 ])
-function saveForm(graph_values,s_flight,type,par,parr){
+function saveForm(s_flight,type,par,parr){
 
   var save_btn = document.getElementById('save_btn')
 
 
   save_btn.onclick = function(){
+    var x = []
+  	var y = []
+  	data_to_be_selected.points.forEach(function(pt)
+  	{
+      x.push(pt.x);
+      y.push(pt.y);
+    })
       var upload = {
-          points: graph_values,
-          flight: s_flight,
-          type: type,
-          parameters: Parameter_Outputs(type,par,parr),
+          intial_x_value:x[0],
+          final_x_value:x[x.length - 1],
+          first_y_value:y[0],
+          final_y_value:y[y.length - 1],
+          Flight_Number: s_flight,
+          Graph_Type: type,
+          Parameter_1: par,
+          Parameter_2:parr,
           anomaly: v_test,
-          marker: {color: set_anomaly.get(v_test)}
+
       }
       console.log(upload)
+      Anomaly_Upload(upload);
       // Record_Saved.push(upload)
+      upload.marker = {color: set_anomaly.get(v_test)}
       MarkerColor(upload)
   }
 
@@ -672,76 +656,35 @@ function MarkerColor(values){
   var select = document.getElementById('p-pid')
   console.log('Selection lenght:', select.length)
   console.log('Parameter_Options Values:', Parameters_options)
+  var x = []
+	var y = []
+	data_to_be_selected.points.forEach(function(pt)
+	{
+    x.push(pt.x);
+    y.push(pt.y);
+  })
   plot_data = {
-    x: values.points.x,
-    y: values.points.y,
+    x: x,
+    y: y,
     mode: 'markers',
     type: 'scatter',
     name: values.anomaly,
     marker: values.marker
 
   }
-  console.log('New plot_data :', plot_data)
-  console.log('Charts: ', Charts)
-  var index = 0
-  for(var i = 0; i < Parameters_options[Parameters_options.length-1].length; i++ ){
-    if(values.parameters[0] === Parameters_options[Parameters_options.length-1][i]){
-      console.log("Match")
-      index = i
-      console.log('Index: ', index)
-    }
-  }
-  var chart_index = Charts.length - Parameters_options[Parameters_options.length-1].length + index
-  console.log('Chart index: ', chart_index)
-
-  Plotly.addTraces(Charts[chart_index],plot_data)
-
+  layout.xaxis.title.text = document.getElementById('pid2').value;;
+  layout.yaxis.title.text = document.getElementById('pid').value;
+  console.log(document.getElementById('pid').value);
+  Plotly.addTraces(selected_chart_for_point_selection,plot_data);
+  Plotly.relayout(selected_chart_for_point_selection, layout);
 }
 
+async function Anomaly_Upload(to_be_uploaded){
+console.log( "HERE");
+  fetch("http://" + hostname + ":" + port + "/" , {method: 'POST' , body: JSON.stringify(to_be_uploaded)})
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
 
-
-
-
-
-
-
-
-// const new_anoamly_color = new Map([
-//   [1, '#F5DEB3' ],
-//   [2,'#EE82EE'],
-//   [3,'#4682B4'],
-//   [4, '#CD853F'],
-//   [5,'#B0C4DE']
-// ])
-// function colorAnomaly(){
-
-//   var mychart = document.getElementById('test-chart')
-
-
-
-//   console.log('GRaph data? ', mychart)
-//   Record_Saved[0]['marker'] = {color: set_anomaly.get(Record_Saved[0].Anomaly)}
-//   console.log(Record_Saved[0])
-//   console.log(Chart_Data[0])
-
-
-//   Plotly.restyle(mychart,Record_Saved[0])
-
-// }
-
-"MAYBE REMOVE"
-// function colorAnomaly(anomaly_feature){
-//   var return_color = ''
-
-//   if(set_anomaly.has(anomal_feature)){
-//     return_color = set_anomaly.get(anomaly_feature)
-//   }
-//   else{
-//     color_num = Math.floor(Math.random()*5)
-//     new_color = new_anoamly_color.get(color_num)
-//     new_anoamly_color.delete(color_num)
-//     set_anomaly.set(anomaly_feature,new_color)
-//     return_color = set_anomaly.get(anomaly_feature)
-//   }
-//   return return_color
-// }
+}

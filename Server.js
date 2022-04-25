@@ -160,13 +160,36 @@ const server = http.createServer((req, res) => {
                         }
                         res.write(data);
                     }
-                    res.end();
+
                 });
         }
 
     } else {
-        res.statusCode = 500;
-        res.end();
+      //res.statusCode = 500;
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Content-Type', 'application/json');
+      let body = "";
+      req.on('data' , chunk => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        var ana = fs.readFileSync('Anamolies.json');
+        var obj = JSON.parse(ana);
+        obj.push([JSON.parse(body)]);
+        var converted = JSON.stringify(obj,null,4);
+        fs.writeFile('Anamolies.json', converted, err => {
+      // error checking
+        if(err) throw err;
+
+        res.end(JSON.stringify("DATA RECIEVED. UPLOAD SUCESSFULL\n"));
+      });
+    });
+      //console.log(JSON.stringify(body));
+
+
+
+        //res.statusCode = 500;
+        //res.end();
     }
 })
 
