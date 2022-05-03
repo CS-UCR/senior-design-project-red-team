@@ -541,10 +541,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   display: flex;
 }
 
-.hidden {
-  display: none;
-}
-
 .h-\[800px\] {
   height: 800px;
 }

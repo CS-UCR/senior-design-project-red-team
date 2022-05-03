@@ -1,7 +1,7 @@
 
 
 function goto5() {
-    refresh_chart = () => Satsitics();
+    refresh_chart = () => Statistics();
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
@@ -24,7 +24,7 @@ function goto5() {
 
 }
 
- function Satsitics(){
+ function Statistics(){
   document.getElementById('time_series_options').hidden = true;
   if(tab_count === 0){
     s_refresh_chart_tab();
@@ -101,6 +101,6 @@ function s_refresh_chart_tab(){
   }
   display(chart,tab);
 
-  Satsitics();
+  Statistics();
 
 }

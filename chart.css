@@ -1,0 +1,42 @@
+circle.hidden {
+    opacity: 0.3; 
+    fill: black;
+}
+.ChartGrid {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    gap: 20px;
+}
+.ChartContent {
+    float: left;
+}
+.ChartOptions {
+    width: 100px;
+    /* background-color: red; */
+    vertical-align: top;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 10px;
+}
+.ChartSidebar {
+    display: grid;
+    grid-template-rows: 1fr 2fr 2fr;
+}
+.ChartAnomaly button {
+    background-color: rgb(212, 212, 212);
+}
+.chart-btn {
+    margin: 0px;
+    padding: 0px;
+    height: 30px;
+    background: none;
+    border: none;
+}
+.chart-btn:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+.chart-btn img {
+    width: 100%;
+    height: 100%;
+}

@@ -68,9 +68,9 @@ function goto4() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
-    document.getElementById("DISPLAY_SATSTICS").hidden = true;
-    document.getElementById("DISPLAY_SATSTICS_NORMAL").hidden = true;
-    document.getElementById("DISPLAY_SATSTICS_NORMAL_NEW_TAB").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS_NORMAL").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
 
@@ -164,8 +164,10 @@ function load_chart(pars, flightno, div_name) {
         });
 };
 
-function pairwiseChart(chartname, data, pars, total_width  = 800, total_height = 800, sep = 10) {
-    data = d3.transpose(data);
+var clip_counter = 0;
+
+function pairwiseChart(chart_div, data, pars, total_width = 800, total_height = 800, sep = 10) {
+    const data_t = d3.transpose(data);
     console.log(data);
     const fontinfo = {
         size: 14,
@@ -180,7 +182,7 @@ function pairwiseChart(chartname, data, pars, total_width  = 800, total_height =
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
     const subplot = {
-        num: data[0].length,
+        num: pars.length,
         sep: sep,
         width: undefined,
         height: undefined
@@ -190,171 +192,427 @@ function pairwiseChart(chartname, data, pars, total_width  = 800, total_height =
 
     console.log(subplot);
 
-    let svg = d3.select(chartname)
+    // Create SVG and graph area offset by margin values
+    let svg = d3.select(chart_div)
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`)
 
-    for (let i = 0; i < subplot.num; i++) {
-        let x = i * (subplot.sep + subplot.width);
-        for (let j = 0; j < subplot.num; j++) {
-            let y = j * (subplot.sep + subplot.height);
+    // Create Scales and Bins
+    let xScale = data.map(d =>
+        d3.scaleLinear()
+            .domain(d3.extent(d)).nice()
+            .range([0, subplot.width])
+    );
+    let yScale = data.map(d =>
+        d3.scaleLinear()
+            .domain(d3.extent(d))
+            .range([subplot.height, 0])
+    );
+    let bins = data.map((d, i) =>
+        d3.bin()
+            .domain(xScale[i].domain())
+            .thresholds(xScale[i].ticks(10))
+        (d)
+    );
+    let hScale = bins.map(bs =>
+        d3.scaleLinear()
+            .domain([0, d3.max(bs, b => b.length)])
+            .range([subplot.height, 0])
+    );
+
+    // Create Subplot <g>'s
+    let cell = svg.selectAll("g")
+        .data(d3.cross(d3.range(pars.length), d3.range(pars.length)))
+        .join("g")
+            .attr("transform", ([i,j]) => `translate(
+                ${i * (subplot.sep + subplot.width)},
+                ${j * (subplot.sep + subplot.height)}
+            )`);
+
+    // Populate subplots
+    cell.each(function ([i,j]) {
+        if (i == j) { // Draw Histogram
+            d3.select(this)
+                .selectAll('rect')
+                .data(bins[i])
+                .join('rect')
+                    .attr("x", 1)
+                    .attr("transform", b => `translate(${xScale[i](b.x0)}, ${hScale[i](b.length)})`)
+                    .attr("width", b => (n => n < 0 ? 0 : n)(xScale[i](b.x1) - xScale[i](b.x0) - 1))
+                    .attr("height", b => subplot.height - hScale[i](b.length))
+                    .style("fill", "steelblue");
+        } else { // Draw Points
+            d3.select(this)
+                .selectAll("circle")
+                .data(data_t)
+                .join("circle")
+                    .attr("cx", d => xScale[i](d[i]))
+                    .attr("cy", d => yScale[j](d[j]))
+                    .attr("r", 3)
+                    .attr("fill-opacity", 0.7)
+                    .attr("fill", "steelblue");
+        }
+    });
+
+    // Draw borders around subplots
+    cell.append("rect")
+        .style("fill", "none")
+        .style("stroke", "gray")
+        .attr("width", subplot.width)
+        .attr("height", subplot.height);
+
+    // Brushing (Selection ability)
+    circle = cell.selectAll("circle");
+
+    const brush = d3.brush()
+        .extent([[0, 0],[subplot.width, subplot.height]])
+        .on("start", brushStart)
+        .on("brush", brushMove)
+        .on("end", brushEnd);
+
+    let currentCell;
+
+    function brushStart() {
+        if (currentCell !== this) {
+            d3.select(currentCell).call(brush.move, null);
+            currentCell = this;
+        }
+    }
+    function brushMove({selection}, [i,j]) {
+        if (selection) {
+            [[x0, y0], [x1, y1]] = selection;
+            circle.classed("hidden", d =>
+                xScale[i](d[i]) < x0 ||
+                xScale[i](d[i]) > x1 ||
+                yScale[j](d[j]) < y0 ||
+                yScale[j](d[j]) > y1
+            );
+        }
+    }
+    function brushEnd({selection}, [i,j]) {
+        if (selection) return;
+        // [[x0, x1], [y0, y1]] = selection;
+        // data.filter(d =>
+        //     xScale[i](d[i]) > x0 &&
+        //     xScale[i](d[i]) < x1 &&
+        //     yScale[j](d[j]) > y0 &&
+        //     yScale[j](d[j]) < y1
+        // );
+        circle.classed("hidden", false);
+    }
+
+    cell.filter(([i,j]) => i != j).call(brush);
+
+    let xLabel = svg.append("g").selectAll("text")
+        .data(pars)
+        .join("text")
+        .style("opacity", `${fontinfo.opacity}%`)
+        .style("font-size", `${fontinfo.size}`)
+        .text(p => p)
+        .attr("transform", function (_, i) {
+                return `translate(
+                    ${(i * subplot.width + subplot.sep) + subplot.width / 2 - this.getComputedTextLength() / 2},
+                    ${height + margin.bottom - fontinfo.size}
+                )`});
+
+    let yLabel = svg.append("g").selectAll("text")
+        .data(pars)
+        .join("text")
+        .style("opacity", `${fontinfo.opacity}%`)
+        .style("font-size", `${fontinfo.size}`)
+        .text(p => p)
+        .attr("transform", function (_, i) {
+                return `rotate(${-90}) translate(
+                    -${(i * subplot.width + subplot.sep) + subplot.height / 2 + this.getComputedTextLength() / 2},
+                    -${margin.left - fontinfo.size}
+                )`});
+}
+
+const default_settings = {
+    height: 800,
+    width: 1000,
+    reverse_x: false,
+    lines: false,
+    show_anomolies: false,
+    onAnomaly: null,
+    trace_colors: ['steelblue'],
+    trace_names: ['Main']
+}
+function twoParameterChart(chart_div, data, pars, user_settings) {
+    console.log(data);
+    var settings = {};
+    Object.assign(settings, default_settings);
+    Object.assign(settings, user_settings);
+    const total_height = settings.height;
+    const total_width = settings.width;
+    const fontinfo = {
+        size: 18,
+        opacity: 50,
+        type: 'sans-serif'
+    }
+    const margin = {
+        left: 100,
+        bottom: 80,
+        top: 10,
+        right: 10
+    };
+    sel = null;
+
+    // Create html divs
+    let chart_grid = d3.select(chart_div).classed('ChartGrid', true)
+    let chart_content = chart_grid.append('div').classed('ChartContents', true)
+    let chart_sidebar = chart_grid.append('div').classed('ChartSidebar', true)
+    let chart_options = chart_sidebar.append('div').classed('ChartOptions', true)
+    let chart_traces  = chart_sidebar.append('div')
+    let chart_anomaly = chart_sidebar.append('div').classed('ChartAnomaly', true)
+
+    // Create anomaly-save interface
+    chart_anomaly.append('select').selectAll('option')
+        .data(['Flap Slate', 'Path High', 'Speed High'])
+        .enter()
+        .append('option')
+            .text(d => d)
+    chart_anomaly.append('button')
+        .text('Save as Anomaly')
+        .node().onclick = (ev) => settings.onAnomaly(sel, chart_anomaly.select('select').node().value)
+
+    const width  = total_width - margin.left - margin.right;
+    const height = total_height - margin.top - margin.bottom;
+
+    // Create <svg> and <g>
+    let total_svg = chart_content.append('svg')
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    let svg = total_svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
+
+    // Create Scales
+    let xExtents = d3.transpose(data.map(trace => d3.extent(trace.X)))
+    let xScale = d3.scaleLinear()
+        .domain([d3.min(xExtents[0]), d3.max(xExtents[1])]).nice()
+        .range(settings.reverse_x ? [width, 0] : [0, width]);
+    let yExtents = d3.transpose(data.map(trace => d3.extent(trace.Y)))
+    let yScale = d3.scaleLinear()
+        .domain(d3.extent([d3.min(yExtents[0]), d3.max(yExtents[1])])).nice()
+        .range([height, 0]);
+
+    // Create Axes
+    let yAxis = svg
+        .append("g")
+        .style('font-size', '14px')
+        .call(d3.axisLeft().scale(yScale))
+    let xAxis = svg
+        .append("g")
+        .style('font-size', '14px')
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom().scale(xScale))
+
+    // Create clipping <rect>
+    total_svg
+        .append('defs')
+        .append('svg:clipPath')
+            .attr('id', `c${clip_counter}`)
+        .append("svg:rect")
+            // .attr('x', margin.left)
+            // .attr('y', margin.top)
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr("width", width)
+            .attr("height", height)
 
 
-            if (i == 0) { // left
-
-            }
-            let xScale = d3.scaleLinear()
-                .domain(d3.extent(data, d => d[i])).nice()
-                .range([x, x + subplot.width]);
-
-            if (i == j) {
-                let bin = d3.bin()
-                    .value(d => d[i])
-                    .domain(xScale.domain())
-                    .thresholds(xScale.ticks(10));
-                let bins = bin(data);
-
-                let hScale = d3.scaleLinear()
-                    .domain([0, d3.max(bins, b => b.length)])
-                    .range([subplot.height, 0]);
-
-                svg.append("g")
-                    .selectAll("rect")
-                    .data(bins)
-                    .join("rect")
-                        .attr("x", x + 1)
-                        .attr("y", y)
-                        .attr("transform", b => `translate(${xScale(b.x0) - x}, ${hScale(b.length)})`)
-                        .attr("width", b => xScale(b.x1) - xScale(b.x0) - 1)
-                        .attr("height", b => subplot.height - hScale(b.length))
-                        .style("fill", "steelblue")
-
-            } else {
-                // if (j == subplot.num - 1) {
-                //     svg.append("g")
-                //         .attr("transform", `translate(0, ${height})`)
-                //         .call(d3.axisBottom(xScale));
-                // }
-                let yScale = d3.scaleLinear()
-                    .domain(d3.extent(data, d => d[j])).nice()
-                    .range([y + subplot.height, y]);
-                // if (i == 0) {
-                //     svg.append("g")
-                //         .call(d3.axisLeft(yScale));
-                // }
-
-                // svg.append("path")
-                //     .datum(data)
-                //     .attr("fill", "none")
-                //     .attr("stroke", "steelblue")
-                //     .attr("stroke-width", "3")
-                //     .attr("d", d3.line()
-                //         .x(d => xScale(d[i]))
-                //         .y(d => yScale(d[j]))
-                //     );
-
-                svg.append("g")
-                    .selectAll("dot")
-                    .data(data)
+    // Create circles within clipped <g>
+    let clip_g = svg.append("g").attr('clip-path', `url(#c${clip_counter++})`)
+    let circle_g = clip_g.append("g")
+    circle_g
+        .selectAll('g')
+        .data(data)
+        .join('g')
+            .each(function (trace, i)  {
+                chart_traces
+                    .append('label')
+                        .text(settings.trace_names[i])
+                        .append('input')
+                            .attr('type', 'checkbox')
+                            .property('checked', true)
+                            .on('change', (e) => {
+                                 d3.select(this).style('display', e.target.checked ? null : 'none');
+                            })
+                chart_traces.append('br')
+                d3.select(this)
+                    .selectAll("circle")
+                    .data(d3.zip(trace.X, trace.Y))
                     .join("circle")
-                        .attr("cx", d => xScale(d[i]))
-                        .attr("cy", d => yScale(d[j]))
-                        .attr("r", 1.5)
-                        .style("stroke", "steelblue")
-                        .style("fill", "steelblue");
+                        // .call((s) => s.each(d => console.log(d)))
+                        .attr("cx", d => xScale(d[0]))
+                        .attr("cy", d => yScale(d[1]))
+                        .attr("r", 3)
+                        .attr("fill-opacity", 0.7)
+                        .attr("fill", settings.trace_colors[i]);
+            })
+        
 
-            }
 
-            let sub_g = svg.append("g")
-                .attr("transform", `translate(${x}, ${y})`)
-            sub_g.append("path")
-                .style("fill", "none")
-                .style("stroke-width", `${2}`)
-                .style("stroke", "gray")
-                .attr("d", `M 0, 0 h ${subplot.width} v ${subplot.height} h ${-subplot.width} v ${-subplot.height} Z`);
+    // Draw borders
+    svg
+        .append("rect")
+            .style("fill", "none")
+            .style("stroke", "gray")
+            .attr("width", width)
+            .attr("height", height);
 
-            if (j == subplot.num - 1) { // bottom
-                let xLabel = sub_g.append("text")
-                    .style("opacity", `${fontinfo.opacity}%`)
-                    .style("font-size", `${fontinfo.size}`)
-                    .text(`${pars[i]}`);
-                xLabel
-                    .attr("transform",
-                            `translate(
-                                ${subplot.width / 2 - xLabel.node().getComputedTextLength() / 2},
-                                ${subplot.height + margin.bottom - fontinfo.size}
-                            )`);
-            }
-            if (i == 0) {
-                let yLabel = sub_g.append("text")
-                    .style("opacity", `${fontinfo.opacity}%`)
-                    .style("font-size", `${fontinfo.size}`)
-                    .text(`${pars[j]}`);
-                yLabel
-                    .attr("transform",
-                          `rotate(${-90})
-                           translate(
-                               -${subplot.height / 2 + yLabel.node().getComputedTextLength() / 2},
-                               -${margin.left - fontinfo.size}
-                           )`);
-            }
+    let circle = circle_g.selectAll("circle");
+
+    // Create selection brush and its callbacks
+    let brush = d3.brush()
+        .extent([[0,0],[width, height]])
+        .on("start", brushStart)
+        .on("brush", brushMove)
+        .on("end", brushEnd);
+
+    function brushStart() {
+
+    }
+    var zoom_t = d3.zoomIdentity;
+    function brushMove({selection}) {
+        if (selection) {
+            [[x0, y0], [x1, y1]] = selection.map((xs) => zoom_t.invert(xs));
+            // console.log(selection[0] + ', ' + selection[1], '\n' + [x0, y0] + ',' + [x1, y1]);
+            circle.classed("hidden", d =>
+                xScale(d[0]) < x0 ||
+                xScale(d[0]) > x1 ||
+                yScale(d[1]) < y0 ||
+                yScale(d[1]) > y1
+            );
+        }
+    }
+    function brushEnd({selection}) {
+        if (selection) {
+            [[x0, x1], [y0, y1]] = selection;
+            // data.filter(d =>
+            //     xScale[i](d[i]) > x0 &&
+            //     xScale[i](d[i]) < x1 &&
+            //     yScale[j](d[j]) > y0 &&
+            //     yScale[j](d[j]) < y1
+            // );
+            sel = [[xScale.invert(x0),xScale.invert(x1)],[yScale.invert(y0),yScale.invert(y1)]];
+        }
+        else {
+            sel = null;
+            circle.classed("hidden", false);
         }
     }
 
-    // let xScale = d3.scaleLinear()
-    //     .domain(d3.extent(data, d => d.X))
-    //     .range([width, 0]);
-    // svg.append("g")
-    //     .attr("transform", `translate(0, ${height})`)
-    //     .call(d3.axisBottom(xScale));
-    // let xLabel = svg.append("text")
-    //     .style("opacity", `${fontinfo.opacity}%`)
-    //     .style("font-size", `${fontinfo.size}`)
-    //     .text("THIS IS AN XAXIS LABEL WOOOO");
-    // xLabel
-    //     .attr("transform",
-    //           `translate(
-    //               ${width / 2 - xLabel.node().getComputedTextLength() / 2},
-    //               ${height + margin.bottom - fontinfo.size}
-    //           )`);
+    // Create zoom/pan and its callback
+    let zoom = d3.zoom()
+        .on("zoom", zoomMove)
 
-    // let yScale = d3.scaleLinear()
-    //     .domain(d3.extent(data, d => d.Y1))
-    //     .range([height, 0]);
-    // svg.append("g")
-    //     .call(d3.axisLeft(yScale));
-    // let yLabel = svg.append("text")
-    //     .style("opacity", `${fontinfo.opacity}%`)
-    //     .style("font-size", `${fontinfo.size}`)
-    //     .text("THIS IS A YAXIS LABEL WOOOO");
-    // yLabel
-    //     .attr("transform",
-    //           `rotate(${-90})
-    //            translate(
-    //                -${height / 2 + yLabel.node().getComputedTextLength() / 2},
-    //                -${margin.left - fontinfo.size}
-    //            )`);
+    let old_k = null;
+    function zoomMove({transform: t}) {
+        zoom_t = t;
+        circle_g.attr('transform', t)
+        if (old_k != t.k) {
+            circle.attr('r', 3 / t.k)
+            old_k = t.k
+        }
 
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", "3")
-    //     .attr("d", d3.line()
-    //         .x(d => xScale(d.X))
-    //         .y(d => yScale(d.Y))
-    //         )
+        yAxis.call(d3.axisLeft(t.rescaleY(yScale)));
+        xAxis.call(d3.axisBottom(t.rescaleX(xScale)));
 
-    // svg.append("g")
-    //     .selectAll("dot")
-    //     .data(data)
-    //     .join("circle")
-    //         .attr("cx", d => xScale(d.X))
-    //         .attr("cy", d => yScale(d.Y))
-    //         .attr("r", 2)
-    //         .style("stroke", "steelblue")
-    //         .style("fill", "white")
+        xAxis.selectAll('.tick').each( function () {
+            d3.select(this).select('line')
+                .attr('y1', -height)
+                .attr('opacity', (d3.select(this).select('text').text() == 0) ? 1 : 0.1)
+        });
+        yAxis.selectAll('.tick').each( function () {
+            d3.select(this).select('line')
+                .attr('x1', width)
+                .attr('opacity', (d3.select(this).select('text').text() == 0) ? 1 : 0.1)
+        });
+    }
+
+    // Overwrite double click to reset view instead of zoom in
+    function onDblClick(e) {
+        zoom_rect.call(zoom.transform, d3.zoomIdentity);
+    }
+
+    // Apply zoom to new <rect> for easy disabling
+    let zoom_rect = total_svg
+        .append('rect')
+            .attr('id', 'zoom')
+            .attr('x', margin.left)
+            .attr('y', margin.top)
+            .attr('width', width)
+            .attr('height', height)
+            .style('opacity', 0)
+            .call(zoom)
+            .on("dblclick.zoom", onDblClick)
+
+    let brush_rect = svg.call(brush).select('.overlay');
+
+    // Add Menu Buttons and their callbacks
+    let switchToZoom = () => {
+        zoom_rect.attr('display', null);
+        brush_rect.attr('display', 'none');
+        brush.move(svg, null);
+    }
+    let switchToBrush = () => {
+        zoom_rect.attr('display', 'none');
+        brush_rect.attr('display', null);
+    }
+
+    const OptionButtonsInfo = [
+        {img_src: "https://www.svgrepo.com/show/314941/zoom-icon.svg", callback: switchToZoom},
+        {img_src: "https://www.svgrepo.com/show/114778/selection.svg", callback: switchToBrush}
+    ]
+    chart_options.selectAll('button')
+        .data(OptionButtonsInfo)
+        .enter()
+        .append('button')
+            .classed('chart-btn', true)
+            .on('click', (_, d) => (d.callback)())
+            // .attr('onclick', d => d.callback.name + '()')
+            .append('img')
+                .attr('src', d => d.img_src)
+
+    // Click on first button
+    chart_options.select('.chart-btn').node().click()
+
+
+    // Add Labels
+    let xLabel = svg.append("text")
+        .style("opacity", `${fontinfo.opacity}%`)
+        .style("font-size", `${fontinfo.size}`)
+        .style('fill', 'black')
+        .text(pars[0])
+        .attr("transform", function () {return `translate(
+                ${width / 2 - this.getComputedTextLength() / 2},
+                ${height + margin.bottom - fontinfo.size}
+            )`});
+
+    let yLabel = svg.append("text")
+        .style("opacity", `${fontinfo.opacity}%`)
+        .style("font-size", `${fontinfo.size}`)
+        .style('fill', 'black')
+        .text(pars[1])
+        .attr("transform", function () {return `rotate(${-90}) translate(
+                -${height / 2 + this.getComputedTextLength() / 2},
+                -${margin.left - fontinfo.size}
+            )`});
+
+    // Extend tick marks to create grid
+    xAxis.selectAll('.tick > line').each( function () {
+        d3.select(this)
+            .attr('y1', -height)
+            .attr('opacity', 0.1)
+    });
+    yAxis.selectAll('.tick > line').each( function () {
+        d3.select(this)
+            .attr('x1', width)
+            .attr('opacity', 0.1)
+    });
 }

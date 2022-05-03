@@ -126,7 +126,7 @@ const server = http.createServer((req, res) => {
                     loadCSV(requested_data[1]);
                 res.end(JSON.stringify({
                     main: {
-                        x: dists_to_landing(),
+                        x: csv_cols['MILES FROM TOUCHDOWN'],
                         y: csv_cols[requested_data[2]]
                     },
                     percentiles: percentile_values(Ps, requested_data[2])
@@ -158,14 +158,13 @@ const server = http.createServer((req, res) => {
                             case '.css': res.setHeader('Content-Type', 'text/css'); break;
                             case '.json': res.setHeader('Content-Type', 'application/json'); break;
                         }
-                        res.write(data);
+                        res.end(data);
                     }
 
                 });
         }
 
-    } else {
-      //res.statusCode = 500;
+    } else if (req.method == 'POST') {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Content-Type', 'application/json');
       let body = "";
@@ -174,22 +173,23 @@ const server = http.createServer((req, res) => {
       });
       req.on('end', () => {
         var ana = fs.readFileSync('Anamolies.json');
+        if (ana == '') ana = [];
         var obj = JSON.parse(ana);
-        obj.push([JSON.parse(body)]);
+        obj.push(JSON.parse(body));
         var converted = JSON.stringify(obj,null,4);
         fs.writeFile('Anamolies.json', converted, err => {
       // error checking
-        if(err) throw err;
+        if (err) throw err;
 
-        res.end(JSON.stringify("DATA RECIEVED. UPLOAD SUCESSFULL\n"));
+        res.end("DATA RECIEVED. UPLOAD SUCCESSFUL\n");
       });
     });
-      //console.log(JSON.stringify(body));
 
 
-
-        //res.statusCode = 500;
-        //res.end();
+      
+    } else {
+        res.statusCode = 500;
+        res.end();
     }
 })
 
