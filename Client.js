@@ -186,8 +186,11 @@ function two_parameter_chart() {
     fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
         .then(response => response.json())
         .then(data => {
-            
-            twoParameterChart(d3.select(cur_chart).append('div').node(), {X: data.x, Y: data.y}, [par1, par2], 1200, 800, false, false)
+
+          const settings = {
+              width: 1200
+            }
+            twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)
             // if (par1 == par2) {
             //     plot_data = {
             //         x: data.x,
@@ -221,6 +224,7 @@ function two_parameter_chart() {
 
 function dtr_chart() {
     document.getElementById('time_series_options').hidden = true;
+    document.getElementById('ptile-opts').hidden = true;
     if (tab_count === 0) {
         refresh_chart_tab();
         return;
@@ -254,7 +258,7 @@ function dtr_chart() {
                 x: sel[0],
                 y: sel[1],
                 flight: flight,
-                x_par: 'Index',
+                x_par: 'Distance From Landing (Miles)',
                 y_par: this.value,
                 type: type
             }
@@ -277,6 +281,15 @@ function dtr_chart() {
             settings
         )
     });
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
+
+    checks = document.querySelectorAll('.ptile-opt:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
 }
 
 function time_series(refresh) {
@@ -304,7 +317,7 @@ function time_series(refresh) {
                 x: sel[0],
                 y: sel[1],
                 flight: flight,
-                x_par: 'Index',
+                x_par: 'Time',
                 y_par: this.value,
                 type: type
             }
@@ -319,13 +332,17 @@ function time_series(refresh) {
 
         twoParameterChart(
             new_chart,
-            [{X: data.x, Y: data.y}], 
-            ['Time (Index)', this.value], 
+            [{X: data.x, Y: data.y}],
+            ['Time (Index)', this.value],
             settings
         );
 
-        
+
     });
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
 }
 
 var count = 1;
@@ -392,12 +409,14 @@ function display(chart,tab){
   if(cur_chart != undefined){
     cur_chart.style.display = "none";
     cur_tab.style.color = "#2196F3";
+    cur_tab.style.fontWeight = 'normal';
   }
   cur_chart = chart;
   cur_tab = tab;
   cur_chart.style.display = "inline";
   if(cur_tab != undefined){
-    cur_tab.style.color = "#000000";
+    cur_tab.style.color = "#FF0000";
+    cur_tab.style.fontWeight = 'bold';
   }
 }
 
@@ -416,6 +435,7 @@ async function Anomaly_Upload(obj){
         .then(response => {
             console.log('RESPONSE::POST:')
             console.log(response);
+            window.alert("Anamoly marked.")
         })
 
 }

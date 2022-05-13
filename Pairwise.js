@@ -97,7 +97,11 @@ function goto4() {
       var parameters = GetCheckedParameters();
 
     load_chart(parameters,flight,cur_chart);
-
+    document.getElementById('time_series_options').hidden = true;
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
     }
   }
 
@@ -454,7 +458,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
                         .attr("fill-opacity", 0.7)
                         .attr("fill", settings.trace_colors[i]);
             })
-        
+
 
 
     // Draw borders

@@ -12,5 +12,61 @@
         "x_par": "Index",
         "y_par": "AILERON POSITION LH",
         "type": "Flap Slate"
+    },
+    {
+        "x": [
+            15.935779816513762,
+            12.844036697247706
+        ],
+        "y": [
+            71.28169014084506,
+            72.33802816901408
+        ],
+        "flight": "677200105090350",
+        "x_par": "Index",
+        "y_par": "AIRBRAKE POSITION",
+        "type": "Path High"
+    },
+    {
+        "x": [
+            11.660550458715594,
+            17.743119266055047
+        ],
+        "y": [
+            76.48591549295774,
+            80.52112676056338
+        ],
+        "flight": "677200105090350",
+        "x_par": "Distance From Landing (Miles)",
+        "y_par": "AILERON POSITION LH",
+        "type": "Flap Slate"
+    },
+    {
+        "x": [
+            12.587155963302752,
+            19.577981651376145
+        ],
+        "y": [
+            2.3661971830985884,
+            51.80281690140845
+        ],
+        "flight": "677200105090350",
+        "x_par": "Distance From Landing (Miles)",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Flap Slate"
+    },
+    {
+        "x": [
+            16.192660550458715,
+            12.715596330275229
+        ],
+        "y": [
+            70.85915492957747,
+            72.59154929577466
+        ],
+        "flight": "677200105090350",
+        "x_par": "Distance From Landing (Miles)",
+        "y_par": "AIRBRAKE POSITION",
+        "type": "Flap Slate"
     }
 ]
