@@ -24,5 +24,31 @@
             "Parameter_2": "DISTANCE FROM LANDING (MILES)",
             "anomaly": "Path High"
         }
+    ],
+    [
+        {
+            "intial_x_value": 185,
+            "final_x_value": 314,
+            "first_y_value": 84.04348,
+            "final_y_value": 86.375694,
+            "Flight_Number": "677200105090350",
+            "Graph_Type": "time-series",
+            "Parameter_1": "ACMS TIMING USED T1HZ",
+            "Parameter_2": "Time",
+            "anomaly": "Path High"
+        }
+    ],
+    [
+        {
+            "intial_x_value": 25,
+            "final_x_value": 91,
+            "first_y_value": 84.964096,
+            "final_y_value": 83.716156,
+            "Flight_Number": "677200105090350",
+            "Graph_Type": "time-series",
+            "Parameter_1": "ACMS TIMING USED T1HZ",
+            "Parameter_2": "Time",
+            "anomaly": "Flap Slate"
+        }
     ]
 ]
