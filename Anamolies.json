@@ -50,5 +50,31 @@
             "Parameter_2": "Time",
             "anomaly": "Flap Slate"
         }
+    ],
+    [
+        {
+            "intial_x_value": 84.11061,
+            "final_x_value": 74.48687,
+            "first_y_value": -91,
+            "final_y_value": -91,
+            "Flight_Number": "677200105090350",
+            "Graph_Type": "two-parameter",
+            "Parameter_1": "AIRCRAFT NUMBER",
+            "Parameter_2": "AIRBRAKE POSITION",
+            "anomaly": "Path High"
+        }
+    ],
+    [
+        {
+            "intial_x_value": 97.60141,
+            "final_x_value": 100.618904,
+            "first_y_value": -91,
+            "final_y_value": -91,
+            "Flight_Number": "677200105090350",
+            "Graph_Type": "two-parameter",
+            "Parameter_1": "AIRCRAFT NUMBER",
+            "Parameter_2": "AIRBRAKE POSITION",
+            "anomaly": "Flap Slate"
+        }
     ]
 ]
