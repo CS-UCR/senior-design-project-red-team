@@ -390,7 +390,10 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
       .style("border-color" , '#000000')
     chart_anomaly.append('button')
         .text('Save as Anomaly')
-        .node().onclick = (ev) => settings.onAnomaly(sel, chart_anomaly.select('select').node().value , chart_anomaly.select('input').node().value )
+        .node().onclick = (ev) => {
+          settings.onAnomaly(sel, chart_anomaly.select('select').node().value , chart_anomaly.select('input').node().value );
+
+            }
 
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;

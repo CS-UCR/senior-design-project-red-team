@@ -220,7 +220,8 @@ function two_parameter_chart() {
 
           const settings = {
               width: 1200,
-              onAnomaly: on_anomaly
+              onAnomaly: on_anomaly,
+              trace_names: [flight]
             }
             twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)
             // if (par1 == par2) {
@@ -308,7 +309,7 @@ function dtr_chart() {
             onAnomaly: on_anomaly,
             // show_anomalies: true,
             reverse_x: true,
-            trace_names: ['Main', ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
+            trace_names: [flight, ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
             trace_colors: ['steelblue', ...Object.keys(data.percentiles.ys).map(x => ptile_colors[x])]
         }
 
@@ -447,7 +448,7 @@ function delete_tab(tab, chart){
   if(cur_chart === chart){
     cur_chart = undefined;
     if (tab_count) {
-      display(document.getElementsByClassName('grapher')[0],first_tab);
+      display(document.getElementsByClassName('grapher')[0],first_tab, first_tab.children[1].id);
     }
   }
 }

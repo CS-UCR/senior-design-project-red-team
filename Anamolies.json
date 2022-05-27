@@ -1,8 +1,8 @@
 [
     {
         "x": [
-            94.07339449541284,
-            75.96330275229359
+            95.28440366972477,
+            75.19266055045871
         ],
         "y": [
             -91,
@@ -13,38 +13,6 @@
         "y_par": "AIRCRAFT NUMBER",
         "type": "Flap Slate",
         "Graph_Type": "Two Parameter Chart",
-        "Note": "Two Parameter Test"
-    },
-    {
-        "x": [
-            15.963302752293577,
-            12.642201834862385
-        ],
-        "y": [
-            66.7605633802817,
-            73.09859154929578
-        ],
-        "flight": "677200105090350",
-        "x_par": "Distance From Landing (Miles)",
-        "y_par": "AIRBRAKE POSITION",
-        "type": "Path High",
-        "Graph_Type": "DTR Chart",
-        "Note": "DTR TEST"
-    },
-    {
-        "x": [
-            39.174311926605505,
-            126.51376146788992
-        ],
-        "y": [
-            80.11267605633802,
-            70.8169014084507
-        ],
-        "flight": "677200105090350",
-        "x_par": "Time",
-        "y_par": "AIRBRAKE POSITION",
-        "type": "Flap Slate",
-        "Graph_Type": "Time Series Chart",
-        "Note": "TIME SERIES TEST"
+        "Note": "Note this"
     }
 ]
