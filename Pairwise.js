@@ -62,6 +62,7 @@ function remove_children(p){
 }
 function goto4() {
     refresh_chart = () =>  p_refresh_chart();
+    type_of_graph = "pw"
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
@@ -73,7 +74,7 @@ function goto4() {
     document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
-
+    document.getElementById('ptile-opts').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -95,7 +96,10 @@ function goto4() {
 
       var flight = document.getElementById('file-select').value
       var parameters = GetCheckedParameters();
-
+      let orig = cur_text;
+      let hold = cur_text.substring(0, 2);
+      document.getElementById(cur_text).id = orig.replace(hold , "pw");
+      cur_text = orig.replace(hold , "pw");
     load_chart(parameters,flight,cur_chart);
     document.getElementById('time_series_options').hidden = true;
     let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
@@ -114,13 +118,14 @@ function goto4() {
     text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
     delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
     chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
-
+    tab.classList.add("border", "border-solid" ,"border-black" , "h-16" , "w-24")
     chart.id = "chart" + count;
     tab.id = "tab" + count;
+    text.id = type_of_graph + count;
     text.innerHTML = "Tab " + count;
     delete_button.innerHTML = 'X';
     delete_button.onclick = () => {delete_tab(tab.id, chart)};
-    text.onclick = () => {display(chart,tab)};
+    text.onclick = () => {display(chart,tab , text.id)};
 
 
     tab.appendChild(delete_button);
@@ -139,7 +144,7 @@ function goto4() {
       }
       chart.style.display = "inline";
     }
-    display(chart,tab);
+    display(chart,tab , text.id);
 
     p_refresh_chart();
 
@@ -379,9 +384,13 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
         .enter()
         .append('option')
             .text(d => d)
+    chart_anomaly.append('input')
+      .style("border-width",'1px')
+      .style("border-style" , 'solid')
+      .style("border-color" , '#000000')
     chart_anomaly.append('button')
         .text('Save as Anomaly')
-        .node().onclick = (ev) => settings.onAnomaly(sel, chart_anomaly.select('select').node().value)
+        .node().onclick = (ev) => settings.onAnomaly(sel, chart_anomaly.select('select').node().value , chart_anomaly.select('input').node().value )
 
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
