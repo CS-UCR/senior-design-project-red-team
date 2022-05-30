@@ -147,8 +147,10 @@ const server = http.createServer((req, res) => {
                 break;
             default:
                 //let file = requested_data[0];
+                
                 let file = requested_data.join('/')
                 fs.readFile(file, (err, data) => {
+                    console.log(err);
                     if (err) {
                         res.statusCode = 500;
                     }

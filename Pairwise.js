@@ -141,8 +141,6 @@ function goto4() {
 
   }
 
-
-
 function GetCheckedParameters(){
   const checkboxes = document.querySelectorAll('input[name="time_series_option"]:checked');
     var options = [];
@@ -154,7 +152,7 @@ function GetCheckedParameters(){
 
 function load_chart(pars, flightno, div_name) {
     if (pars.length == 0) return;
-    d3.json(`http://127.0.0.1:8080/truncated/${flightno}`)
+    d3.json(`http://${hostname}:${port}/truncated/${flightno}`)
         .then(json => {
             return pars.map(par => json[par]);
         })
@@ -337,15 +335,19 @@ const default_settings = {
     reverse_x: false,
     lines: false,
     show_anomolies: false,
-    onAnomaly: null,
+    onAnomaly: () => {},
     trace_colors: ['steelblue'],
-    trace_names: ['Main']
+    trace_names: ['Main'],
+    anomaly_data: [], // : {}[]
+    boxes: [],
 }
+
 function twoParameterChart(chart_div, data, pars, user_settings) {
     console.log(data);
     var settings = {};
     Object.assign(settings, default_settings);
     Object.assign(settings, user_settings);
+    console.log(settings);
     const total_height = settings.height;
     const total_width = settings.width;
     const fontinfo = {
@@ -370,14 +372,22 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     let chart_anomaly = chart_sidebar.append('div').classed('ChartAnomaly', true)
 
     // Create anomaly-save interface
-    chart_anomaly.append('select').selectAll('option')
+    chart_anomaly.append('select')
+        .selectAll('option')
         .data(['Flap Slate', 'Path High', 'Speed High'])
         .enter()
         .append('option')
             .text(d => d)
     chart_anomaly.append('button')
         .text('Save as Anomaly')
-        .node().onclick = (ev) => settings.onAnomaly(sel, chart_anomaly.select('select').node().value)
+        .node().onclick = (ev) => {
+            let type = chart_anomaly.select('select').node().value;
+            settings.onAnomaly(sel, type);
+            addBox({
+                sel: sel,
+                text: type
+            })
+        }
 
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
@@ -492,7 +502,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     }
     function brushEnd({selection}) {
         if (selection) {
-            [[x0, x1], [y0, y1]] = selection;
+            [[x0, y0], [x1, y1]] = selection;
             // data.filter(d =>
             //     xScale[i](d[i]) > x0 &&
             //     xScale[i](d[i]) < x1 &&
@@ -515,6 +525,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     function zoomMove({transform: t}) {
         zoom_t = t;
         circle_g.attr('transform', t)
+        boxes_g.attr('transform', t)
         if (old_k != t.k) {
             circle.attr('r', 3 / t.k)
             old_k = t.k
@@ -615,4 +626,24 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             .attr('x1', width)
             .attr('opacity', 0.1)
     });
+
+    function addBox(box) {
+        let { sel, text } = box;
+        console.log(box);
+        sel[0] = sel[0].map(xScale)
+        sel[1] = sel[1].map(yScale)
+        let [[x0, x1], [y0, y1]] = sel;
+        boxes_g.append('rect')
+            .attr('width', x1 - x0)
+            .attr('height', y1 - y0)
+            .style('transform', `translate(${x0}, ${y0})`)
+            .style('fill', 'red')
+            .style('opacity', 0.3)
+    }
+
+    // Show Anomalies
+    let boxes_g = svg.append('g')
+    for (let box of settings.boxes) {
+        addBox(box);
+    }
 }

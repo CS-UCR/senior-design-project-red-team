@@ -1,5 +1,6 @@
-const hostname = '127.0.0.1'
-const port = '8080'
+const onAWS = false;
+const hostname = onAWS ? 'ec2-54-91-170-251.compute-1.amazonaws.com' : '127.0.0.1'
+const port = onAWS ? '80' : '8080'
 
 // const flight_parameters = ['AILERON POSITION LH', 'AILERON POSITION RH', 'CORRECTED ANGLE OF ATTACK', 'BARO CORRECT ALTITUDE LSP', 'BARO CORRECT ALTITUDE LSP', 'COMPUTED AIRSPEED LSP', 'SELECTED COURSE', 'DRIFT ANGLE', 'ELEVATOR POSITION LEFT', 'ELEVATOR POSITION RIGHT', 'T.E.FLAP POSITION', 'GLIDESLOPE DEVIATION', 'SELECTED HEADING', 'SELECTED AIRSPEED', 'LOCALIZER DEVIATION', 'N1 COMMAND LSP', 'TOTAL PRESSURE LSP', 'PITCH ANGLE LSP', 'ROLL ANGLE LSP', 'RUDDER POSITION', 'TRUE HEADING LSP', 'VERTICAL ACCELERATION', 'WIND SPEED', 'AP FD STATUS', 'GEARS L & R DOWN LOCKED', 'TCAS LSP', 'WEIGHT ON WHEELS']
 
@@ -27,8 +28,6 @@ var layout = {
   width: 1400,
   height: 800,
 };
-
-
 
 function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['flights'].join('/'))
@@ -171,7 +170,7 @@ function remove_children(p){
   }
 
 }
-function two_parameter_chart() {
+async function two_parameter_chart() {
     if(tab_count === 0){
       refresh_chart_tab();
       return;
@@ -183,40 +182,22 @@ function two_parameter_chart() {
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
     layout.xaxis.title.text = par1;
-    fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
-        .then(response => response.json())
-        .then(data => {
-            
-            twoParameterChart(d3.select(cur_chart).append('div').node(), {X: data.x, Y: data.y}, [par1, par2], 1200, 800, false, false)
-            // if (par1 == par2) {
-            //     plot_data = {
-            //         x: data.x,
-            //         y: data.y,
-            //         type: 'histogram'
-            //     };
-            // } else {
-            //     plot_data = {
-            //         x: data.x,
-            //         y: data.y,
-            //         mode: 'markers',
-            //         type: 'scatter'
-            //     };
-            //     layout.yaxis.title.text = par2;
-            // }
-            // //console.log(data);
-            // var chart = cur_chart;
-            // chart.id = flight;
-            // Plotly.newPlot(chart, [plot_data], layout)
-            // //selectDisplay(chart);
+    let [data, json] = await Promise.all([
+        d3.json("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/')),
+        d3.json("http://" + hostname + ":" + port + "/Anomalies.json")
+    ]).catch(err => console.error(err));
+    console.log(json)
+    let apl_anom = json.filter(obj => obj.flight == flight && obj.x_par == par1 && obj.y_par == par2)
+    console.log(apl_anom)
+    const settings = {
+        width: 1200,
+        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], text: obj.type}))
+    }
+    twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)       
+}
 
-            // chart.on('plotly_selected' , function(eventData){
-            //   selected_chart_for_point_selection = chart;
-            //   data_to_be_selected = eventData;
-            //   Log_Display();
-            // });
-
-        })
-        .catch(err => console.error(err))
+function oneDimChart() {
+  
 }
 
 function dtr_chart() {
@@ -279,7 +260,7 @@ function dtr_chart() {
     });
 }
 
-function time_series(refresh) {
+function time_series() {
     document.getElementById('time_series_options').hidden = true;
     if (tab_count === 0) {
         refresh_chart_tab();
@@ -299,7 +280,7 @@ function time_series(refresh) {
             .catch(err => console.error(err))
 
         new_chart.id = flight;
-        on_anomaly = (sel, type) => {
+        let on_anomaly = (sel, type) => {
             let a = {
                 x: sel[0],
                 y: sel[1],
@@ -314,7 +295,6 @@ function time_series(refresh) {
         const settings = {
           width: 1200,
           onAnomaly: on_anomaly,
-        //   show_anomalies: true
         }
 
         twoParameterChart(
@@ -338,7 +318,7 @@ function refresh_chart_tab() {
 
     text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
     delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
-    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
+    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2", "grapher")
 
     chart.id = "chart" + count;
     tab.id = "tab" + count;

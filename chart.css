@@ -7,7 +7,7 @@ circle.hidden {
     grid-template-columns: 1fr 100px;
     gap: 20px;
 }
-.ChartContent {
+.ChartContents {
     float: left;
 }
 .ChartOptions {
