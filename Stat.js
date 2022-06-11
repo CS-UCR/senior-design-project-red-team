@@ -15,6 +15,7 @@ function goto5() {
     document.getElementById('Refresh').hidden = true;
     document.getElementById('refresh').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
 
     document.getElementById('TPC').style.border = "1px solid #000000";

@@ -89,6 +89,7 @@ function goto1() {
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
@@ -98,7 +99,7 @@ function goto1() {
     document.getElementById('STAT').style.border = "1px solid #000000";
 }
 function goto2() {
-    refresh_chart = dtr_chart;
+    refresh_chart = () => dtr_chart(false);
     type_of_graph = "dt";
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
@@ -113,6 +114,7 @@ function goto2() {
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -135,6 +137,7 @@ function goto3() {
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -154,6 +157,7 @@ function goto4() {
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR') = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -176,11 +180,14 @@ var cur_text;
 
 function remove_children(p){
   while(p.firstChild){
+    console.log("Here");
+    //console.log(p.firstChild.ChartContents.svg.g.text)
     p.removeChild(p.firstChild);
   }
 
 }
 function two_parameter_chart() {
+  console.log("Here");
     if(tab_count === 0){
       refresh_chart_tab();
       return;
@@ -255,7 +262,7 @@ function two_parameter_chart() {
         .catch(err => console.error(err))
 }
 
-function dtr_chart() {
+function dtr_chart(val) {
     document.getElementById('time_series_options').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     if (tab_count === 0) {
@@ -263,6 +270,14 @@ function dtr_chart() {
         return;
     }
     const chart = cur_chart;
+    var time_dtr_values;
+    if(val != false){
+    time_dtr_values = chart.querySelectorAll("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    time_dtr_values.forEach((element) =>{
+      console.log(element.innerHTML)
+    });
+  }
+
     if (chart) {
         remove_children(chart);
     }
@@ -272,6 +287,8 @@ function dtr_chart() {
     cur_text = orig.replace(hold , "dt");
     var flight = d3.select('#file-select').property('value');
     const checkboxes = d3.selectAll('input[name="time_series_option"]:checked');
+
+
     let checked_ptiles = d3.selectAll('.ptile-opt:checked').nodes().map(node => node.value);
     console.log(checked_ptiles)
     const ptile_colors = {
@@ -279,6 +296,7 @@ function dtr_chart() {
         '50': 'orange',
         '90': 'red'
     }
+    if(val === false){
     checkboxes.each( async function () {
         let new_chart = d3.select(chart).append('div').node();
         new_chart.classList.add('w-fit', 'h-[800px]');
@@ -320,6 +338,50 @@ function dtr_chart() {
             settings
         )
     });
+  }else{
+    time_dtr_values.forEach( async (element) =>{
+      let new_chart = d3.select(chart).append('div').node();
+      new_chart.classList.add('w-fit', 'h-[800px]');
+
+      let data = await fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, element.innerHTML, ...checked_ptiles].join('/'))
+          .then(response => response.json())
+          .catch(err => console.error(err));
+
+      console.log(data);
+      if (!data.percentiles.ys) data.percentiles.ys = {}
+
+      on_anomaly = (sel, type , note) => {
+          let a = {
+              x: sel[0],
+              y: sel[1],
+              flight: flight,
+              x_par: 'Distance From Landing (Miles)',
+              y_par: element.innerHTML,
+              type: type,
+              Graph_Type: "DTR Chart",
+              Note: note
+          }
+          console.log(a);
+          Anomaly_Upload(a);
+      }
+      const settings = {
+          width: 1200,
+          onAnomaly: on_anomaly,
+          // show_anomalies: true,
+          reverse_x: true,
+          trace_names: [flight, ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
+          trace_colors: ['steelblue', ...Object.keys(data.percentiles.ys).map(x => ptile_colors[x])]
+      }
+
+      twoParameterChart(
+          new_chart, // div
+          [{X: data.main.x, Y: data.main.y}, Object.values(data.percentiles?.ys).map(y => ({X: data.percentiles.x, Y: y}))].flat(), // traces
+          ["DISTANCE FROM LANDING (MILES)", element.innerHTML], // X & Y labels
+          settings
+      )
+    });
+    goto2();
+  }
     let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
     for(var i = 0; i < checks.length; i++){
       checks[i].checked = false;
@@ -448,7 +510,8 @@ function delete_tab(tab, chart){
   if(cur_chart === chart){
     cur_chart = undefined;
     if (tab_count) {
-      display(document.getElementsByClassName('grapher')[0],first_tab, first_tab.children[1].id);
+      console.log(document.getElementById('sidebar').children[0].children[1])
+      display(document.getElementsByClassName('grapher')[0],document.getElementById('sidebar').children[0].children[1], document.getElementById('sidebar').children[0].children[1].id);
     }
   }
 }

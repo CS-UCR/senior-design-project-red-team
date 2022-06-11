@@ -55,8 +55,28 @@ function single_graph() {
     location.href = "Client.html";
 }
 
+/*
+let lis = document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+for(var i = 0; i < lis.length; i++){
+  if(lis[i].style.display.hidden != true){
+    console.log(lis[i].innerHTML);
+  }
+}
+
+*/
+
 function remove_children(p){
   while(p.firstChild){
+    //document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    //77200105090350
+    //console.log(p.firstChild.querySelectorAll('[text]:nth-child(16)').innerText)
+    ///html/body/div[2]/div/main/div[2]/div/div/div[1]/svg/g/text[2]
+    //#\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)
+    //console.log(p.firstChild.querySelector("ChartContents > svg > g > text:nth-child(16)").innerHTML);
+    //document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    //console.log(p.firstChild.id)
+    //console.log(document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)").innerHTML)
+
     p.removeChild(p.firstChild);
   }
 }
@@ -75,6 +95,7 @@ function goto4() {
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
