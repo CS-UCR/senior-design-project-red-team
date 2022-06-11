@@ -39,8 +39,8 @@ function goto5() {
       let size = parameters.length;
       for(var i = 0; i < size; i++){
         let par = parameters[i];
-        let new_chart = document.createElement('div');
-        new_chart.classList.add("pc","blue-trim");
+        // let new_chart = document.createElement('div');
+        // new_chart.classList.add("pc","blue-trim");
         fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, parameters[i], parameters[i]].join('/'))
             .then(response => response.json())
             .then(data => {
@@ -56,12 +56,14 @@ function goto5() {
                 new_chart.innerHTML += "Standard Deviation: " + d3.deviation(plot_data) + "\n";
                 new_chart.innerHTML += "Median: " + d3.median(plot_data) + "\n";
 
-                cur_chart.appendChild(new_chart);
+                // cur_chart.appendChild(new_chart);
+
+                d3.select(cur_chart).append('div').classed('pc blue-trim', true);
 
             })
 
           }
-          //.catch(err => console.error(err))
+          // .catch(err => console.error(err))
         }
 }
 
