@@ -676,6 +676,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
         .style("font-size", `${fontinfo.size}`)
         .style('fill', 'black')
         .text(pars[1])
+        .classed('ylabel', true)
         .attr("transform", function () {return `rotate(${-90}) translate(
                 -${height / 2 + this.getComputedTextLength() / 2},
                 -${margin.left - fontinfo.size}

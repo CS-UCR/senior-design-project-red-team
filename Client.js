@@ -244,11 +244,13 @@ function dtr_chart(val) {
     }
     const chart = cur_chart;
     var time_dtr_values;
-    if(val != false){
-    time_dtr_values = chart.querySelectorAll("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
-    time_dtr_values.forEach((element) =>{
-      console.log(element.innerHTML)
-    });
+    if (val != false) {
+      console.log(cur_chart.children[0].id);
+      time_dtr_values = chart.querySelectorAll('.ylabel')
+      time_dtr_values.forEach((element) => {
+        console.log(element.innerHTML);
+      }
+    );
   }
 
     if (chart) {
@@ -438,6 +440,7 @@ function refresh_chart_tab() {
     chart.id = "chart" + count;
     tab.id = "tab" + count;
     text.id = type_of_graph + count;
+    console.log(chart.id);
     console.log(text.id);
     text.innerHTML = "Tab " + count;
     delete_button.innerHTML = 'X';
