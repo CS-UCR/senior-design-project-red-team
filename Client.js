@@ -72,6 +72,7 @@ function init() {
 
 function goto1() {
     refresh_chart = two_parameter_chart;
+    type_of_graph = "tw";
     document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = false;
@@ -84,6 +85,8 @@ function goto1() {
     document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
@@ -93,7 +96,8 @@ function goto1() {
     document.getElementById('STAT').style.border = "1px solid #000000";
 }
 function goto2() {
-    refresh_chart = dtr_chart;
+    refresh_chart = () => dtr_chart(false);
+    type_of_graph = "dt";
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
@@ -106,7 +110,8 @@ function goto2() {
     document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
-
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -116,6 +121,7 @@ function goto2() {
 }
 function goto3() {
     refresh_chart = () => time_series(true);
+    type_of_graph = "ts";
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
@@ -127,7 +133,8 @@ function goto3() {
     document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
-
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -139,17 +146,21 @@ function goto3() {
 
 function goto4() {
     refresh_chart = () =>  p_refresh_chart();
+    type_of_graph = "pw";
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR') = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
+    document.getElementById('STAT').style.border = "1px solid #000000";
 
 }
 
@@ -161,9 +172,13 @@ var first_tab;
 var dtr_current_selected_chart = undefined;
 var selected_chart_for_point_selection = undefined;
 var data_to_be_selected;
+var type_of_graph;
+var cur_text;
 
 function remove_children(p){
   while(p.firstChild){
+    console.log("Here");
+    //console.log(p.firstChild.ChartContents.svg.g.text)
     p.removeChild(p.firstChild);
   }
 
@@ -179,6 +194,13 @@ async function two_parameter_chart() {
     var flight = document.getElementById('file-select').value
     var par1 = document.getElementById('parameter-1').value
     var par2 = document.getElementById('parameter-2').value
+    let orig = cur_text;
+    let hold = cur_text.substring(0, 2);
+    document.getElementById(cur_text).id = orig.replace(hold , "tw");
+    cur_text = orig.replace(hold , "tw");
+    if(par1 === "" || par2 === ""){
+      return;
+    }
     layout.xaxis.title.text = par1;
     let [data, json] = await Promise.all([
         d3.json("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/')),
@@ -194,7 +216,8 @@ async function two_parameter_chart() {
           flight: flight,
           x_par: par1,
           y_par: par2,
-          type: type
+          type: type,
+          Graph_Type: 'Two Parameter Chart'
       }
       console.log(a);
       Anomaly_Upload(a);
@@ -202,7 +225,8 @@ async function two_parameter_chart() {
     const settings = {
         width: 1200,
         boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: anomaly_colours.get(obj.type), text: obj.type})),
-        onAnomaly: on_anomaly
+        onAnomaly: on_anomaly,
+        trace_names: [flight]
     }
     twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)       
 }
@@ -211,18 +235,33 @@ function oneDimChart() {
   
 }
 
-function dtr_chart() {
+function dtr_chart(val) {
     document.getElementById('time_series_options').hidden = true;
+    document.getElementById('ptile-opts').hidden = true;
     if (tab_count === 0) {
         refresh_chart_tab();
         return;
     }
     const chart = cur_chart;
+    var time_dtr_values;
+    if(val != false){
+    time_dtr_values = chart.querySelectorAll("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    time_dtr_values.forEach((element) =>{
+      console.log(element.innerHTML)
+    });
+  }
+
     if (chart) {
         remove_children(chart);
     }
+    let orig = cur_text;
+    let hold = cur_text.substring(0, 2);
+    document.getElementById(cur_text).id = orig.replace(hold , "dt");
+    cur_text = orig.replace(hold , "dt");
     var flight = d3.select('#file-select').property('value');
     const checkboxes = d3.selectAll('input[name="time_series_option"]:checked');
+
+
     let checked_ptiles = d3.selectAll('.ptile-opt:checked').nodes().map(node => node.value);
     console.log(checked_ptiles)
     const ptile_colors = {
@@ -230,6 +269,7 @@ function dtr_chart() {
         '50': 'orange',
         '90': 'red'
     }
+    if(val === false){
     checkboxes.each( async function () {
         let new_chart = d3.select(chart).append('div').node();
         new_chart.classList.add('w-fit', 'h-[800px]');
@@ -246,9 +286,10 @@ function dtr_chart() {
                 x: sel[0],
                 y: sel[1],
                 flight: flight,
-                x_par: 'Index',
+                x_par: 'Distance From Landing (Miles)',
                 y_par: this.value,
-                type: type
+                type: type,
+                Graph_Type: "DTR Chart"
             }
             console.log(a);
             Anomaly_Upload(a);
@@ -258,7 +299,7 @@ function dtr_chart() {
             onAnomaly: on_anomaly,
             // show_anomalies: true,
             reverse_x: true,
-            trace_names: ['Main', ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
+            trace_names: [flight, ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
             trace_colors: ['steelblue', ...Object.keys(data.percentiles.ys).map(x => ptile_colors[x])]
         }
 
@@ -269,6 +310,58 @@ function dtr_chart() {
             settings
         )
     });
+  }else{
+    time_dtr_values.forEach( async (element) =>{
+      let new_chart = d3.select(chart).append('div').node();
+      new_chart.classList.add('w-fit', 'h-[800px]');
+
+      let data = await fetch("http://" + hostname + ":" + port + "/" + ['dtr', flight, element.innerHTML, ...checked_ptiles].join('/'))
+          .then(response => response.json())
+          .catch(err => console.error(err));
+
+      console.log(data);
+      if (!data.percentiles.ys) data.percentiles.ys = {}
+
+      on_anomaly = (sel, type) => {
+          let a = {
+              x: sel[0],
+              y: sel[1],
+              flight: flight,
+              x_par: 'Distance From Landing (Miles)',
+              y_par: element.innerHTML,
+              type: type,
+              Graph_Type: "DTR Chart"
+          }
+          console.log(a);
+          Anomaly_Upload(a);
+      }
+      const settings = {
+          width: 1200,
+          onAnomaly: on_anomaly,
+          // show_anomalies: true,
+          reverse_x: true,
+          trace_names: [flight, ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
+          trace_colors: ['steelblue', ...Object.keys(data.percentiles.ys).map(x => ptile_colors[x])]
+      }
+
+      twoParameterChart(
+          new_chart, // div
+          [{X: data.main.x, Y: data.main.y}, Object.values(data.percentiles?.ys).map(y => ({X: data.percentiles.x, Y: y}))].flat(), // traces
+          ["DISTANCE FROM LANDING (MILES)", element.innerHTML], // X & Y labels
+          settings
+      )
+    });
+    goto2();
+  }
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
+
+    checks = document.querySelectorAll('.ptile-opt:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
 }
 
 function time_series() {
@@ -281,6 +374,10 @@ function time_series() {
     if (chart) {
         remove_children(chart);
     }
+    let orig = cur_text;
+    let hold = cur_text.substring(0, 2);
+    document.getElementById(cur_text).id = orig.replace(hold , "ts");
+    cur_text = orig.replace(hold , "ts");
     var flight = d3.select('#file-select').property('value');
     const checkboxes = d3.selectAll('input[name="time_series_option"]:checked');
 
@@ -296,9 +393,10 @@ function time_series() {
                 x: sel[0],
                 y: sel[1],
                 flight: flight,
-                x_par: 'Index',
+                x_par: 'Time',
                 y_par: this.value,
-                type: type
+                type: type,
+                Graph_Type: "Time Series Chart"
             }
             console.log(a);
             Anomaly_Upload(a);
@@ -306,17 +404,23 @@ function time_series() {
         const settings = {
           width: 1200,
           onAnomaly: on_anomaly,
+          trace_names: [flight]
+        //   show_anomalies: true
         }
 
         twoParameterChart(
             new_chart,
-            [{X: data.x, Y: data.y}], 
-            ['Time (Index)', this.value], 
+            [{X: data.x, Y: data.y}],
+            ['Time (Index)', this.value],
             settings
         );
 
-        
+
     });
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
 }
 
 var count = 1;
@@ -329,14 +433,16 @@ function refresh_chart_tab() {
 
     text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
     delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
-    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2", "grapher")
-
+    chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
+    tab.classList.add("border", "border-solid" ,"border-black" , "h-16" , "w-24")
     chart.id = "chart" + count;
     tab.id = "tab" + count;
+    text.id = type_of_graph + count;
+    console.log(text.id);
     text.innerHTML = "Tab " + count;
     delete_button.innerHTML = 'X';
     delete_button.onclick = () => {delete_tab(tab.id, chart)};
-    text.onclick = () => {display(chart,tab)};
+    text.onclick = () => {display(chart,tab , text.id)};
 
 
     tab.appendChild(delete_button);
@@ -355,7 +461,7 @@ function refresh_chart_tab() {
         }
         chart.style.display = "inline";
     }
-    display(chart,tab);
+    display(chart,tab , text.id);
 
     refresh_chart();
 
@@ -374,21 +480,44 @@ function delete_tab(tab, chart){
   if(cur_chart === chart){
     cur_chart = undefined;
     if (tab_count) {
-      display(document.getElementsByClassName('grapher')[0],first_tab);
+      console.log(document.getElementById('sidebar').children[0].children[1])
+      display(document.getElementsByClassName('grapher')[0],document.getElementById('sidebar').children[0].children[1], document.getElementById('sidebar').children[0].children[1].id);
     }
   }
 }
 
-function display(chart,tab){
+function display(chart,tab , text){
+  console.log(text);
   if(cur_chart != undefined){
     cur_chart.style.display = "none";
     cur_tab.style.color = "#2196F3";
+    cur_tab.style.fontWeight = 'normal';
   }
   cur_chart = chart;
   cur_tab = tab;
+  cur_text = text;
   cur_chart.style.display = "inline";
   if(cur_tab != undefined){
-    cur_tab.style.color = "#000000";
+    cur_tab.style.color = "#FF0000";
+    cur_tab.style.fontWeight = 'bold';
+  }
+  let hold = text.substring(0, 2);
+  switch(hold){
+    case "tw":
+      goto1();
+      break;
+    case "dt":
+      goto2();
+      break;
+    case "ts":
+      goto3();
+      break;
+    case "pw":
+      goto4();
+      break;
+    case "st":
+      goto5();
+      break;
   }
 }
 
@@ -408,6 +537,7 @@ async function Anomaly_Upload(obj){
         .then(response => {
             console.log('RESPONSE::POST:')
             console.log(response);
+            window.alert("Anamoly marked.")
         })
 
 }

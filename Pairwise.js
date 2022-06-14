@@ -55,13 +55,34 @@ function single_graph() {
     location.href = "Client.html";
 }
 
+/*
+let lis = document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+for(var i = 0; i < lis.length; i++){
+  if(lis[i].style.display.hidden != true){
+    console.log(lis[i].innerHTML);
+  }
+}
+
+*/
+
 function remove_children(p){
   while(p.firstChild){
+    //document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    //77200105090350
+    //console.log(p.firstChild.querySelectorAll('[text]:nth-child(16)').innerText)
+    ///html/body/div[2]/div/main/div[2]/div/div/div[1]/svg/g/text[2]
+    //#\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)
+    //console.log(p.firstChild.querySelector("ChartContents > svg > g > text:nth-child(16)").innerHTML);
+    //document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)")
+    //console.log(p.firstChild.id)
+    //console.log(document.querySelector("#\\36 77200105090350 > div.ChartContents > svg > g > text:nth-child(16)").innerHTML)
+
     p.removeChild(p.firstChild);
   }
 }
 function goto4() {
     refresh_chart = () =>  p_refresh_chart();
+    type_of_graph = "pw"
     document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
@@ -73,13 +94,14 @@ function goto4() {
     document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
     document.getElementById('Refresh').hidden = false;
     document.getElementById('refresh').hidden = false;
-
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
-      document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('STAT').style.border = "1px solid #000000";
 
 }
 
@@ -95,9 +117,16 @@ function goto4() {
 
       var flight = document.getElementById('file-select').value
       var parameters = GetCheckedParameters();
-
+      let orig = cur_text;
+      let hold = cur_text.substring(0, 2);
+      document.getElementById(cur_text).id = orig.replace(hold , "pw");
+      cur_text = orig.replace(hold , "pw");
     load_chart(parameters,flight,cur_chart);
-
+    document.getElementById('time_series_options').hidden = true;
+    let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+    for(var i = 0; i < checks.length; i++){
+      checks[i].checked = false;
+    }
     }
   }
 
@@ -110,13 +139,14 @@ function goto4() {
     text.classList.add("hover:color-[#0000ff]", "focus:text-color-[#0000ff]")
     delete_button.classList.add("text-4xl", "font-bold", "text-gray-100", "left-2", "z-10", "hover:text-[#f44336]", "cursor-pointer")
     chart.classList.add("w-3/4", "h-[800px]", "ml-5", "mt-2","grapher")
-
+    tab.classList.add("border", "border-solid" ,"border-black" , "h-16" , "w-24")
     chart.id = "chart" + count;
     tab.id = "tab" + count;
+    text.id = type_of_graph + count;
     text.innerHTML = "Tab " + count;
     delete_button.innerHTML = 'X';
     delete_button.onclick = () => {delete_tab(tab.id, chart)};
-    text.onclick = () => {display(chart,tab)};
+    text.onclick = () => {display(chart,tab , text.id)};
 
 
     tab.appendChild(delete_button);
@@ -135,7 +165,7 @@ function goto4() {
       }
       chart.style.display = "inline";
     }
-    display(chart,tab);
+    display(chart,tab , text.id);
 
     p_refresh_chart();
 
@@ -495,7 +525,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
                         .attr("fill-opacity", 0.7)
                         .attr("fill", settings.trace_colors[i]);
             })
-        
+
 
 
     // Draw borders
