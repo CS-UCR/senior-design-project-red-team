@@ -150,8 +150,8 @@ const server = http.createServer((req, res) => {
                 
                 let file = requested_data.join('/')
                 fs.readFile(file, (err, data) => {
-                    console.log(err);
                     if (err) {
+                        console.log(err);
                         res.statusCode = 500;
                     }
                     else {
@@ -174,12 +174,12 @@ const server = http.createServer((req, res) => {
         body += chunk;
       });
       req.on('end', () => {
-        var ana = fs.readFileSync('Anamolies.json');
+        var ana = fs.readFileSync('Anomalies.json');
         if (ana == '') ana = [];
         var obj = JSON.parse(ana);
         obj.push(JSON.parse(body));
         var converted = JSON.stringify(obj,null,4);
-        fs.writeFile('Anamolies.json', converted, err => {
+        fs.writeFile('Anomalies.json', converted, err => {
       // error checking
         if (err) throw err;
 

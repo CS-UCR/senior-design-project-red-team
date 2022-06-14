@@ -334,13 +334,13 @@ const default_settings = {
     width: 1000,
     reverse_x: false,
     lines: false,
-    show_anomolies: false,
     onAnomaly: () => {},
     trace_colors: ['steelblue'],
     trace_names: ['Main'],
-    anomaly_data: [], // : {}[]
     boxes: [],
 }
+
+var addBox;
 
 function twoParameterChart(chart_div, data, pars, user_settings) {
     console.log(data);
@@ -368,26 +368,55 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     let chart_content = chart_grid.append('div').classed('ChartContents', true)
     let chart_sidebar = chart_grid.append('div').classed('ChartSidebar', true)
     let chart_options = chart_sidebar.append('div').classed('ChartOptions', true)
+    let chart_box_toggle = chart_sidebar.append('div').classed('ChartBoxToggle', true)
     let chart_traces  = chart_sidebar.append('div')
     let chart_anomaly = chart_sidebar.append('div').classed('ChartAnomaly', true)
 
     // Create anomaly-save interface
     chart_anomaly.append('select')
         .selectAll('option')
-        .data(['Flap Slate', 'Path High', 'Speed High'])
+        .data(['Flap Slate', 'Path High', 'Speed High', 'Note'])
         .enter()
         .append('option')
             .text(d => d)
+    chart_anomaly.append('textarea')
+        .style('margin', '5px 0px')
+        .style('border', '1px solid #222')
+        // .style('width', '150px')
+        .style('display', 'none')
     chart_anomaly.append('button')
         .text('Save as Anomaly')
         .node().onclick = (ev) => {
-            let type = chart_anomaly.select('select').node().value;
-            settings.onAnomaly(sel, type);
+            if (!sel) return;
+            let type = chart_anomaly.select('select').property('value');
+            let text = type;
+            if (type != 'Note') {
+                settings.onAnomaly(sel, type);
+            } else {
+                text = chart_anomaly.select('textarea').property('value');
+            }
             addBox({
                 sel: sel,
-                text: type
+                color: anomaly_colours.get(type),
+                text: text
             })
+            brush.move(brush_rect, null);
         }
+    
+        chart_anomaly.select('select').on('change', (e) => {
+            chart_anomaly.select('textarea').style('display', (e.target.value == 'Note') ? null : 'none')
+        })
+
+    chart_box_toggle
+        .append('label')
+            .text('Show Annotations')
+            .append('input')
+                .attr('type', 'checkbox')
+                .property('checked', true)
+                .on('change', (e) => {
+                    box_g.style('display', e.target.checked ? null : 'none')
+                })
+            
 
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
@@ -437,6 +466,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
 
     // Create circles within clipped <g>
     let clip_g = svg.append("g").attr('clip-path', `url(#c${clip_counter++})`)
+    let box_g = clip_g.append("g").style('opacity', 0.5)
     let circle_g = clip_g.append("g")
     circle_g
         .selectAll('g')
@@ -445,7 +475,8 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             .each(function (trace, i)  {
                 chart_traces
                     .append('label')
-                        .text(settings.trace_names[i])
+                        .text(settings.trace_names[i] + '  ')
+                        .style('color', settings.trace_colors[i])
                         .append('input')
                             .attr('type', 'checkbox')
                             .property('checked', true)
@@ -509,7 +540,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             //     yScale[j](d[j]) > y0 &&
             //     yScale[j](d[j]) < y1
             // );
-            sel = [[xScale.invert(x0),xScale.invert(x1)],[yScale.invert(y0),yScale.invert(y1)]];
+            sel = [[rxScale.invert(x0),rxScale.invert(x1)],[ryScale.invert(y0),ryScale.invert(y1)]];
         }
         else {
             sel = null;
@@ -521,18 +552,23 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     let zoom = d3.zoom()
         .on("zoom", zoomMove)
 
+    let ryScale = yScale, rxScale = xScale
     let old_k = null;
     function zoomMove({transform: t}) {
         zoom_t = t;
         circle_g.attr('transform', t)
-        boxes_g.attr('transform', t)
+        box_g.attr('transform', t)
+        box_g.selectAll('rect').style('stroke-width', 2 / t.k)
+        box_g.selectAll('text').style('font-size', `${fontinfo.size / t.k}`)
         if (old_k != t.k) {
             circle.attr('r', 3 / t.k)
             old_k = t.k
         }
 
-        yAxis.call(d3.axisLeft(t.rescaleY(yScale)));
-        xAxis.call(d3.axisBottom(t.rescaleX(xScale)));
+        ryScale = t.rescaleY(yScale)
+        rxScale = t.rescaleX(xScale)
+        yAxis.call(d3.axisLeft(ryScale));
+        xAxis.call(d3.axisBottom(rxScale));
 
         xAxis.selectAll('.tick').each( function () {
             d3.select(this).select('line')
@@ -563,17 +599,17 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             .call(zoom)
             .on("dblclick.zoom", onDblClick)
 
-    let brush_rect = svg.call(brush).select('.overlay');
+    let brush_rect = svg.call(brush);
 
     // Add Menu Buttons and their callbacks
     let switchToZoom = () => {
         zoom_rect.attr('display', null);
-        brush_rect.attr('display', 'none');
+        brush_rect.select('.overlay').attr('display', 'none');
         brush.move(svg, null);
     }
     let switchToBrush = () => {
         zoom_rect.attr('display', 'none');
-        brush_rect.attr('display', null);
+        brush_rect.select('.overlay').attr('display', null);
     }
 
     const OptionButtonsInfo = [
@@ -627,22 +663,31 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             .attr('opacity', 0.1)
     });
 
-    function addBox(box) {
-        let { sel, text } = box;
-        console.log(box);
-        sel[0] = sel[0].map(xScale)
-        sel[1] = sel[1].map(yScale)
+    function addBox({ sel, color, text }) {
+        sel[0] = sel[0].map((x) => rxScale(x)).map((x) => zoom_t.invertX(x))
+        sel[1] = sel[1].map((y) => ryScale(y)).map((y) => zoom_t.invertY(y))
         let [[x0, x1], [y0, y1]] = sel;
-        boxes_g.append('rect')
+        box_g.append('rect')
             .attr('width', x1 - x0)
             .attr('height', y1 - y0)
-            .style('transform', `translate(${x0}, ${y0})`)
-            .style('fill', 'red')
-            .style('opacity', 0.3)
+            .style('transform', `translate(${x0}px, ${y0}px)`)
+            .style('fill', color)
+            .style('fill-opacity', 0.2)
+            .style('stroke', color)
+            .style('stroke-width', '2px')
+            .style('stroke-opacity', 0.5)
+        box_g.append('text')
+            .style("opacity", 0.7)
+            .style("font-size", `${fontinfo.size}`)
+            .style('fill', color)
+            .style("transform", `translate(
+                ${x0}px,
+                ${y0 - fontinfo.size - 3}px
+            )`)
+            .text(text);
     }
 
     // Show Anomalies
-    let boxes_g = svg.append('g')
     for (let box of settings.boxes) {
         addBox(box);
     }

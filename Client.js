@@ -2,8 +2,6 @@ const onAWS = false;
 const hostname = onAWS ? 'ec2-54-91-170-251.compute-1.amazonaws.com' : '127.0.0.1'
 const port = onAWS ? '80' : '8080'
 
-// const flight_parameters = ['AILERON POSITION LH', 'AILERON POSITION RH', 'CORRECTED ANGLE OF ATTACK', 'BARO CORRECT ALTITUDE LSP', 'BARO CORRECT ALTITUDE LSP', 'COMPUTED AIRSPEED LSP', 'SELECTED COURSE', 'DRIFT ANGLE', 'ELEVATOR POSITION LEFT', 'ELEVATOR POSITION RIGHT', 'T.E.FLAP POSITION', 'GLIDESLOPE DEVIATION', 'SELECTED HEADING', 'SELECTED AIRSPEED', 'LOCALIZER DEVIATION', 'N1 COMMAND LSP', 'TOTAL PRESSURE LSP', 'PITCH ANGLE LSP', 'ROLL ANGLE LSP', 'RUDDER POSITION', 'TRUE HEADING LSP', 'VERTICAL ACCELERATION', 'WIND SPEED', 'AP FD STATUS', 'GEARS L & R DOWN LOCKED', 'TCAS LSP', 'WEIGHT ON WHEELS']
-
 var layout = {
   xaxis: {
     title: {
@@ -189,9 +187,22 @@ async function two_parameter_chart() {
     console.log(json)
     let apl_anom = json.filter(obj => obj.flight == flight && obj.x_par == par1 && obj.y_par == par2)
     console.log(apl_anom)
+    let on_anomaly = (sel, type) => {
+      let a = {
+          x: sel[0],
+          y: sel[1],
+          flight: flight,
+          x_par: par1,
+          y_par: par2,
+          type: type
+      }
+      console.log(a);
+      Anomaly_Upload(a);
+    }
     const settings = {
         width: 1200,
-        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], text: obj.type}))
+        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: anomaly_colours.get(obj.type), text: obj.type})),
+        onAnomaly: on_anomaly
     }
     twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)       
 }
@@ -230,7 +241,7 @@ function dtr_chart() {
         console.log(data);
         if (!data.percentiles.ys) data.percentiles.ys = {}
 
-        on_anomaly = (sel, type) => {
+        let on_anomaly = (sel, type) => {
             let a = {
                 x: sel[0],
                 y: sel[1],
@@ -387,7 +398,8 @@ var Charts = []
 var anomaly_colours = new Map([
   ['Flap Slate', '#228B22'],
   ['Path High', '#FFA500'],
-  ['Speed High','#F08080']
+  ['Speed High','#F08080'],
+  ['Note', 'blue']
 ])
 
 async function Anomaly_Upload(obj){
@@ -398,4 +410,16 @@ async function Anomaly_Upload(obj){
             console.log(response);
         })
 
+}
+
+document.addEventListener('keypress', (ev) => {
+  if (ev.key === 'k') {
+    testing()
+  }
+})
+
+function testing() {
+  document.getElementById('parameter-1').value = 'AILERON POSITION LH'
+  document.getElementById('parameter-2').value = 'AILERON POSITION RH'
+  two_parameter_chart()
 }

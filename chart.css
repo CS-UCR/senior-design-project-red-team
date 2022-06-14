@@ -4,7 +4,7 @@ circle.hidden {
 }
 .ChartGrid {
     display: grid;
-    grid-template-columns: 1fr 100px;
+    grid-template-columns: 1fr 150px;
     gap: 20px;
 }
 .ChartContents {
@@ -20,7 +20,7 @@ circle.hidden {
 }
 .ChartSidebar {
     display: grid;
-    grid-template-rows: 1fr 2fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 2fr;
 }
 .ChartAnomaly button {
     background-color: rgb(212, 212, 212);
