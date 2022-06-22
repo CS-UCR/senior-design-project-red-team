@@ -228,11 +228,11 @@ async function two_parameter_chart() {
         onAnomaly: on_anomaly,
         trace_names: [flight]
     }
-    twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)       
+    twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)
 }
 
 function oneDimChart() {
-  
+
 }
 
 function dtr_chart(val) {
@@ -546,7 +546,7 @@ async function Anomaly_Upload(obj){
 }
 
 document.addEventListener('keypress', (ev) => {
-  if (ev.key === 'k') {
+  if (ev.key === 'p') {
     testing()
   }
 })
