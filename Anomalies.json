@@ -66,5 +66,20 @@
         "x_par": "AILERON POSITION LH",
         "y_par": "AILERON POSITION RH",
         "type": "Path High"
+    },
+    {
+        "x": [
+            72.71559633027523,
+            86.25688073394495
+        ],
+        "y": [
+            58.225352112676056,
+            51.2112676056338
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart"
     }
 ]

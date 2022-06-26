@@ -16,17 +16,22 @@ function goto5() {
     document.getElementById('refresh').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-
+    document.getElementById('file-select').disabled = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #00ff00";
+    document.getElementById('ONED').style.border = "1px solid #000000";
 
 }
 
  function Statistics(){
+   if(d3.select('#file-select').property('value') === ""){
+     window.alert("Please enter a flight");
+     return;
+   }
   document.getElementById('time_series_options').hidden = true;
   if(tab_count === 0){
     s_refresh_chart_tab();

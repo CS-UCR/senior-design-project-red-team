@@ -96,16 +96,23 @@ function goto4() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
+    document.getElementById('file-select').disabled = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
     document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #000000";
 
 }
 
  function p_refresh_chart() {
+
+   if(d3.select('#file-select').property('value') === ""){
+     window.alert("Please enter a flight");
+     return;
+   }
 
     if(tab_count === 0){
       p_refresh_chart_tab();
@@ -432,7 +439,28 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             })
             brush.move(brush_rect, null);
         }
-    
+    chart_anomaly.append('button')
+      .style('margin-top', '5px')
+      .text('Save PNG of Graph')
+      .node().onclick = (ev) => {
+        let file_name = prompt("Please enter the name of the image.")
+        if(file_name != null){
+        html2canvas(chart_div).then(function(canvas) {
+    // Export the canvas to its data URI representation
+    var base64image = canvas.toDataURL("image/png");
+
+
+    var link = document.createElement("a");
+    link.download = file_name;
+    link.href = base64image;
+    link.click()
+
+    //downloadURI(base64image);
+  //  window.saveAs(base64image);
+    });
+  }
+      }
+
         chart_anomaly.select('select').on('change', (e) => {
             chart_anomaly.select('textarea').style('display', (e.target.value == 'Note') ? null : 'none')
         })
@@ -446,7 +474,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
                 .on('change', (e) => {
                     box_g.style('display', e.target.checked ? null : 'none')
                 })
-            
+
 
     const width  = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
@@ -722,4 +750,188 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     for (let box of settings.boxes) {
         addBox(box);
     }
+}
+
+function kernelDensityEstimator(kernel, X) {
+    return function (V) {
+        return X.map(function (x) {
+            return [x, d3.mean(V, function (v) { return kernel(x - v); })];
+        });
+    };
+}
+function kernelEpanechnikov(k) {
+    return function (v) {
+        return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+    };
+}
+
+function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_height = 800) {
+    const fontinfo = {
+        size: 18,
+        opacity: 50,
+        type: 'sans-serif'
+    }
+    const margin = {
+        left: 100,
+        bottom: 50,
+        top: 10,
+        right: 10
+    };
+    const width = total_width - margin.left - margin.right;
+    const height = total_height - margin.top - margin.bottom;
+
+    const y_pos = d3.range(0, pars.length).map(i => (height / (pars.length + 1)) * (i + 1))
+
+    // Create html divs
+    //let chart_grid = d3.select(chart_div).classed('ChartGrid', true)
+    let chart_grid = d3.select(chart_div).classed('ChartGrid', true)
+    let chart_content = chart_grid.append('div').classed('ChartContents', true)
+    let chart_sidebar = chart_grid.append('div').classed('ChartSidebar', true)
+    let chart_options = chart_sidebar.append('div').classed('ChartOptions', true)
+
+    // Create anomaly-save interface
+    // chart_options.selectAll('button')
+    //     .join(['avg'])
+
+    // Create <svg> and <g>
+    let total_svg = chart_content.append('svg')
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    let svg = total_svg
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
+
+    // Create scales
+    let xScales = data.map(d =>
+        d3.scaleLinear()
+            .domain(d3.extent(d)).nice()
+            .range([0, width])
+        );
+    let bins = data.map((d, i) =>
+        d3.bin()
+            .domain(xScales[i].domain())
+            .thresholds(xScales[i].ticks(50))
+            (d)
+    );
+    let hScale = d3.scaleLinear()
+        .domain([0, 1])
+        .range([0, -100])
+
+    svg
+        .append("rect")
+        .style("fill", "none")
+        .style("stroke", "gray")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.selectAll('g')
+        .data(y_pos)
+        .join('g')
+            .style('font-size', '14px')
+            .attr("transform", y => `translate(0, ${y})`)
+            .each(function (_, i) {
+                d3.select(this).call(d3.axisBottom().scale(xScales[i]))
+            })
+
+    function debug(val) {
+        console.log(val)
+        return val;
+    }
+
+    let sub_plots = svg.append('g')
+        .selectAll('g')
+        .data(data)
+        .join('g')
+        .style('transform', (_, i) => `translateY(${y_pos[i]}px)`)
+        .each(function (ds, i) { // ds: number[], i: number
+            // d3.select(this)
+
+            // let density = kde(ds);
+            // density.push([xScales[i].domain()[1], 0], [xScales[i].domain()[0], 0]);
+
+            d3.select(this)
+                // .selectAll('rect')
+                // .data(bins[i])
+                // .join('rect')
+                //     .attr("x", 1)
+                //     .style('opacity', 0.3)
+                //     .attr("transform", b => `translate(${xScales[i](b.x0)}, ${hScale(b.length)})`)
+                //     .attr("width", b => (n => n < 0 ? 0 : n)(xScales[i](b.x1) - xScales[i](b.x0) - 1))
+                //     .attr("height", b => -hScale(b.length))
+                //     .style("fill", "steelblue");
+                .append('path')
+                    .datum(bins[i])
+                    .style('stroke', 'steelblue')
+                    .style('stroke-opacity', 0.6)
+                    .style('stroke-width', 1)
+                    .style('fill', 'steelblue')
+                    .style('fill-opacity', 0.2)
+                    .attr('d', debug(d3.line()
+                        .curve(d3.curveBasis)
+                        // REDUCE VALUES BY (-) TO GET DISRETE DERIVATIVE AND PLOT IN THE STEAD OF DENSITY
+                            .x(b => xScales[i](b.x0))
+                            .y(b => hScale(b.length / bins[i].length)
+                                // d3.scaleLinear()
+                                //     .domain([0, d3.max(density, d => d[1])])
+                                //     .range([0, -100])
+                                //     (d[1])
+                            )
+                    ))
+
+            d3.select(this)
+                .selectAll('circle')
+                .data(ds.map(d => [xScales[i](d), y_pos[i]]))
+                .join('circle')
+                    .attr('r', 5)
+                    .attr('cx', ([d, _]) => d)
+                    .attr('cy', 0)
+                    .style('fill', 'steelblue')
+                    // .style('transform', `scaleX(${1/3})`)
+        })
+            // .attr('x1', 0)
+            // .attr('x2', width)
+            // .style('stroke', 'gray')
+            // .style('stroke-width', 2)
+
+    let QT = d3.quadtree()
+        .x(d => d[0])
+        .y(d => d[1])
+        .addAll(d3.transpose([...data, ids]))
+
+    let select_circle = total_svg.append('circle').style('fill', 'red');
+
+    total_svg.on('mousemove', (e) => {
+        //console.log([e.x, e.y])
+        select_circle.attr('cx', e.clientX).attr('cy', e.clientY)
+        let found = QT.find(e.x, e.y, 20)
+        if (found) {
+            console.log(found);
+        }
+    })
+
+    let xLabel = svg.append('g')
+        .selectAll('text')
+        .data(pars)
+        .join('text')
+            .style("opacity", `${fontinfo.opacity}%`)
+            .style("font-size", `${fontinfo.size}`)
+            .style('fill', 'black')
+            .text(d => d)
+            .attr("transform", function (_,i) {
+                return `translate(
+                    ${width / 2 - this.getComputedTextLength() / 2},
+                    ${y_pos[i] + 30 + fontinfo.size}
+                )`});
+
+    let yLabel = svg.append('text')
+        .style("opacity", `${fontinfo.opacity}%`)
+        .style("font-size", `${fontinfo.size}`)
+        .style('fill', 'black')
+        .text('AVG')
+        .attr("transform", function () {
+            return `translate(
+                    ${width / 2 - this.getComputedTextLength() / 2},
+                    ${height + margin.bottom - fontinfo.size}
+                )`});
+
 }

@@ -31,12 +31,22 @@ function init() {
     fetch("http://" + hostname + ":" + port + "/" + ['flights'].join('/'))
         .then(response => response.json())
         .then(obj => {
-            d3.select('#file-select')
-              .selectAll('option')
+            /*d3.select('dro')
+              .selectAll('a')
               .data(obj)
               .enter()
-              .append('option')
-                .text(d => d)
+              .append('a')
+                .text(d => d)*/
+
+            var flightholder = document.getElementById("dro");
+            obj.forEach(x => {
+                //console.log(x);
+                var o = document.createElement('a')
+                o.innerHTML = x
+                o.id = x
+                o.onclick = () => { handle(o.id,event)}
+                flightholder.appendChild(o)
+            })
         })
         .catch(err => console.error(err));
     fetch("http://" + hostname + ":" + port + "/" + ['parameters'].join('/'))
@@ -87,6 +97,7 @@ function goto1() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
+    document.getElementById('file-select').disabled = false;
 
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
@@ -94,6 +105,7 @@ function goto1() {
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #000000";
 }
 function goto2() {
     refresh_chart = () => dtr_chart(false);
@@ -112,12 +124,14 @@ function goto2() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
+    document.getElementById('file-select').disabled = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #000000";
 }
 function goto3() {
     refresh_chart = () => time_series(true);
@@ -135,12 +149,14 @@ function goto3() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = false;
+    document.getElementById('file-select').disabled = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #00ff00";
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #000000";
 
 }
 
@@ -154,13 +170,37 @@ function goto4() {
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
     document.getElementById('ptile-opts').hidden = true;
-    document.getElementById('TIME_SERIES_TO_DTR') = false;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
+    document.getElementById('file-select').disabled = false;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
     document.getElementById('TS').style.border = "1px solid #000000";
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
     document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #000000";
+
+}
+
+function goto6() {
+    refresh_chart = () => oneDimChart();
+    type_of_graph = "1d";
+    document.getElementById('parameter-2').disabled = true;
+    document.getElementById('add-button').hidden = true;
+    document.getElementById('parameter-2').hidden = true;
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('time_series_select').hidden = false;
+    document.getElementById("dtr-specific").hidden = true;
+    document.getElementById('ptile-opts').hidden = true;
+    document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
+    document.getElementById('file-select').disabled = true;
+
+    document.getElementById('TPC').style.border = "1px solid #000000";
+    document.getElementById('DTRC').style.border = "1px solid #000000";
+    document.getElementById('TS').style.border = "1px solid #000000";
+    document.getElementById('PAIR').style.border = "1px solid #000000";
+    document.getElementById('STAT').style.border = "1px solid #000000";
+    document.getElementById('ONED').style.border = "1px solid #00ff00";
 
 }
 
@@ -184,6 +224,10 @@ function remove_children(p){
 
 }
 async function two_parameter_chart() {
+  if(d3.select('#file-select').property('value') === ""){
+    window.alert("Please enter a flight");
+    return;
+  }
     if(tab_count === 0){
       refresh_chart_tab();
       return;
@@ -233,9 +277,53 @@ async function two_parameter_chart() {
 
 function oneDimChart() {
 
+  test_pars = d3.selectAll('input[name="time_series_option"]:checked');
+  const chart = cur_chart;
+  if (tab_count === 0) {
+      refresh_chart_tab();
+      return;
+  }
+  if (chart) {
+      remove_children(chart);
+  }
+  let orig = cur_text;
+  let hold = cur_text.substring(0, 2);
+  document.getElementById(cur_text).id = orig.replace(hold , "1d");
+  cur_text = orig.replace(hold , "1d");
+
+  d3.json('http://127.0.0.1:8080/aggregates.json').then(json => {
+          let data = [];
+          let ids = [];
+          let total = [];
+          /*for (let i = 0; i < test_pars.length; i++) {
+            data[i] = [];
+          }*/
+
+            let i = 0;
+          for (let flight in json) {
+              test_pars.each((par) => {
+                  data.push(json[flight+""][par+""]["mean"]);
+                  i++;
+              })
+              ids.push(flight);
+              total.push(data);
+              data = []
+          }
+          multi1DChart(d3.select(cur_chart).append('div').node(), total, test_pars, ids, 1600, 900);
+      });
+
+
+  let checks = document.querySelectorAll('input[name="time_series_option"]:checked');
+  for(var i = 0; i < checks.length; i++){
+    checks[i].checked = false;
+  }
 }
 
 function dtr_chart(val) {
+  if(d3.select('#file-select').property('value') === ""){
+    window.alert("Please enter a flight");
+    return;
+  }
     document.getElementById('time_series_options').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     if (tab_count === 0) {
@@ -367,6 +455,10 @@ function dtr_chart(val) {
 }
 
 function time_series() {
+  if(d3.select('#file-select').property('value') === ""){
+    window.alert("Please enter a flight");
+    return;
+  }
     document.getElementById('time_series_options').hidden = true;
     if (tab_count === 0) {
         refresh_chart_tab();
@@ -521,6 +613,9 @@ function display(chart,tab , text){
     case "st":
       goto5();
       break;
+    case "1d":
+      goto6();
+      break;
   }
 }
 
@@ -545,14 +640,57 @@ async function Anomaly_Upload(obj){
 
 }
 
-document.addEventListener('keypress', (ev) => {
-  if (ev.key === 'p') {
-    testing()
+/*document.addEventListener('click', (ev) => {
+  if(document.getElementById("dro").classList.contains("show")){
+    console.log("herre");
+    document.getElementById("dro").classList.toggle("show");
   }
-})
+
+})*/
 
 function testing() {
   document.getElementById('parameter-1').value = 'AILERON POSITION LH'
   document.getElementById('parameter-2').value = 'AILERON POSITION RH'
   two_parameter_chart()
+}
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("file-select");
+  filter = input.value;
+  div = document.getElementById("dro");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+  }
+}
+
+function handle(ele,ev){
+	var element = document.getElementById(ele);
+    document.getElementById("file-select").value = ele;
+    displayFlightOptions(ev);
+}
+
+
+document.addEventListener("click", (evt) => {
+
+  if(evt.target != document.getElementById('file-select') && document.getElementById("dro").classList.contains("show")){
+    document.getElementById("dro").classList.toggle("show");
+    //console.log("works hopefully");
+  }
+
+})
+
+
+
+function displayFlightOptions(ev){
+  if(!(document.getElementById("dro").classList.contains("show"))){
+    document.getElementById("dro").classList.toggle("show");
+    ev.stopPropagation();
+  }
 }

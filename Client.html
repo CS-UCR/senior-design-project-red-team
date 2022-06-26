@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <script src="html2canvas.min.js"></script>
     <script src="Client.js"></script>
     <!-- <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script> -->
     <script src="https://d3js.org/d3.v7.js"></script>
@@ -25,13 +26,19 @@
                 <button class="btn-top" onclick="goto3()" id='TS'>Time Series</button>
                 <button class="btn-top" onclick="goto4()" id='PAIR'>Pairwise Plots</button>
                 <button class="btn-top" onclick="goto5()" id='STAT'>Statistics</button>
+                <button class="btn-top" onclick="goto6()" id='ONED'>1-Dimensional Graph</button>
             </div>
         </nav>
         <div class="mx-4">
 
             <div id="">
                 <header class="flex flex-nowrap flex-row items-stretch space-x-2 my-2 h-6 relative top-2">
-                    <select class="rounded-sm blue-trim ml-28" id='file-select'>Select a flight</select>
+                    <input type="text" placeholder="Select a flight" class="rounded-sm blue-trim ml-28" id='file-select' onkeyup="filterFunction()" onclick = "displayFlightOptions(event)">
+                        <div id = "dro" class = "dropdown-content top-2" >
+
+                        </div>
+
+                  </input>
                     <button class="rounded-sm blue-trim" id='time_series_select' onclick='drop()' hidden>Select Parameters</button>
                     <span id="dtr-specific" hidden>
                         <button class="h-full" id="ptile-opts-btn" onclick="ptile_opts_btn_f(this)">
