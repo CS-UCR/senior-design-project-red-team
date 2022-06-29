@@ -765,6 +765,14 @@ function kernelEpanechnikov(k) {
     };
 }
 
+
+
+
+
+
+
+
+
 function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_height = 800) {
     const fontinfo = {
         size: 18,
@@ -780,7 +788,15 @@ function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_heigh
     const width = total_width - margin.left - margin.right;
     const height = total_height - margin.top - margin.bottom;
 
-    const y_pos = d3.range(0, pars.length).map(i => (height / (pars.length + 1)) * (i + 1))
+    let data_pars = [];
+    let data_pars_i = 0;
+    pars.each(function(){
+      data_pars[data_pars_i] = this.value;
+      data_pars_i++;
+    })
+    console.log(data_pars.length)
+
+    const y_pos = d3.range(0, data_pars.length).map(i => (height / (data_pars.length + 1)) * (i + 1))
 
     // Create html divs
     //let chart_grid = d3.select(chart_div).classed('ChartGrid', true)
@@ -884,7 +900,7 @@ function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_heigh
                 .join('circle')
                     .attr('r', 5)
                     .attr('cx', ([d, _]) => d)
-                    .attr('cy', 0)
+                    .attr('cy', function(d){return height;})
                     .style('fill', 'steelblue')
                     // .style('transform', `scaleX(${1/3})`)
         })
@@ -909,9 +925,12 @@ function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_heigh
         }
     })
 
+  //console.log(pars._groups)
+
+
     let xLabel = svg.append('g')
         .selectAll('text')
-        .data(pars)
+        .data(data_pars)
         .join('text')
             .style("opacity", `${fontinfo.opacity}%`)
             .style("font-size", `${fontinfo.size}`)
@@ -934,4 +953,384 @@ function multi1DChart(chart_div, data, pars, ids, total_width = 800, total_heigh
                     ${height + margin.bottom - fontinfo.size}
                 )`});
 
+}
+
+
+
+
+
+
+
+function One_D_Chart(chart_div, data, pars, user_settings){
+
+      console.log(data);
+      var settings = {};
+      Object.assign(settings, default_settings);
+      Object.assign(settings, user_settings);
+      console.log(settings);
+      const total_height = settings.height;
+      const total_width = settings.width;
+      const fontinfo = {
+          size: 18,
+          opacity: 50,
+          type: 'sans-serif'
+      }
+      const margin = {
+          left: 100,
+          bottom: 80,
+          top: 10,
+          right: 10
+      };
+      sel = null;
+
+      // Create html divs
+      let chart_grid = d3.select(chart_div).classed('ChartGrid', true)
+      let chart_content = chart_grid.append('div').classed('ChartContents', true)
+      let chart_sidebar = chart_grid.append('div').classed('ChartSidebar', true)
+      let chart_options = chart_sidebar.append('div').classed('ChartOptions', true)
+      let chart_box_toggle = chart_sidebar.append('div').classed('ChartBoxToggle', true)
+      let chart_traces  = chart_sidebar.append('div')
+      let chart_anomaly = chart_sidebar.append('div').classed('ChartAnomaly', true)
+
+      // Create anomaly-save interface
+      chart_anomaly.append('select')
+          .selectAll('option')
+          .data(['Flap Slate', 'Path High', 'Speed High', 'Note'])
+          .enter()
+          .append('option')
+              .text(d => d)
+      chart_anomaly.append('textarea')
+          .style('margin', '5px 0px')
+          .style('border', '1px solid #222')
+          // .style('width', '150px')
+          .style('display', 'none')
+      chart_anomaly.append('button')
+          .text('Save as Anomaly')
+          .node().onclick = (ev) => {
+              if (!sel) return;
+              let type = chart_anomaly.select('select').property('value');
+              let text = type;
+              if (type != 'Note') {
+                  settings.onAnomaly(sel, type);
+              } else {
+                  text = chart_anomaly.select('textarea').property('value');
+              }
+              addBox({
+                  sel: sel,
+                  color: anomaly_colours.get(type),
+                  text: text
+              })
+              brush.move(brush_rect, null);
+          }
+      chart_anomaly.append('button')
+        .style('margin-top', '5px')
+        .text('Save PNG of Graph')
+        .node().onclick = (ev) => {
+          let file_name = prompt("Please enter the name of the image.")
+          if(file_name != null){
+          html2canvas(chart_div).then(function(canvas) {
+      // Export the canvas to its data URI representation
+      var base64image = canvas.toDataURL("image/png");
+
+
+      var link = document.createElement("a");
+      link.download = file_name;
+      link.href = base64image;
+      link.click()
+
+      //downloadURI(base64image);
+    //  window.saveAs(base64image);
+      });
+    }
+        }
+
+          chart_anomaly.select('select').on('change', (e) => {
+              chart_anomaly.select('textarea').style('display', (e.target.value == 'Note') ? null : 'none')
+          })
+
+      chart_box_toggle
+          .append('label')
+              .text('Show Annotations')
+              .append('input')
+                  .attr('type', 'checkbox')
+                  .property('checked', true)
+                  .on('change', (e) => {
+                      box_g.style('display', e.target.checked ? null : 'none')
+                  })
+
+
+      const width  = total_width - margin.left - margin.right;
+      const height = total_height - margin.top - margin.bottom;
+
+      // Create <svg> and <g>
+      let total_svg = chart_content.append('svg')
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+      let svg = total_svg
+          .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`)
+
+      // Create Scales
+      let xExtents = d3.transpose(data.map(trace => d3.extent(trace.X)))
+      let xScale = d3.scaleLinear()
+          .domain([d3.min(xExtents[0]), d3.max(xExtents[1])]).nice()
+          .range(settings.reverse_x ? [width, 0] : [0, width]);
+      let yExtents = d3.transpose(data.map(trace => d3.extent(trace.Y)))
+      let yScale = d3.scaleLinear()
+          .domain(d3.extent([d3.min(yExtents[0]), d3.max(yExtents[1])])).nice()
+          .range([height, 0]);
+
+      // Create Axes
+      let yAxis = svg
+          .append("g")
+          .style('font-size', '14px')
+          .call(d3.axisLeft().scale(yScale))
+      let xAxis = svg
+          .append("g")
+          .style('font-size', '14px')
+          .attr("transform", `translate(0, ${height})`)
+          .call(d3.axisBottom().scale(xScale))
+
+      // Create clipping <rect>
+      total_svg
+          .append('defs')
+          .append('svg:clipPath')
+              .attr('id', `c${clip_counter}`)
+          .append("svg:rect")
+              // .attr('x', margin.left)
+              // .attr('y', margin.top)
+              .attr('x', 0)
+              .attr('y', 0)
+              .attr("width", width)
+              .attr("height", height)
+
+
+      // Create circles within clipped <g>
+      let clip_g = svg.append("g").attr('clip-path', `url(#c${clip_counter++})`)
+      let box_g = clip_g.append("g").style('opacity', 0.5)
+      let circle_g = clip_g.append("g")
+      circle_g
+          .selectAll('g')
+          .data(data)
+          .join('g')
+              .each(function (trace, i)  {
+                  chart_traces
+                      .append('label')
+                          .text(settings.trace_names[i] + '  ')
+                          .style('color', settings.trace_colors[i])
+                          .append('input')
+                              .attr('type', 'checkbox')
+                              .property('checked', true)
+                              .on('change', (e) => {
+                                   d3.select(this).style('display', e.target.checked ? null : 'none');
+                              })
+                  chart_traces.append('br')
+                  d3.select(this)
+                      .selectAll("circle")
+                      .data(d3.zip(trace.X, trace.Y))
+                      .join("circle")
+                          // .call((s) => s.each(d => console.log(d)))
+                          .attr("cx", d => xScale(d[0]))
+                          .attr("cy", d => yScale(d[1]))
+                          .attr("r", 3)
+                          .attr("fill-opacity", 0.7)
+                          .attr("fill", settings.trace_colors[i]);
+              })
+
+
+
+      // Draw borders
+      svg
+          .append("rect")
+              .style("fill", "none")
+              .style("stroke", "gray")
+              .attr("width", width)
+              .attr("height", height);
+
+      let circle = circle_g.selectAll("circle");
+
+      // Create selection brush and its callbacks
+      let brush = d3.brush()
+          .extent([[0,0],[width, height]])
+          .on("start", brushStart)
+          .on("brush", brushMove)
+          .on("end", brushEnd);
+
+      function brushStart() {
+
+      }
+      var zoom_t = d3.zoomIdentity;
+      function brushMove({selection}) {
+          if (selection) {
+              [[x0, y0], [x1, y1]] = selection.map((xs) => zoom_t.invert(xs));
+              // console.log(selection[0] + ', ' + selection[1], '\n' + [x0, y0] + ',' + [x1, y1]);
+              circle.classed("hidden", d =>
+                  xScale(d[0]) < x0 ||
+                  xScale(d[0]) > x1 ||
+                  yScale(d[1]) < y0 ||
+                  yScale(d[1]) > y1
+              );
+          }
+      }
+      function brushEnd({selection}) {
+          if (selection) {
+              [[x0, y0], [x1, y1]] = selection;
+              // data.filter(d =>
+              //     xScale[i](d[i]) > x0 &&
+              //     xScale[i](d[i]) < x1 &&
+              //     yScale[j](d[j]) > y0 &&
+              //     yScale[j](d[j]) < y1
+              // );
+              sel = [[rxScale.invert(x0),rxScale.invert(x1)],[ryScale.invert(y0),ryScale.invert(y1)]];
+          }
+          else {
+              sel = null;
+              circle.classed("hidden", false);
+          }
+      }
+
+      // Create zoom/pan and its callback
+      let zoom = d3.zoom()
+          .on("zoom", zoomMove)
+
+      let ryScale = yScale, rxScale = xScale
+      let old_k = null;
+      function zoomMove({transform: t}) {
+          zoom_t = t;
+          circle_g.attr('transform', t)
+          box_g.attr('transform', t)
+          box_g.selectAll('rect').style('stroke-width', 2 / t.k)
+          box_g.selectAll('text').style('font-size', `${fontinfo.size / t.k}`)
+          if (old_k != t.k) {
+              circle.attr('r', 3 / t.k)
+              old_k = t.k
+          }
+
+          ryScale = t.rescaleY(yScale)
+          rxScale = t.rescaleX(xScale)
+          yAxis.call(d3.axisLeft(ryScale));
+          xAxis.call(d3.axisBottom(rxScale));
+
+          xAxis.selectAll('.tick').each( function () {
+              d3.select(this).select('line')
+                  .attr('y1', -height)
+                  .attr('opacity', (d3.select(this).select('text').text() == 0) ? 1 : 0.1)
+          });
+          yAxis.selectAll('.tick').each( function () {
+              d3.select(this).select('line')
+                  .attr('x1', width)
+                  .attr('opacity', (d3.select(this).select('text').text() == 0) ? 1 : 0.1)
+          });
+      }
+
+      // Overwrite double click to reset view instead of zoom in
+      function onDblClick(e) {
+          zoom_rect.call(zoom.transform, d3.zoomIdentity);
+      }
+
+      // Apply zoom to new <rect> for easy disabling
+      let zoom_rect = total_svg
+          .append('rect')
+              .attr('id', 'zoom')
+              .attr('x', margin.left)
+              .attr('y', margin.top)
+              .attr('width', width)
+              .attr('height', height)
+              .style('opacity', 0)
+              .call(zoom)
+              .on("dblclick.zoom", onDblClick)
+
+      let brush_rect = svg.call(brush);
+
+      // Add Menu Buttons and their callbacks
+      let switchToZoom = () => {
+          zoom_rect.attr('display', null);
+          brush_rect.select('.overlay').attr('display', 'none');
+          brush.move(svg, null);
+      }
+      let switchToBrush = () => {
+          zoom_rect.attr('display', 'none');
+          brush_rect.select('.overlay').attr('display', null);
+      }
+
+      const OptionButtonsInfo = [
+          {img_src: "https://www.svgrepo.com/show/314941/zoom-icon.svg", callback: switchToZoom},
+          {img_src: "https://www.svgrepo.com/show/114778/selection.svg", callback: switchToBrush}
+      ]
+      chart_options.selectAll('button')
+          .data(OptionButtonsInfo)
+          .enter()
+          .append('button')
+              .classed('chart-btn', true)
+              .on('click', (_, d) => (d.callback)())
+              // .attr('onclick', d => d.callback.name + '()')
+              .append('img')
+                  .attr('src', d => d.img_src)
+
+      // Click on first button
+      chart_options.select('.chart-btn').node().click()
+
+
+      // Add Labels
+      let xLabel = svg.append("text")
+          .style("opacity", `${fontinfo.opacity}%`)
+          .style("font-size", `${fontinfo.size}`)
+          .style('fill', 'black')
+          .text(pars[0])
+          .attr("transform", function () {return `translate(
+                  ${width / 2 - this.getComputedTextLength() / 2},
+                  ${height + margin.bottom - fontinfo.size}
+              )`});
+
+      let yLabel = svg.append("text")
+          .style("opacity", `${fontinfo.opacity}%`)
+          .style("font-size", `${fontinfo.size}`)
+          .style('fill', 'black')
+          .text(pars[1])
+          .classed('ylabel', true)
+          .attr("transform", function () {return `rotate(${-90}) translate(
+                  -${height / 2 + this.getComputedTextLength() / 2},
+                  -${margin.left - fontinfo.size}
+              )`});
+
+      // Extend tick marks to create grid
+      xAxis.selectAll('.tick > line').each( function () {
+          d3.select(this)
+              .attr('y1', -height)
+              .attr('opacity', 0.1)
+      });
+      yAxis.selectAll('.tick > line').each( function () {
+          d3.select(this)
+              .attr('x1', width)
+              .attr('opacity', 0.1)
+      });
+
+      function addBox({ sel, color, text }) {
+          sel[0] = sel[0].map((x) => rxScale(x)).map((x) => zoom_t.invertX(x))
+          sel[1] = sel[1].map((y) => ryScale(y)).map((y) => zoom_t.invertY(y))
+          let [[x0, x1], [y0, y1]] = sel;
+          box_g.append('rect')
+              .attr('width', x1 - x0)
+              .attr('height', y1 - y0)
+              .style('transform', `translate(${x0}px, ${y0}px)`)
+              .style('fill', color)
+              .style('fill-opacity', 0.2)
+              .style('stroke', color)
+              .style('stroke-width', '2px')
+              .style('stroke-opacity', 0.5)
+          box_g.append('text')
+              .style("opacity", 0.7)
+              .style("font-size", `${fontinfo.size}`)
+              .style('fill', color)
+              .style("transform", `translate(
+                  ${x0}px,
+                  ${y0 - fontinfo.size - 3}px
+              )`)
+              .text(text);
+      }
+
+      // Show Anomalies
+      for (let box of settings.boxes) {
+          addBox(box);
+      }
 }

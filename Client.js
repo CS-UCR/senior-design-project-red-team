@@ -295,21 +295,64 @@ function oneDimChart() {
           let data = [];
           let ids = [];
           let total = [];
+          let zeros = [];
+          let y_holder = [];
           /*for (let i = 0; i < test_pars.length; i++) {
             data[i] = [];
           }*/
 
+          let on_anomaly = (sel, type) => {
+            let a = {
+                x: sel[0],
+                y: sel[1],
+                flight: "All Flights",
+                x_par: par1,
+                y_par: par2,
+                type: type,
+                Graph_Type: 'Statistics'
+            }
+            console.log(a);
+            Anomaly_Upload(a);
+          }
+          const settings = {
+              width: 1200,
+              boxes: [],
+              onAnomaly: on_anomaly,
+              trace_names: ["All Flights"]
+          }
+
             let i = 0;
-          for (let flight in json) {
+            test_pars.each((par) => {
+                for (let flight in json) {
+                data.push(json[flight+""][par+""]["mean"]);
+                for(let p = 0; p < data.length; p++){
+                  zeros[p] = 0;
+                }
+              }
+              twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data, Y:zeros}] ,[par, "AVG"], settings );
+            })
+          /*for (let flight in json) {
               test_pars.each((par) => {
                   data.push(json[flight+""][par+""]["mean"]);
-                  i++;
+                  for(let p = 0; p < data.length; p++){
+                    zeros[p] = 0;
+                  }
               })
+              y_holder.push(0)
+              zeros = []
               ids.push(flight);
               total.push(data);
               data = []
-          }
-          multi1DChart(d3.select(cur_chart).append('div').node(), total, test_pars, ids, 1600, 900);
+              i++;
+          }*/
+
+
+          /*let j = 0;
+          test_pars.each((par) =>{
+            twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: total[j], Y:y_holder}] ,[par, "AVG"], settings );
+            j++;
+          });*/
+
       });
 
 
