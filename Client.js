@@ -691,6 +691,8 @@ async function Anomaly_Upload(obj){
 
 })*/
 
+
+
 function testing() {
   document.getElementById('parameter-1').value = 'AILERON POSITION LH'
   document.getElementById('parameter-2').value = 'AILERON POSITION RH'

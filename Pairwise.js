@@ -409,6 +409,8 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
     let chart_traces  = chart_sidebar.append('div')
     let chart_anomaly = chart_sidebar.append('div').classed('ChartAnomaly', true)
 
+    //chart_anomaly.setAttribute("data-html2canvas" , "ignore");
+
     // Create anomaly-save interface
     chart_anomaly.append('select')
         .selectAll('option')
@@ -439,14 +441,25 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
             })
             brush.move(brush_rect, null);
         }
+        //.attr('data-html2canvas-ignore')
     chart_anomaly.append('button')
       .style('margin-top', '5px')
       .text('Save PNG of Graph')
       .node().onclick = (ev) => {
         let file_name = prompt("Please enter the name of the image.")
         if(file_name != null){
+        //chart_anomaly.style.display = 'none';
         html2canvas(chart_div).then(function(canvas) {
+        var ctx = canvas.getContext("2d");
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        //var pos = chart_anomaly.getBoundingClientRect();
+        //var top = pos.top;
+        //var lef = pos.left;
+        ctx.fillStyle = "white";
+        ctx.fillRect(1243,600,200,300);
+        //ctx.putImageData(imageData, 0, 0);
     // Export the canvas to its data URI representation
+    //chart_anomaly.style.display = 'inline';
     var base64image = canvas.toDataURL("image/png");
 
 
@@ -459,7 +472,9 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
   //  window.saveAs(base64image);
     });
   }
+
       }
+      //.attr('data-html2canvas-ignore')
 
         chart_anomaly.select('select').on('change', (e) => {
             chart_anomaly.select('textarea').style('display', (e.target.value == 'Note') ? null : 'none')
