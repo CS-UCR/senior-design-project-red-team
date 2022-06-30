@@ -2,7 +2,25 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parse/sync'); // NodeJS 16
+const stringify = require('csv-stringify');
+const createCsvWriter = require('csv-writer')
+const json2csv = require('json2csv').parse;
 // const { strictEqual } = require('assert');
+
+/*const csvWriter = createCsvWriter({
+    path: 'Anomalies.csv',
+    header: [
+        {id: 'x_initial', title: 'x_initial'},
+        {id: 'x_final', title: 'x_final'},
+        {id: 'y_inital', title: 'y_inital'},
+        {id: 'y_final', title: 'y_final'},
+        {id: 'flight', title: 'flight'},
+        {id: 'x_parameter', title: 'x_parameter'},
+        {id: 'y_parameter', title: 'y_parameter'},
+        {id: 'Anomaly_type', title: 'Anomaly_type'},
+        {id: 'Graph_Type', title: 'Graph_Type'},
+    ]
+});*/
 
 const flight_data_dir = 'truncated/';
 
@@ -147,7 +165,7 @@ const server = http.createServer((req, res) => {
                 break;
             default:
                 //let file = requested_data[0];
-                
+
                 let file = requested_data.join('/')
                 fs.readFile(file, (err, data) => {
                     if (err) {
@@ -177,18 +195,33 @@ const server = http.createServer((req, res) => {
         var ana = fs.readFileSync('Anomalies.json');
         if (ana == '') ana = [];
         var obj = JSON.parse(ana);
+        var to_csv_obj = JSON.parse(body);
         obj.push(JSON.parse(body));
         var converted = JSON.stringify(obj,null,4);
         fs.writeFile('Anomalies.json', converted, err => {
       // error checking
         if (err) throw err;
-
+        //console.log(to_csv_obj.type);
+        console.log(to_csv_obj.Graph_Type);
+        var csv_obj = {x_initial:to_csv_obj.x[0] ,
+                      x_final: to_csv_obj.x[1] ,
+                       y_inital:to_csv_obj.y[0],
+                       y_final:to_csv_obj.y[1],
+                       flight:to_csv_obj.flight ,
+                       x_parameter:to_csv_obj.x_par ,
+                       y_parameter:to_csv_obj.y_par ,
+                       Anomaly_Type:to_csv_obj.type ,
+                       Graph_Type:to_csv_obj.Graph_Type + ""}
+        //console.log(csv_obj.Anomaly_Type);
+        //console.log(csv_obj.Graph_Type);
+        fs.appendFileSync('Anamolies.csv', json2csv([csv_obj], {header:false})+'\r\n');
+        //fs.appendFileSync('Anomalies.csv' , stringify({x_initial:converted.x[0] , x_final: converted.x[1] , y_inital:converted.y[0], y_final:converted.y[1], flight:converted.flight , x_parameter:converted.x_par , y_parameter:converted.y_par , Anomaly_Type:converted.type , Graph_Type:converted.Graph_type}));
         res.end("DATA RECIEVED. UPLOAD SUCCESSFUL\n");
       });
     });
 
 
-      
+
     } else {
         res.statusCode = 500;
         res.end();
