@@ -1,6 +1,7 @@
 const onAWS = false;
 const hostname = onAWS ? 'ec2-54-91-170-251.compute-1.amazonaws.com' : '127.0.0.1'
 const port = onAWS ? '80' : '8080'
+var login;
 
 var layout = {
   xaxis: {
@@ -78,6 +79,28 @@ function init() {
               .text(d => d)
         })
         .catch(err => console.error(err));
+        // get login info to add user login
+        fetch("http://" + hostname + ":" + port + "/" + ['login'].join('/'))
+        .then(response => response.text())
+        .then(user_info => {
+          if(user_info === ""){
+            login = window.prompt("Please enter your login.");
+            ob = {
+              user: login
+            }
+            console.log(JSON.stringify(ob));
+            fetch("http://" + hostname + ":" + port + "/" + ['login'].join('/') , {method: 'POST' , body: JSON.stringify(ob)})
+            .then(response => response.text())
+            .then(rep => {
+              console.log(rep);
+            })
+            .catch(err => console.error(err));
+          }else{
+            login = user_info;
+            console.log(login);
+          }
+        })
+        .catch(err => console.error(err));
 }
 
 function goto1() {
@@ -98,6 +121,9 @@ function goto1() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
     document.getElementById('file-select').disabled = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
@@ -106,6 +132,7 @@ function goto1() {
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
     document.getElementById('ONED').style.border = "1px solid #000000";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 }
 function goto2() {
     refresh_chart = () => dtr_chart(false);
@@ -125,6 +152,9 @@ function goto2() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
     document.getElementById('file-select').disabled = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -132,6 +162,7 @@ function goto2() {
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
     document.getElementById('ONED').style.border = "1px solid #000000";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 }
 function goto3() {
     refresh_chart = () => time_series(true);
@@ -150,6 +181,9 @@ function goto3() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = false;
     document.getElementById('file-select').disabled = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -157,6 +191,7 @@ function goto3() {
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
     document.getElementById('ONED').style.border = "1px solid #000000";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 
 }
 
@@ -172,6 +207,9 @@ function goto4() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
     document.getElementById('file-select').disabled = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -179,6 +217,7 @@ function goto4() {
     document.getElementById('PAIR').style.border = "1px solid #00ff00";
     document.getElementById('STAT').style.border = "1px solid #000000";
     document.getElementById('ONED').style.border = "1px solid #000000";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 
 }
 
@@ -194,6 +233,9 @@ function goto6() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
     document.getElementById('file-select').disabled = true;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -201,6 +243,7 @@ function goto6() {
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #000000";
     document.getElementById('ONED').style.border = "1px solid #00ff00";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 
 }
 
@@ -261,7 +304,8 @@ async function two_parameter_chart() {
           x_par: par1,
           y_par: par2,
           type: type,
-          Graph_Type: 'Two Parameter Chart'
+          Graph_Type: 'Two Parameter Chart',
+          User: login
       }
       console.log(a);
       Anomaly_Upload(a);
@@ -309,7 +353,8 @@ function oneDimChart() {
                 x_par: par1,
                 y_par: par2,
                 type: type,
-                Graph_Type: 'Statistics'
+                Graph_Type: 'Statistics',
+                User: login
             }
             console.log(a);
             Anomaly_Upload(a);
@@ -422,7 +467,8 @@ function dtr_chart(val) {
                 x_par: 'Distance From Landing (Miles)',
                 y_par: this.value,
                 type: type,
-                Graph_Type: "DTR Chart"
+                Graph_Type: "DTR Chart",
+                User: login
             }
             console.log(a);
             Anomaly_Upload(a);
@@ -463,7 +509,8 @@ function dtr_chart(val) {
               x_par: 'Distance From Landing (Miles)',
               y_par: element.innerHTML,
               type: type,
-              Graph_Type: "DTR Chart"
+              Graph_Type: "DTR Chart",
+              User: login
           }
           console.log(a);
           Anomaly_Upload(a);
@@ -533,7 +580,8 @@ function time_series() {
                 x_par: 'Time',
                 y_par: this.value,
                 type: type,
-                Graph_Type: "Time Series Chart"
+                Graph_Type: "Time Series Chart",
+                User: login
             }
             console.log(a);
             Anomaly_Upload(a);
@@ -673,7 +721,7 @@ var anomaly_colours = new Map([
 ])
 
 async function Anomaly_Upload(obj){
-    fetch("http://" + hostname + ":" + port + "/" , {method: 'POST' , body: JSON.stringify(obj)})
+    fetch("http://" + hostname + ":" + port + "/" + ['Anomaly_mark'].join('/') , {method: 'POST' , body: JSON.stringify(obj)})
         .then(response => response.text())
         .then(response => {
             console.log('RESPONSE::POST:')
@@ -726,7 +774,7 @@ document.addEventListener("click", (evt) => {
 
   if(evt.target != document.getElementById('file-select') && document.getElementById("dro").classList.contains("show")){
     document.getElementById("dro").classList.toggle("show");
-    //console.log("works hopefully");
+    console.log("works hopefully");
   }
 
 })

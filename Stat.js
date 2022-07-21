@@ -17,6 +17,9 @@ function goto5() {
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
     document.getElementById('file-select').disabled = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -24,6 +27,7 @@ function goto5() {
     document.getElementById('PAIR').style.border = "1px solid #000000";
     document.getElementById('STAT').style.border = "1px solid #00ff00";
     document.getElementById('ONED').style.border = "1px solid #000000";
+    document.getElementById('ANON').style.border = "1px solid #000000";
 
 }
 

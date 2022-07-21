@@ -158,6 +158,21 @@ const server = http.createServer((req, res) => {
                     y: csv_cols[requested_data[2]]
                 }));
                 break;
+            case 'login':
+              let ans = "";
+              let forwarded = req.headers['x-forwarded-for']
+              let ip = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress;
+              console.log("USER IP: " + ip);
+              let logs = fs.readFileSync('User_Info.json');
+              let users_info = JSON.parse(logs);
+              //console.log(JSON.stringify(users_info));
+              users_info.forEach(function(item){
+                if(ip === item.address){
+                  ans = item.login;
+                }
+              })
+              res.end(ans);
+              break;
             case undefined:
                 res.setHeader('Content-Type', 'text/html');
                 let html = fs.readFileSync('Client.html');
@@ -177,8 +192,10 @@ const server = http.createServer((req, res) => {
                             case '.js': res.setHeader('Content-Type', 'application/javascript'); break;
                             case '.css': res.setHeader('Content-Type', 'text/css'); break;
                             case '.json': res.setHeader('Content-Type', 'application/json'); break;
+                            case '.csv': res.setHeader('Content-Type', 'text/csv'); break;
                         }
                         res.end(data);
+                        //console.log("CSV SENT");
                     }
 
                 });
@@ -187,6 +204,16 @@ const server = http.createServer((req, res) => {
     } else if (req.method == 'POST') {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Content-Type', 'application/json');
+      let posted_data =
+          (req.url)
+              .split('/')
+              .filter(x => x != '')
+              .map(x => x
+                  .replace(/%[0-9]+/g, match => String.fromCharCode(parseInt(match.slice(1), 16)))
+              );
+      console.log(posted_data)
+      switch(posted_data[0]){
+        case 'Anomaly_mark':
       let body = "";
       req.on('data' , chunk => {
         body += chunk;
@@ -211,7 +238,9 @@ const server = http.createServer((req, res) => {
                        x_parameter:to_csv_obj.x_par ,
                        y_parameter:to_csv_obj.y_par ,
                        Anomaly_Type:to_csv_obj.type ,
-                       Graph_Type:to_csv_obj.Graph_Type + ""}
+                       Graph_Type:to_csv_obj.Graph_Type + "",
+                       User: to_csv_obj.User + ""
+                     }
         //console.log(csv_obj.Anomaly_Type);
         //console.log(csv_obj.Graph_Type);
         fs.appendFileSync('Anamolies.csv', json2csv([csv_obj], {header:false})+'\r\n');
@@ -219,9 +248,43 @@ const server = http.createServer((req, res) => {
         res.end("DATA RECIEVED. UPLOAD SUCCESSFUL\n");
       });
     });
+    break;
+    case 'login':
+      let bod = "";
+      req.on('data' , chunk => {
+        bod += chunk;
+      });
+      //console.log(bod + "");
 
+      req.on('end', () =>{
+        bod = JSON.parse(bod);
+        console.log("after parse");
+        console.log(bod.user);
+      let forwarded = req.headers['x-forwarded-for']
+      let ip = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress;
+      obj = {
+        login: bod.user,
+        address: ip
+      }
+      let logs = fs.readFileSync('User_Info.json');
+      let info = JSON.parse(logs);
+      info.push(obj);
+      logs = JSON.stringify(info, null, 4);
+      fs.writeFileSync("User_Info.json",logs,"utf-8");
+      res.end("Login established");
+    })
 
+      break;
+    case undefined:
+      res.statusCode = 500;
+      res.end();
+      break;
+    default:
+    res.statusCode = 500;
+    res.end();
+    break;
 
+}
     } else {
         res.statusCode = 500;
         res.end();

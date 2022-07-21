@@ -8,6 +8,7 @@
     <script src="https://d3js.org/d3.v7.js"></script>
     <script src="Pairwise.js"></script>
     <script src="Stat.js"></script>
+    <script src="Anomaly.js"></script>
     <link href="tailwind.css" rel="stylesheet">
     <link href="tabs.css" rel="stylesheet">
     <link href="chart.css" rel="stylesheet">
@@ -27,6 +28,7 @@
                 <button class="btn-top" onclick="goto4()" id='PAIR'>Pairwise Plots</button>
                 <button class="btn-top" onclick="goto5()" id='STAT'>Statistics</button>
                 <button class="btn-top" onclick="goto6()" id='ONED'>1-Dimensional Graph</button>
+                <button class="btn-top" onclick="goto7()" id='ANON'>Anomalies</button>
             </div>
         </nav>
         <div class="mx-4">
@@ -83,6 +85,13 @@
                             onclick='dtr_chart(true)' hidden>Display DTR</button>
                     <button id='DISPLAY_STATISTICS_NORMAL_NEW_TAB' class="bg-blue-500 text-gray-50 rounded-sm px-2"
                                 onclick='s_refresh_chart_tab()' hidden>Display Statistics in new tab</button>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='DownAnonJson'
+                                onclick='DownJson()' hidden>Download Anomalies.json</button>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='DownAnonCSV'
+                                onclick='DownCSV()' hidden>Download Anomalies.csv</button>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='UpAnon'
+                                onclick='UploadAnon()' hidden>Upload Anomalies</button>
+
 
                 </header>
                 <main>

@@ -1,3 +1,2 @@
-"x_initial","x_final","y_inital","y_final","flight","x_parameter","y_parameter","Anomaly_Type","Graph_Type"
-73.98165137614679,85.3211009174312,-91,-91,"677200105090350","AIRBRAKE POSITION","AIRCRAFT NUMBER","Speed High","Two Parameter Chart"
-94.6788990825688,111.96330275229357,-91,-91,"677200105090350","AIRBRAKE POSITION","AIRCRAFT NUMBER","Speed High","Two Parameter Chart"
+"x_initial","x_final","y_inital","y_final","flight","x_parameter","y_parameter","Anomaly_Type","Graph_Type", "User"
+95.97548122236996,106.91130244915723,-91,-91,"677200105090350","AIRBRAKE POSITION","AIRCRAFT NUMBER","Flap Slate","Two Parameter Chart","test"
