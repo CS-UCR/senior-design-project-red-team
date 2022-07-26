@@ -14,5 +14,85 @@
         "type": "Flap Slate",
         "Graph_Type": "Two Parameter Chart",
         "User": "test"
+    },
+    {
+        "x": [
+            95.97548122236996,
+            106.91130244915723
+        ],
+        "y": [
+            -91,
+            -91
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "AIRCRAFT NUMBER",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "test"
+    },
+    {
+        "x": [
+            -91,
+            -91
+        ],
+        "y": [
+            58.34576575283412,
+            51.71514713431997
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRCRAFT NUMBER",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "Adhikar"
+    },
+    {
+        "x": [
+            95.97548122236996,
+            106.91130244915723
+        ],
+        "y": [
+            -91,
+            -91
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "AIRCRAFT NUMBER",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "test"
+    },
+    {
+        "x": [
+            95.97548122236996,
+            106.91130244915723
+        ],
+        "y": [
+            -91,
+            -91
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "AIRCRAFT NUMBER",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "test"
+    },
+    {
+        "x": [
+            -91,
+            -91
+        ],
+        "y": [
+            58.34576575283412,
+            51.71514713431997
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRCRAFT NUMBER",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "Adhikar"
     }
 ]

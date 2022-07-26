@@ -64,12 +64,40 @@ async function DownCSV(){
       link.click();
       document.body.removeChild(link);
 
-    
+
 
 }
 
 function UploadAnon(){
 
   console.log("UploadAnon works");
+  let input_btn = document.createElement('input');
+  input_btn.setAttribute('type', 'file');
+  input_btn.setAttribute('oninput', "UpAno(this.files)")
+  input_btn.click();
+
+
+}
+
+function UpAno(files){
+
+  type = files[0].type;
+  console.log(type);
+  if(type == "text/csv"){
+    fetch("http://" + hostname + ":" + port + "/" + ['anoup_csv'].join('/') , {mode: 'no-cors', method: 'POST' , body: files[0]})
+    .then(response => response.text())
+    .then(response => {
+      window.alert(response)
+    })
+    .catch(err => console.error(err));
+  }else{
+
+    fetch("http://" + hostname + ":" + port + "/" + ['anoup_json'].join('/') , {mode: 'no-cors', method: 'POST' , body: files[0] , headers: {'Content-type': 'application/json; charset=UTF-8'}})
+    .then(response => response.text())
+    .then(rep => {
+      window.alert(rep)
+    })
+    .catch(err => console.error(err));
+  }
 
 }

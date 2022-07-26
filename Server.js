@@ -5,6 +5,7 @@ const csv = require('csv-parse/sync'); // NodeJS 16
 const stringify = require('csv-stringify');
 const createCsvWriter = require('csv-writer')
 const json2csv = require('json2csv').parse;
+const csv_append = require("csv-append");
 // const { strictEqual } = require('assert');
 
 /*const csvWriter = createCsvWriter({
@@ -275,6 +276,69 @@ const server = http.createServer((req, res) => {
     })
 
       break;
+
+    case 'anoup_csv':
+    //let bo = [Buffer.alloc(0, "", 'base64')];
+    let bo = [];
+    req.on('data' , chunk => {
+      bo.push(chunk)
+    });
+
+    req.on('end', () => {
+      //first put it into csv
+      /*let csv_input = Buffer.concat(bo);
+      csv_input = csv.parse(csv_input.toString(), {from_line:2 , relax_quotes: true});
+      csv_append.append('Anamolies.csv', csv_input);*/
+      let csv_input = csv.parse(stringify.stringify(bo[0]), {from_line:2 , relax_quotes: true});
+      fs.appendFileSync('Anamolies.csv', stringify.stringify(csv_input) + '\r\n');
+      //let total = csv.parse(bo, {from_line:2});
+    /*  fs.appendFileSync('Anamolies.csv', stringify.stringify(csv_input, {
+        cast: {object: function(value){
+          return JSON.stringify(value)
+        }}}) + '\r\n');*/
+      res.end("works");
+    })
+    break;
+
+    case 'anoup_json':
+    let da = [Buffer.alloc(0)];
+    req.on('data' , chunk => {
+      da.push(chunk);
+    });
+    req.on('end', () =>{
+
+      var ano = fs.readFileSync('Anomalies.json');
+      if (ano == '') ano = [];
+      var orig = JSON.parse(ano);
+      //console.log(da);
+      var tot = Buffer.concat(da);
+      tot = JSON.parse(tot)
+      //console.log(tot);
+      for(let i = 0; i < tot.length; i++){
+        let j = tot[i];
+        //console.log(j)
+        orig.push(j);
+
+        var convert = {x_initial:j.x[0] ,
+                      x_final: j.x[1] ,
+                       y_inital:j.y[0],
+                       y_final:j.y[1],
+                       flight:j.flight ,
+                       x_parameter:j.x_par ,
+                       y_parameter:j.y_par ,
+                       Anomaly_Type:j.type ,
+                       Graph_Type:j.Graph_Type + "",
+                       User: j.User + ""
+                     }
+        fs.appendFileSync('Anamolies.csv', json2csv([convert], {header:false})+'\r\n');
+      }
+
+
+      fs.writeFileSync('Anomalies.json', JSON.stringify(orig, null, 4));
+      res.end("Data received. Upload SUCCESSFUL");
+    })
+    break;
+
     case undefined:
       res.statusCode = 500;
       res.end();

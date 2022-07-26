@@ -85,6 +85,7 @@ function init() {
         .then(user_info => {
           if(user_info === ""){
             login = window.prompt("Please enter your login.");
+            if(login != null){
             ob = {
               user: login
             }
@@ -95,6 +96,7 @@ function init() {
               console.log(rep);
             })
             .catch(err => console.error(err));
+          }
           }else{
             login = user_info;
             console.log(login);
