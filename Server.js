@@ -244,7 +244,7 @@ const server = http.createServer((req, res) => {
                      }
         //console.log(csv_obj.Anomaly_Type);
         //console.log(csv_obj.Graph_Type);
-        fs.appendFileSync('Anamolies.csv', json2csv([csv_obj], {header:false})+'\r\n');
+        fs.appendFileSync('Anamolies.csv', json2csv([csv_obj], {header:false})+'\n');
         //fs.appendFileSync('Anomalies.csv' , stringify({x_initial:converted.x[0] , x_final: converted.x[1] , y_inital:converted.y[0], y_final:converted.y[1], flight:converted.flight , x_parameter:converted.x_par , y_parameter:converted.y_par , Anomaly_Type:converted.type , Graph_Type:converted.Graph_type}));
         res.end("DATA RECIEVED. UPLOAD SUCCESSFUL\n");
       });
@@ -279,7 +279,7 @@ const server = http.createServer((req, res) => {
 
     case 'anoup_csv':
     //let bo = [Buffer.alloc(0, "", 'base64')];
-    let bo = [];
+    let bo = [Buffer.alloc(0)];
     req.on('data' , chunk => {
       bo.push(chunk)
     });
@@ -289,8 +289,45 @@ const server = http.createServer((req, res) => {
       /*let csv_input = Buffer.concat(bo);
       csv_input = csv.parse(csv_input.toString(), {from_line:2 , relax_quotes: true});
       csv_append.append('Anamolies.csv', csv_input);*/
-      let csv_input = csv.parse(stringify.stringify(bo[0]), {from_line:2 , relax_quotes: true});
-      fs.appendFileSync('Anamolies.csv', stringify.stringify(csv_input) + '\r\n');
+      var anaj = fs.readFileSync('Anomalies.json');
+      if (anaj == '') anaj = [];
+      var overalj = JSON.parse(anaj);
+      let total_csv = (Buffer.concat(bo));
+      total_csv = csv.parse(total_csv.toString(), {from_line:2, relax_quotes:true});
+      for(var i = 0; i < total_csv.length; i++){
+          let ccon = {
+            x_initial:total_csv[i][0] *1 ,
+            x_final: total_csv[i][1]*1 ,
+            y_inital:total_csv[i][2]*1,
+            y_final:total_csv[i][3]*1,
+            flight:total_csv[i][4] ,
+            x_parameter:total_csv[i][5] ,
+            y_parameter:total_csv[i][6] ,
+            Anomaly_Type:total_csv[i][7] ,
+            Graph_Type:total_csv[i][8]+ "",
+            User: total_csv[i][9]+ ""
+          }
+          let jcon = {
+            x:[total_csv[i][0] *1,
+             total_csv[i][1]*1 ],
+            y:[total_csv[i][2]*1,
+            total_csv[i][3]*1],
+            flight:total_csv[i][4] ,
+            x_par:total_csv[i][5] ,
+            y_par:total_csv[i][6] ,
+            type:total_csv[i][7] ,
+            Graph_Type:total_csv[i][8]+ "",
+            User: total_csv[i][9]+ ""
+          }
+          overalj.push(jcon);
+
+          fs.appendFileSync('Anamolies.csv', json2csv([ccon], {header:false})+'\n');
+      }
+      var new_and_old_json = JSON.stringify(overalj,null,4);
+      fs.writeFileSync('Anomalies.json', new_and_old_json);
+      //total_csv = csv.parse(total_csv.toString(), {from_line:2, relax_quotes:true});
+      //fs.appendFileSync('Anamolies.csv', );
+      //console.log(JSON.stringify(total_csv));
       //let total = csv.parse(bo, {from_line:2});
     /*  fs.appendFileSync('Anamolies.csv', stringify.stringify(csv_input, {
         cast: {object: function(value){
@@ -330,7 +367,7 @@ const server = http.createServer((req, res) => {
                        Graph_Type:j.Graph_Type + "",
                        User: j.User + ""
                      }
-        fs.appendFileSync('Anamolies.csv', json2csv([convert], {header:false})+'\r\n');
+        fs.appendFileSync('Anamolies.csv', json2csv([convert], {header:false})+'\n');
       }
 
 

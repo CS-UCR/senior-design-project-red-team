@@ -84,7 +84,7 @@ function UpAno(files){
   type = files[0].type;
   console.log(type);
   if(type == "text/csv"){
-    fetch("http://" + hostname + ":" + port + "/" + ['anoup_csv'].join('/') , {mode: 'no-cors', method: 'POST' , body: files[0]})
+    fetch("http://" + hostname + ":" + port + "/" + ['anoup_csv'].join('/') , {mode: 'no-cors', method: 'POST' , body: files[0], headers: {'Content-type': 'text/csv; charset=UTF-8'}})
     .then(response => response.text())
     .then(response => {
       window.alert(response)
