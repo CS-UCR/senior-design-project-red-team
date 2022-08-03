@@ -1049,6 +1049,13 @@ function One_D_Chart(chart_div, data, pars, user_settings){
           if(file_name != null){
           html2canvas(chart_div).then(function(canvas) {
       // Export the canvas to its data URI representation
+      var ctx = canvas.getContext("2d");
+      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      //var pos = chart_anomaly.getBoundingClientRect();
+      //var top = pos.top;
+      //var lef = pos.left;
+      ctx.fillStyle = "white";
+      ctx.fillRect(1243,600,200,300);
       var base64image = canvas.toDataURL("image/png");
 
 

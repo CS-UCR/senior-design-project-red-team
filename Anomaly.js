@@ -15,10 +15,13 @@ function goto7() {
     document.getElementById('refresh').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = true;
+    document.getElementById('file-select').hidden = true;
     document.getElementById('DownAnonJson').hidden = false;
     document.getElementById('DownAnonCSV').hidden = false;
     document.getElementById('UpAnon').hidden = false;
+    document.getElementById('ModAnon').hidden = false;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -28,6 +31,18 @@ function goto7() {
     document.getElementById('ONED').style.border = "1px solid #000000";
     document.getElementById('ANON').style.border = "1px solid #00ff00";
 
+}
+
+function ModAnonGoto(){
+    document.getElementById('GraphSelection').hidden = false;
+    document.getElementById('DownAnonJson').hidden = true;
+    document.getElementById('DownAnonCSV').hidden = true;
+    document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('file-select').hidden = false;
+    document.getElementById('parameter-2').hidden = false;
+    document.getElementById('parameter-1').hidden = false;
+    document.getElementById('PandF').hidden = false;
 }
 
 function DownJson(){
@@ -100,4 +115,11 @@ function UpAno(files){
     .catch(err => console.error(err));
   }
 
+}
+
+function ProcessAndFilter(){
+  console.log(document.getElementById('file-select').value)
+  console.log(document.getElementById('parameter-1').value)
+  console.log(document.getElementById('parameter-2').value)
+  console.log(document.getElementById('GraphSelection').value)
 }

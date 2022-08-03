@@ -16,10 +16,13 @@ function goto5() {
     document.getElementById('refresh').hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = false;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -53,6 +56,8 @@ function goto5() {
       let size = parameters.length;
       for(var i = 0; i < size; i++){
         let par = parameters[i];
+        let new_chart = document.createElement('div');
+        new_chart.classList.add("pc","blue-trim");
         // let new_chart = document.createElement('div');
         // new_chart.classList.add("pc","blue-trim");
         fetch("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, parameters[i], parameters[i]].join('/'))
@@ -70,9 +75,9 @@ function goto5() {
                 new_chart.innerHTML += "Standard Deviation: " + d3.deviation(plot_data) + "\n";
                 new_chart.innerHTML += "Median: " + d3.median(plot_data) + "\n";
 
-                // cur_chart.appendChild(new_chart);
+                 cur_chart.appendChild(new_chart);
 
-                d3.select(cur_chart).append('div').classed('pc blue-trim', true);
+                //d3.select(cur_chart).append('div').classed('pc blue-trim', true);
 
             })
 

@@ -29,6 +29,7 @@
                 <button class="btn-top" onclick="goto5()" id='STAT'>Statistics</button>
                 <button class="btn-top" onclick="goto6()" id='ONED'>1-Dimensional Graph</button>
                 <button class="btn-top" onclick="goto7()" id='ANON'>Anomalies</button>
+                <button class="btn-top" onclick="ChangeLogin()" id='CHUSER'></button>
             </div>
         </nav>
         <div class="mx-4">
@@ -91,6 +92,16 @@
                                 onclick='DownCSV()' hidden>Download Anomalies.csv</button>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='UpAnon'
                                 onclick='UploadAnon()' hidden>Upload Anomalies</button>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='ModAnon'
+                                onclick='ModAnonGoto()' hidden>Modify Anomalies</button>
+                    <select class="rounded-sm blue-trim" id = "GraphSelection" placeholder = "Graph Type">
+                      <option value="">Select Graph Type</option>
+                      <option value = "TWP">Two Parameter Chart</option>
+                      <option value = "TS">Time Series</option>
+                      <option value = "DTR">DTR</option>
+                    </select>
+                    <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='PandF'
+                                onclick='ProcessAndFilter()' hidden>Search Anomalies and Apply Filters</button>
 
 
                 </header>

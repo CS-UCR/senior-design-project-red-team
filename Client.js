@@ -89,6 +89,7 @@ function init() {
             ob = {
               user: login
             }
+            document.getElementById('CHUSER').innerHTML = "Change Current User: " + login;
             console.log(JSON.stringify(ob));
             fetch("http://" + hostname + ":" + port + "/" + ['login'].join('/') , {method: 'POST' , body: JSON.stringify(ob)})
             .then(response => response.text())
@@ -100,9 +101,30 @@ function init() {
           }else{
             login = user_info;
             console.log(login);
+            document.getElementById('CHUSER').innerHTML = "Change Current User: " + login;
           }
         })
         .catch(err => console.error(err));
+
+
+}
+
+function ChangeLogin(){
+  let user_info = window.prompt("Please enter your login.");
+  if(user_info != null){
+  ob = {
+    user: user_info
+  }
+  document.getElementById('CHUSER').innerHTML = "Change Current User: " + user_info;
+  console.log(JSON.stringify(ob));
+  fetch("http://" + hostname + ":" + port + "/" + ['loginchange'].join('/') , {method: 'POST' , body: JSON.stringify(ob)})
+  .then(response => response.text())
+  .then(rep => {
+    console.log(rep);
+    login = user_info;
+  })
+  .catch(err => console.error(err));
+}
 }
 
 function goto1() {
@@ -122,10 +144,13 @@ function goto1() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = false;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
 
     document.getElementById('TPC').style.border = "1px solid #00ff00";
@@ -153,10 +178,13 @@ function goto2() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = false;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #00ff00";
@@ -182,10 +210,13 @@ function goto3() {
     document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = false;
-    document.getElementById('file-select').disabled = false;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -208,10 +239,13 @@ function goto4() {
     document.getElementById("dtr-specific").hidden = true;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = false;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";
@@ -232,12 +266,20 @@ function goto6() {
     document.getElementById('parameter-1').hidden = true;
     document.getElementById('time_series_select').hidden = false;
     document.getElementById("dtr-specific").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS_NORMAL").hidden = true;
+    document.getElementById("DISPLAY_STATISTICS_NORMAL_NEW_TAB").hidden = true;
+    document.getElementById('Refresh').hidden = false;
+    document.getElementById('refresh').hidden = false;
     document.getElementById('ptile-opts').hidden = true;
     document.getElementById('TIME_SERIES_TO_DTR').hidden = true;
-    document.getElementById('file-select').disabled = true;
+    document.getElementById('file-select').hidden = false;
     document.getElementById('DownAnonJson').hidden = true;
     document.getElementById('DownAnonCSV').hidden = true;
     document.getElementById('UpAnon').hidden = true;
+    document.getElementById('ModAnon').hidden = true;
+    document.getElementById('GraphSelection').hidden = true;
+    document.getElementById('PandF').hidden = true;
 
     document.getElementById('TPC').style.border = "1px solid #000000";
     document.getElementById('DTRC').style.border = "1px solid #000000";

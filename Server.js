@@ -277,6 +277,37 @@ const server = http.createServer((req, res) => {
 
       break;
 
+    case 'loginchange':
+    let bodyy = "";
+    req.on('data' , chunk => {
+      bodyy += chunk;
+    });
+    //console.log(bod + "");
+
+    req.on('end', () =>{
+      bodyy = JSON.parse(bodyy);
+      console.log("after parse");
+      console.log(bodyy.user);
+    let forwarded = req.headers['x-forwarded-for']
+    let ip = forwarded ? forwarded.split(/, /)[0] : req.connection.remoteAddress;
+    obj = {
+      login: bodyy.user,
+      address: ip
+    }
+    let logs = fs.readFileSync('User_Info.json');
+    let info = JSON.parse(logs);
+    for(var i = 0; i < info.length; i++){
+      if(info[i].address === ip){
+        info[i] = obj;
+        break;
+      }
+    }
+    logs = JSON.stringify(info, null, 4);
+    fs.writeFileSync("User_Info.json",logs,"utf-8");
+    res.end("Login established");
+  })
+    break;
+
     case 'anoup_csv':
     //let bo = [Buffer.alloc(0, "", 'base64')];
     let bo = [Buffer.alloc(0)];
