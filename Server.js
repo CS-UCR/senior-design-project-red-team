@@ -250,6 +250,31 @@ const server = http.createServer((req, res) => {
       });
     });
     break;
+
+    case 'Anomaly_redraw':
+    let bodtot = "";
+    req.on('data' , chunk => {
+      bodtot += chunk;
+    });
+    req.on('end', () => {
+      var anajson = fs.readFileSync('Anomalies.json');
+      if (anajson == '') anajson = [];
+      bodtot = JSON.parse(bodtot);
+      console.log(bodtot[0]);
+      console.log(bodtot[1]);
+      anajson = JSON.parse(anajson)
+      for(var i = 0; i < anajson.length; i++){
+        if(JSON.stringify(anajson[i]) === JSON.stringify(bodtot[1])){
+          anajson[i] = bodtot[0];
+          i = anajson.length + 1;
+        }
+      }
+      anajson = JSON.stringify(anajson, null, 4);
+      fs.writeFileSync('Anomalies.json', anajson);
+      res.end("Anomaly Updated");
+    });
+    break;
+
     case 'login':
       let bod = "";
       req.on('data' , chunk => {

@@ -437,10 +437,11 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
                 settings.onAnomaly(sel, type);
             } else {
                 text = chart_anomaly.select('textarea').property('value');
+                settings.onAnomaly(sel, text);
             }
             addBox({
                 sel: sel,
-                color: anomaly_colours.get(type),
+                color: (anomaly_colours.get(type) || '#FF0000'),
                 text: text
             })
             brush.move(brush_rect, null);
@@ -460,7 +461,7 @@ function twoParameterChart(chart_div, data, pars, user_settings) {
         //var top = pos.top;
         //var lef = pos.left;
         ctx.fillStyle = "white";
-        ctx.fillRect(1243,600,200,300);
+        ctx.fillRect(1243,600,200,400);
         //ctx.putImageData(imageData, 0, 0);
     // Export the canvas to its data URI representation
     //chart_anomaly.style.display = 'inline';

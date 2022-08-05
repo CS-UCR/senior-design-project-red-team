@@ -356,7 +356,7 @@ async function two_parameter_chart() {
     }
     const settings = {
         width: 1200,
-        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: anomaly_colours.get(obj.type), text: obj.type})),
+        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: (anomaly_colours.get(obj.type) || '#FF0000'), text: obj.type})),
         onAnomaly: on_anomaly,
         trace_names: [flight]
     }

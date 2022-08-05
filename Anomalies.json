@@ -1,8 +1,8 @@
 [
     {
         "x": [
-            96.30744582124547,
-            107.36904292807363
+            73.81651376146789,
+            87.74311926605505
         ],
         "y": [
             -91,
@@ -13,118 +13,22 @@
         "y_par": "AIRCRAFT NUMBER",
         "type": "Flap Slate",
         "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
+        "User": "adhikar"
     },
     {
         "x": [
-            96.30744582124547,
-            107.36904292807363
+            83.42201834862385,
+            86.20183486238533
         ],
         "y": [
-            -91,
-            -91
+            88.09859154929578,
+            78.87323943661971
         ],
         "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
+        "x_par": "AILERON POSITION LH",
+        "y_par": "AILERON POSITION RH",
+        "type": "nEW ",
         "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
-    },
-    {
-        "x": [
-            96.30744582124547,
-            107.36904292807363
-        ],
-        "y": [
-            -91,
-            -91
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "Adhikar"
+        "User": "test"
     }
 ]
