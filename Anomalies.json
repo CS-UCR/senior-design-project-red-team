@@ -1,34 +1,66 @@
 [
     {
         "x": [
-            73.81651376146789,
-            87.74311926605505
+            96.11009174311927,
+            106.8440366972477
         ],
         "y": [
-            -91,
-            -91
+            57.46478873239437,
+            51.63380281690141
         ],
         "flight": "677200105090350",
         "x_par": "AIRBRAKE POSITION",
-        "y_par": "AIRCRAFT NUMBER",
-        "type": "Flap Slate",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Path High",
         "Graph_Type": "Two Parameter Chart",
         "User": "adhikar"
     },
     {
         "x": [
-            83.42201834862385,
-            86.20183486238533
+            96.11009174311927,
+            106.8440366972477
         ],
         "y": [
-            88.09859154929578,
-            78.87323943661971
+            57.46478873239437,
+            51.63380281690141
         ],
         "flight": "677200105090350",
-        "x_par": "AILERON POSITION LH",
-        "y_par": "AILERON POSITION RH",
-        "type": "nEW ",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Path High",
         "Graph_Type": "Two Parameter Chart",
-        "User": "test"
+        "User": "adhikar"
+    },
+    {
+        "x": [
+            96.11009174311927,
+            106.8440366972477
+        ],
+        "y": [
+            57.46478873239437,
+            51.63380281690141
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Path High",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "adhikar"
+    },
+    {
+        "x": [
+            96.11009174311927,
+            106.8440366972477
+        ],
+        "y": [
+            57.46478873239437,
+            51.63380281690141
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "ACMS TIMING USED T1HZ",
+        "type": "Path High",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "adhikar"
     }
 ]
