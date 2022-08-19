@@ -11,7 +11,8 @@ const csv_s = require("csv-string")
 
 const csvWriter = createCsvWriter({
     path: 'Anamolies.csv',
-    header: ["x_initial","x_final","y_inital","y_final","flight","x_parameter","y_parameter","Anomaly_Type","Graph_Type","User"]
+    //header: ["x_initial","x_final","y_inital","y_final","flight","x_parameter","y_parameter","Anomaly_Type","Graph_Type","User"],
+
 });
 
 const csvAppender = createCsvWriter({
@@ -292,7 +293,9 @@ const server = http.createServer((req, res) => {
                    ]
 
       csvana[j] = csv_up;
-      csvana.shift();
+      fs.writeFileSync('Anamolies.csv', "");
+      //csvana.shift();
+
       csvWriter.writeRecords(csvana)       // returns a promise
         .then(() => {
         console.log('CSV UPDATED');

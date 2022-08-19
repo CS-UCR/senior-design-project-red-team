@@ -1,7 +1,7 @@
 
 
 function goto7() {
-    type_of_graph = "st";
+    type_of_graph = "ana";
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
@@ -170,54 +170,150 @@ async function Anomaly_ReUpload(oldobj, newobj){
       })
 }
 
-async function grapher(json){
+async function redraw_tpc(json){
+  let par1 = json.x_par;
+  let par2 = json.y_par;
+  let [data] = await Promise.all([
+      d3.json("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
+  ]).catch(err => console.error(err));
+  json = [json];
+  let apl_anom = json.filter(obj => obj.flight == flight && obj.x_par == par1 && obj.y_par == par2)
+  console.log(apl_anom)
+  let on_anomaly = (sel, type) => {
+    let a = {
+        x: sel[0],
+        y: sel[1],
+        flight: flight,
+        x_par: par1,
+        y_par: par2,
+        type: type,
+        Graph_Type: 'Two Parameter Chart',
+        User: login
+    }
+    console.log(a);
+    Anomaly_ReUpload(a, json[0]);
+  }
+  const settings = {
+      width: 1200,
+      boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: (anomaly_colours.get(obj.type) || '#FF0000'), text: obj.type})),
+      onAnomaly: on_anomaly,
+      trace_names: [flight]
+  }
+  twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)
+}
+
+async function redraw_dtr(json){
+  const ptile_colors = {
+      '10': 'green',
+      '50': 'orange',
+      '90': 'red'
+  }
+  let new_chart = d3.select(cur_chart).append('div').node();
+  new_chart.classList.add('w-fit', 'h-[800px]');
+
+  let data = await fetch("http://" + hostname + ":" + port + "/" + ['dtr', json.flight, json.y_par, ...[]].join('/'))
+      .then(response => response.json())
+      .catch(err => console.error(err));
+
+  console.log(data);
+  if (!data.percentiles.ys) data.percentiles.ys = {}
+  json = [json]
+  let on_anomaly = (sel, type) => {
+      let a = {
+          x: sel[0],
+          y: sel[1],
+          flight: flight,
+          x_par: 'Distance From Landing (Miles)',
+          y_par: json[0].y_par,
+          type: type,
+          Graph_Type: "DTR Chart",
+          User: login
+      }
+      console.log(a);
+      Anomaly_ReUpload(a, json[0]);
+  }
+  const settings = {
+      width: 1200,
+      boxes: json.map(obj => ({sel: [obj.x, obj.y], color: (anomaly_colours.get(obj.type) || '#FF0000'), text: obj.type})),
+      onAnomaly: on_anomaly,
+      // show_anomalies: true,
+      reverse_x: true,
+      trace_names: [json[0].flight, ...Object.keys(data.percentiles.ys).map(s => s + 'th Percentile')],
+      trace_colors: ['steelblue', ...Object.keys(data.percentiles.ys).map(x => ptile_colors[x])]
+  }
+
+  twoParameterChart(
+      new_chart, // div
+      [{X: data.main.x, Y: data.main.y}, Object.values(data.percentiles?.ys).map(y => ({X: data.percentiles.x, Y: y}))].flat(), // traces
+      ["DISTANCE FROM LANDING (MILES)", json.y_par], // X & Y labels
+      settings
+  )
+}
+
+async function redraw_ts(json){
+  let new_chart = d3.select(cur_chart).append('div').node();
+  let data = await fetch("http://" + hostname + ":" + port + "/" + ['time-series', json.flight, json.y_par].join('/'))
+      .then(response => response.json())
+      .catch(err => console.error(err))
+
+  new_chart.id = json.flight;
+  json = [json];
+  let apl_anom = json;
+  let on_anomaly = (sel, type) => {
+      let a = {
+          x: sel[0],
+          y: sel[1],
+          flight: flight,
+          x_par: 'Time',
+          y_par: json[0].y_par,
+          type: type,
+          Graph_Type: "Time Series Chart",
+          User: login
+      }
+      console.log(a);
+      
+      Anomaly_ReUpload(a, json[0]);
+  }
+  const settings = {
+    width: 1200,
+    onAnomaly: on_anomaly,
+    boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: (anomaly_colours.get(obj.type) || '#FF0000'), text: obj.type})),
+    trace_names: [json[0].flight]
+  //   show_anomalies: true
+  }
+
+  twoParameterChart(
+      new_chart,
+      [{X: data.x, Y: data.y}],
+      ['Time (Index)', json[0].y_par],
+      settings
+  );
+
+
+}
+
+ function grapher(json){
   if(cur_chart){
   remove_children(cur_chart);
 }
   grapht = json.Graph_Type;
+  console.log(grapht + "type");
   flight = json.flight;
   console.log(flight);
   switch(grapht){
 
     case "Two Parameter Chart":
-    let par1 = json.x_par;
-    let par2 = json.y_par;
-    let [data] = await Promise.all([
-        d3.json("http://" + hostname + ":" + port + "/" + ['two-parameter', flight, par1, par2].join('/'))
-    ]).catch(err => console.error(err));
-    json = [json];
-    let apl_anom = json.filter(obj => obj.flight == flight && obj.x_par == par1 && obj.y_par == par2)
-    console.log(apl_anom)
-    let on_anomaly = (sel, type) => {
-      let a = {
-          x: sel[0],
-          y: sel[1],
-          flight: flight,
-          x_par: par1,
-          y_par: par2,
-          type: type,
-          Graph_Type: 'Two Parameter Chart',
-          User: login
-      }
-      console.log(a);
-      Anomaly_ReUpload(a, json[0]);
-    }
-    const settings = {
-        width: 1200,
-        boxes: apl_anom.map(obj => ({sel: [obj.x, obj.y], color: (anomaly_colours.get(obj.type) || '#FF0000'), text: obj.type})),
-        onAnomaly: on_anomaly,
-        trace_names: [flight]
-    }
-    twoParameterChart(d3.select(cur_chart).append('div').node(), [{X: data.x, Y: data.y}], [par1, par2], settings)
+
+    redraw_tpc(json);
 
     break;
 
-    case "DTR Chart ":
-
+    case "DTR Chart":
+    redraw_dtr(json);
     break;
 
-    case "Time Series ":
-
+    case "Time Series Chart":
+    redraw_ts(json);
     break;
 
 

@@ -1,66 +1,50 @@
 [
     {
         "x": [
-            96.11009174311927,
-            106.8440366972477
+            73.26605504587155,
+            86.53211009174312
         ],
         "y": [
-            57.46478873239437,
-            51.63380281690141
+            -91,
+            -91
         ],
         "flight": "677200105090350",
         "x_par": "AIRBRAKE POSITION",
-        "y_par": "ACMS TIMING USED T1HZ",
-        "type": "Path High",
+        "y_par": "AIRCRAFT NUMBER",
+        "type": "Speed High",
         "Graph_Type": "Two Parameter Chart",
         "User": "adhikar"
     },
     {
         "x": [
-            96.11009174311927,
-            106.8440366972477
+            15.596330275229358,
+            9.394495412844037
         ],
         "y": [
-            57.46478873239437,
-            51.63380281690141
+            86.70422535211267,
+            71.07042253521126
         ],
         "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "ACMS TIMING USED T1HZ",
-        "type": "Path High",
-        "Graph_Type": "Two Parameter Chart",
+        "x_par": "Distance From Landing (Miles)",
+        "y_par": "AIRBRAKE POSITION",
+        "type": "Speed High",
+        "Graph_Type": "DTR Chart",
         "User": "adhikar"
     },
     {
         "x": [
-            96.11009174311927,
-            106.8440366972477
+            302.4770642201835,
+            341.9724770642202
         ],
         "y": [
-            57.46478873239437,
-            51.63380281690141
+            104.61971830985915,
+            96.67605633802818
         ],
         "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "ACMS TIMING USED T1HZ",
-        "type": "Path High",
-        "Graph_Type": "Two Parameter Chart",
-        "User": "adhikar"
-    },
-    {
-        "x": [
-            96.11009174311927,
-            106.8440366972477
-        ],
-        "y": [
-            57.46478873239437,
-            51.63380281690141
-        ],
-        "flight": "677200105090350",
-        "x_par": "AIRBRAKE POSITION",
-        "y_par": "ACMS TIMING USED T1HZ",
-        "type": "Path High",
-        "Graph_Type": "Two Parameter Chart",
+        "x_par": "Time",
+        "y_par": "AIRBRAKE POSITION",
+        "type": "Speed High",
+        "Graph_Type": "Time Series Chart",
         "User": "adhikar"
     }
 ]

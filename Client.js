@@ -751,6 +751,9 @@ function display(chart,tab , text){
     case "1d":
       goto6();
       break;
+    case "ana":
+      goto7();
+      break;
   }
 }
 
