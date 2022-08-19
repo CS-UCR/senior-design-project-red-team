@@ -113,11 +113,16 @@ Anomalies in the graph are able to be marked as well. Once they are, the points 
 ## Dependencies
 Install NodeJS. Ensure the version is 16. You can install directly from their website [here](https://nodejs.org/en/). 
 Install Node Package Manager (npm). Usually comes with NodeJS.
+
 Install the CSV-Parse package with the command `npm i csv` in the project directory.
-Install the json2csv package with the command 'npm i json2csv' in the project directory.
-Install the csv-writer package with the command 'npm i csv-writer' in the project directory.
-Install the csv-append packpage with the command 'npm i csv-append' in the project directory. 
-Install the csv-stringify package with the command 'npm i csv-stringify' in the project directory.
+
+Install the json2csv package with the command `npm i json2csv` in the project directory.
+
+Install the csv-writer package with the command `npm i csv-writer` in the project directory.
+
+Install the csv-append packpage with the command `npm i csv-append` in the project directory. 
+
+Install the csv-stringify package with the command `npm i csv-stringify` in the project directory.
 
 All packages should be installed in the node_modules folder. Run these commands in the case that these packages are not present.
 
