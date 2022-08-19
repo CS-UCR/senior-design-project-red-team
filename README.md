@@ -5,11 +5,9 @@
 - [Overview](#overview)
 - [How To Run](#how-to-run)
 - [Usage](#usage)
-- [Diagrams](#diagrams)
 - [Dependencies](#dependencies)
 - [Authors and Acknowledgment](#authors-and-acknowledgment)
-- [Project Status](#project-status)
-- [Contrabutions](#contrabutions)
+
 
 ## Overview
 Researchers would like to identify trends (specifically anomalies) in flight data and be able to label it as such and export it to a separate database.
@@ -34,6 +32,20 @@ Then in the project directory, you can run:
 ```
 node Server.js
 ```
+This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
+
+If new flights are added to the flights folder, then run the following commands:
+
+node 	truncate_csvs_to_json.js
+
+node calculate_percentiles.js
+
+node calculate_aggregates.mjs
+
+Now run the following command:
+
+node Server.js
+
 This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
 
 ## Usage
@@ -97,62 +109,19 @@ Once a desired graph has been created, it can be zoomed into at certain location
 
 Anomalies in the graph are able to be marked as well. Once they are, the points on the graph marked will change colors based on the desired color selection. 
 
-## Diagrams
-
-Mockup of Data: 
-  
-![First Mockup](imgs/Mockup-1.png)
-  
-![Second Mockup Part One](imgs/Mockup%202.0.png)
-  
-![Second Mockup Part 2](imgs/Mockup%202.1.png)
-  
-![Secone Mockup Part 3](imgs/Mockup%202.2.png)
-
 
 ## Dependencies
 Install NodeJS. Ensure the version is 16. You can install directly from their website [here](https://nodejs.org/en/). 
 Install Node Package Manager (npm). Usually comes with NodeJS.
 Install the CSV-Parse package with the command `npm i csv` in the project directory.
+Install the json2csv package with the command 'npm i json2csv' in the project directory.
+Install the csv-writer package with the command 'npm i csv-writer' in the project directory.
+Install the csv-append packpage with the command 'npm i csv-append' in the project directory. 
+Install the csv-stringify package with the command 'npm i csv-stringify' in the project directory.
+
+All packages should be installed in the node_modules folder. Run these commands in the case that these packages are not present.
 
 ## Authors and Acknowledgment
 Thank you to Professor Mariam Salloum and our Teaching Assistants, Jakapun Tachaiya and Shirin Haji Amin Shirazi, for all of their assistance throughout this process. We would also like to thank NASA for giving us this opportunity to work on a project for them. 
 
-## Project Status
-Most of the project is completed, but we plan to continue working on it to add additional features. 
 
-## Contrabutions
-
-Jeremey Cartwright:
-- Implementing Two parameter graph
-- Implementing DTR graph
-- Implementing percentiles
-- Implementing pairwise graphs
-- Made the server
-- Styling of HTML elements
-- Documentation
-- Truncation of data
-- Time series graph 
-- Made initial mockup design
-
-Adhikar Chhibber:
-- Implementing tabs
-- Implementing full time series
-- Implementing statistics page
-- Implementing multi-graph
-- Implementing graph labels
-- Documentation
-- Merging features
-- Made second mockup design
-
-Isis Dumas:
-- Made second mockup design
-- Documentation
-- Helped with pairwise logic 
-- Helped design the Statistics page
-- Managed meeting with the group and the professor/client 
-
-David Gutierrez:
-- Made initial mockup design
-- Implementing Point selection
-- Documentation
