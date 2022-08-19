@@ -45,6 +45,16 @@ function ModAnonGoto(){
     document.getElementById('PandF').hidden = false;
 }
 
+function GraphSelectionListen(){
+  let graphtype = (document.getElementById('GraphSelection').value);
+  if(graphtype != "Two Parameter Chart"){
+    document.getElementById('parameter-1').hidden = true;
+    document.getElementById('parameter-1').value = "";
+  }else{
+    document.getElementById('parameter-1').hidden = false;
+  }
+}
+
 function refresh_chart_tab_Ana() {
     let tab = document.createElement('button');
     let delete_button = document.createElement('span');
@@ -271,7 +281,7 @@ async function redraw_ts(json){
           User: login
       }
       console.log(a);
-      
+
       Anomaly_ReUpload(a, json[0]);
   }
   const settings = {

@@ -94,7 +94,7 @@
                                 onclick='UploadAnon()' hidden>Upload Anomalies</button>
                     <button class="bg-blue-500 text-gray-50 rounded-sm px-2" id='ModAnon'
                                 onclick='ModAnonGoto()' hidden>Modify Anomalies</button>
-                    <select class="rounded-sm blue-trim" id = "GraphSelection" placeholder = "Graph Type">
+                    <select class="rounded-sm blue-trim" id = "GraphSelection" placeholder = "Graph Type" onchange="GraphSelectionListen()">
                       <option value="">Select Graph Type</option>
                       <option value = "Two Parameter Chart">Two Parameter Chart</option>
                       <option value = "Time Series Chart">Time Series</option>
