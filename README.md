@@ -5,11 +5,9 @@
 - [Overview](#overview)
 - [How To Run](#how-to-run)
 - [Usage](#usage)
-- [Diagrams](#diagrams)
 - [Dependencies](#dependencies)
 - [Authors and Acknowledgment](#authors-and-acknowledgment)
-- [Project Status](#project-status)
-- [Contrabutions](#contrabutions)
+
 
 ## Overview
 Researchers would like to identify trends (specifically anomalies) in flight data and be able to label it as such and export it to a separate database.
@@ -36,32 +34,49 @@ node Server.js
 ```
 This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
 
+If new flights are added to the flights folder, then run the following commands:
+
+```
+node truncate_csvs_to_json.js
+```
+```
+node calculate_percentiles.js
+```
+```
+node calculate_aggregates.mjs
+```
+Now run the following command:
+```
+node Server.js
+```
+This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
+
 ## Usage
 Once you have the server running and are in `Client.html`, you will see the following home screen: 
 
-![Home Screen](imgs/Start_Page.png)
+![Home Screen](imgs/User_login.png)
 
-Here, choose the desired graph type to display by pressing one of the buttons at the top of the screen. 
+If you have used the application before then you will not see the login prompt. 
+
+If this is your first time using the application, then enter your username. This will be saved for future uses. 
+
+Here, choose the desired graph type to display by pressing one of the buttons at the top of the screen or if you wish to change your username, then click the `Change Current User` button on the top right to change your login, this change will apply to future uses. 
 
 Use the drop down bars to choose the desiered flight and parameters. The graph will display once the `Graph` button is pressed.    
 
 For the `Two Parameter Chart`, if two different parameters are chosen, a scatter plot will be shown:
 
-![Two Parameter](imgs/Two_Parameter.png)
-
-If two of the same parameters are chosen, a histagram will be shown:
-
-![Histagram](imgs/Two_Parameter_Histagram.png)
+![Two Parameter](imgs/TPC.png)
 
 To have more than one graph be displayed, press the `Graph in New Tab` button:
 
-![Tabs](imgs/Two_Parameter_Tabs.png)
+![Tabs](imgs/Multi-tab.png)
 
 This feature allows the switching between multiple graphs that have been created. This works for all graph types. 
 
 For the `DTR chart`, along with the flowing graphing options, the drop down bar will display a checkbox with all of the parameters. Choose the desired parameters to produce a graph:  
 
-![DTR](imgs/Dtr_Selection.png)
+![DTR](imgs/DTR.png)
 
 Pressing the gear next to the Graph button will display another checkbox. This gives the option to choose between the `10th, 50th, and 90th percentiles` of the desired flight and parameters. As few or as many percentile options can be chosen and displayed:
 
@@ -71,21 +86,22 @@ Pressing the gear next to the Graph button will display another checkbox. This g
 
 The `Time Series` charts work in a similar way as the DTR charts. Choose the flight and the parameters in their respective drop downs to display the results:
 
-![Time Series](imgs/Time_series.png)
+![Time Series](imgs/TS.png)
 
-For the `Pairwise Plots`, any number of parameters are able to be chosen. The number of parameters you choose will determine how many graphs are displayed.
+Before graphing, click `Display Statistics` to show the statistics for the flight and parameters chosen. Note this will wipe the graphs currently displayed on that tab.
 
-For example, if 3 parameters are chosen, 9 graphs are displayed as shown:
+After graphing, click `Display DTR` to show the DTR Chart for the flight and parameters chosen. Note this will wipe the graphs currently displayed on that tab.
 
-![Pairwise 3 Parameters](imgs/Pairwise_3.png)
+For the `Pairwise Plots`, a minimum of 2 parameters must be chosen. 
 
-If 4 parameters are chosen, 16 graphs are displayed as shown:
+For example, if 2 parameters are chosen, 4 graphs are displayed as shown:
 
-![Pairwise 4 Parameters](imgs/Pairwise_4.png)
+![Pairwise 3 Parameters](imgs/PAIR.png)
+
 
 To display the statistics of certain parameters, choose the desired flight and parameters, then press the `Statistics` button as shown:
 
-![Stats](imgs/Stats_page.png)
+![Stats](imgs/STAT.png)
 
 The stats that will be displayed are the `Minimum, Maximum, Mean, Varience, Standard Deviation, and Median` of each chosen parameter, along with the flight number they coorespond to. 
 
@@ -93,66 +109,47 @@ The stats will display a in a different tab from the graphs themselves. This can
 
 > **_NOTE:_** Similar to the percentiles feature, the stats shown will be for the flight and parameters chosen in their respectice drop down bars, NOT the graph displayed in the tab. If you want the stats for the graph displayed,  the same flight and parameters of the graph in the tab has to be set before pressing the Statistics button.
 
+To display a 1-Dimension chart of the average, select the `1-Dimensional Graph` on the top. This graph type works similar to the Time Series graph type.
+
+![1D](imgs/1-D.png)
+
 Once a desired graph has been created, it can be zoomed into at certain locations by holding down the mouse and dragging a box around the desired area. 
 
 Anomalies in the graph are able to be marked as well. Once they are, the points on the graph marked will change colors based on the desired color selection. 
 
-## Diagrams
+To mark an anomaly, click the 4-square icon next to the magnifying glass. Then drag your cursor over the area in the graph that you wish to mark. Then select the anomaly type on the dropdown next to the graph then select `Save as Anomaly`. This will update the graph to reflect the anomaly and future times where this graph appears, the anomaly will be marked as well. 
 
-Mockup of Data: 
-  
-![First Mockup](imgs/Mockup-1.png)
-  
-![Second Mockup Part One](imgs/Mockup%202.0.png)
-  
-![Second Mockup Part 2](imgs/Mockup%202.1.png)
-  
-![Secone Mockup Part 3](imgs/Mockup%202.2.png)
+To save the graph as a png, select the `Save PNG of graph` option next to the graph.
 
+Select the anomaly button on the top to either modify an anomaly or to download the anomaly list as a JSON or a CSV file.
+
+You may also uplaod your own anomaly list as well in CSV or JSON format as well.
+
+![ana_home](imgs/ANA_HOME.png)
+
+> **_NOTE:_** When uploading anomalies of either JSON or CSV format, ensure that your file follows the format of the JSON or CSV file used in the program. If the file does not follow the same format then the program may experience errors.
+
+To change an anomaly, select `Modify Anomalies`. Then select the filters to apply and search for the anomaly you wish to modify. Select the anomaly and a graph with the anomaly will be displayed. Then you may normally modify it by simply using the previous steps to mark an anomaly. The graph will update to show the change. If you wish to modify the new anomaly, then redo the search and restart the process of marking an anomaly.
+
+![ana_mod](imgs/ANA_MOD.png)
 
 ## Dependencies
 Install NodeJS. Ensure the version is 16. You can install directly from their website [here](https://nodejs.org/en/). 
 Install Node Package Manager (npm). Usually comes with NodeJS.
+
 Install the CSV-Parse package with the command `npm i csv` in the project directory.
+
+Install the json2csv package with the command `npm i json2csv` in the project directory.
+
+Install the csv-writer package with the command `npm i csv-writer` in the project directory.
+
+Install the csv-append packpage with the command `npm i csv-append` in the project directory. 
+
+Install the csv-stringify package with the command `npm i csv-stringify` in the project directory.
+
+All packages should be installed in the node_modules folder. Run these commands in the case that these packages are not present.
 
 ## Authors and Acknowledgment
 Thank you to Professor Mariam Salloum and our Teaching Assistants, Jakapun Tachaiya and Shirin Haji Amin Shirazi, for all of their assistance throughout this process. We would also like to thank NASA for giving us this opportunity to work on a project for them. 
 
-## Project Status
-Most of the project is completed, but we plan to continue working on it to add additional features. 
 
-## Contrabutions
-
-Jeremey Cartwright:
-- Implementing Two parameter graph
-- Implementing DTR graph
-- Implementing percentiles
-- Implementing pairwise graphs
-- Made the server
-- Styling of HTML elements
-- Documentation
-- Truncation of data
-- Time series graph 
-- Made initial mockup design
-
-Adhikar Chhibber:
-- Implementing tabs
-- Implementing full time series
-- Implementing statistics page
-- Implementing multi-graph
-- Implementing graph labels
-- Documentation
-- Merging features
-- Made second mockup design
-
-Isis Dumas:
-- Made second mockup design
-- Documentation
-- Helped with pairwise logic 
-- Helped design the Statistics page
-- Managed meeting with the group and the professor/client 
-
-David Gutierrez:
-- Made initial mockup design
-- Implementing Point selection
-- Documentation
