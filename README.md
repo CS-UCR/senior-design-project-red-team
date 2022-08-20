@@ -111,6 +111,8 @@ The stats will display a in a different tab from the graphs themselves. This can
 
 To display a 1-Dimension chart of the average, select the `1-Dimensional Graph` on the top. This graph type works similar to the Time Series graph type.
 
+![1D](imgs/1-D.png)
+
 Once a desired graph has been created, it can be zoomed into at certain locations by holding down the mouse and dragging a box around the desired area. 
 
 Anomalies in the graph are able to be marked as well. Once they are, the points on the graph marked will change colors based on the desired color selection. 
