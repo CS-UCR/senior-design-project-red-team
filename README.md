@@ -36,16 +36,16 @@ This will begin the server. Once the server is running, open `Client.html`. The 
 
 If new flights are added to the flights folder, then run the following commands:
 
-node 	truncate_csvs_to_json.js
+```node 	truncate_csvs_to_json.js
 
 node calculate_percentiles.js
 
 node calculate_aggregates.mjs
-
+```
 Now run the following command:
-
+```
 node Server.js
-
+```
 This will begin the server. Once the server is running, open `Client.html`. The application is now usable.
 
 ## Usage
