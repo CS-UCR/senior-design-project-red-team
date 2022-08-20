@@ -1,24 +1,40 @@
 [
     {
         "x": [
-            186.23853211009174,
-            288.348623853211
+            73.43119266055047,
+            98.36697247706422
         ],
         "y": [
             -91,
             -91
         ],
         "flight": "677200105090350",
-        "x_par": "Time",
+        "x_par": "AIRBRAKE POSITION",
         "y_par": "AIRCRAFT NUMBER",
         "type": "Flap Slate",
-        "Graph_Type": "Time Series Chart",
+        "Graph_Type": "Two Parameter Chart",
         "User": "tester"
     },
     {
         "x": [
-            95.6697247706422,
-            107.50458715596329
+            95.33944954128441,
+            107.55963302752293
+        ],
+        "y": [
+            -91,
+            -91
+        ],
+        "flight": "677200105090350",
+        "x_par": "AIRBRAKE POSITION",
+        "y_par": "AIRCRAFT NUMBER",
+        "type": "Flap Slate",
+        "Graph_Type": "Two Parameter Chart",
+        "User": "tester"
+    },
+    {
+        "x": [
+            94.29357798165137,
+            110.03669724770641
         ],
         "y": [
             -91,
@@ -29,22 +45,6 @@
         "y_par": "AIRCRAFT NUMBER",
         "type": "Path High",
         "Graph_Type": "Two Parameter Chart",
-        "User": "tester"
-    },
-    {
-        "x": [
-            13.357798165137616,
-            11.376146788990823
-        ],
-        "y": [
-            57.12676056338028,
-            52.05633802816901
-        ],
-        "flight": "677200105090350",
-        "x_par": "Distance From Landing (Miles)",
-        "y_par": "ACMS TIMING USED T1HZ",
-        "type": "Flap Slate",
-        "Graph_Type": "DTR Chart",
         "User": "tester"
     }
 ]
