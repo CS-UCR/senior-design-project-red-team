@@ -74,13 +74,9 @@ To have more than one graph be displayed, press the `Graph in New Tab` button:
 
 This feature allows the switching between multiple graphs that have been created. This works for all graph types. 
 
-For the `DTR chart`, along with the flowing graphing options, the drop down bar will display a checkbox with all of the parameters. Choose the desired parameters to produce a graph:  
+For the `DTR chart`, along with the flowing graphing options, the drop down bar will display a checkbox with all of the parameters. Choose the desired parameters to produce a graph. Pressing the gear next to the Graph button will display another checkbox. This gives the option to choose between the `10th, 50th, and 90th percentiles` of the desired flight and parameters. As few or as many percentile options can be chosen and displayed:
 
 ![DTR](imgs/DTR.png)
-
-Pressing the gear next to the Graph button will display another checkbox. This gives the option to choose between the `10th, 50th, and 90th percentiles` of the desired flight and parameters. As few or as many percentile options can be chosen and displayed:
-
-![Percentiles](imgs/Percentiles.png)
 
 > **_NOTE:_** Using the percentiles feature will create an entirely new graph. It is NOT possible to add the percentiles to the graph displayed in the current tab. To add the percentile lines to the current tab, the flight and perameter drop downs would have to be set to the same values as the graph in the tab.
 
