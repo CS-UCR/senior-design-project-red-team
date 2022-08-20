@@ -88,7 +88,7 @@ The `Time Series` charts work in a similar way as the DTR charts. Choose the fli
 
 ![Time Series](imgs/TS.png)
 
-After graphing, click `Display Statistics` to show the statistics for the flight and parameters chosen. Note this will wipe the graphs currently displayed on that tab.
+Before graphing, click `Display Statistics` to show the statistics for the flight and parameters chosen. Note this will wipe the graphs currently displayed on that tab.
 
 After graphing, click `Display DTR` to show the DTR Chart for the flight and parameters chosen. Note this will wipe the graphs currently displayed on that tab.
 
