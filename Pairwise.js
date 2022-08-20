@@ -83,7 +83,7 @@ function remove_children(p){
 function goto4() {
     refresh_chart = () =>  p_refresh_chart();
     type_of_graph = "pw"
-    document.getElementById('parameter-2').disabled = true;
+    //document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;

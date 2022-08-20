@@ -130,7 +130,7 @@ function ChangeLogin(){
 function goto1() {
     refresh_chart = two_parameter_chart;
     type_of_graph = "tw";
-    document.getElementById('parameter-2').disabled = false;
+  //  document.getElementById('parameter-2').disabled = false;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = false;
     document.getElementById('parameter-1').hidden = false;
@@ -164,7 +164,7 @@ function goto1() {
 function goto2() {
     refresh_chart = () => dtr_chart(false);
     type_of_graph = "dt";
-    document.getElementById('parameter-2').disabled = true;
+    //document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
@@ -197,7 +197,7 @@ function goto2() {
 function goto3() {
     refresh_chart = () => time_series(true);
     type_of_graph = "ts";
-    document.getElementById('parameter-2').disabled = true;
+    //document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
@@ -231,7 +231,7 @@ function goto3() {
 function goto4() {
     refresh_chart = () =>  p_refresh_chart();
     type_of_graph = "pw";
-    document.getElementById('parameter-2').disabled = true;
+    //document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
@@ -260,7 +260,7 @@ function goto4() {
 function goto6() {
     refresh_chart = () => oneDimChart();
     type_of_graph = "1d";
-    document.getElementById('parameter-2').disabled = true;
+    //document.getElementById('parameter-2').disabled = true;
     document.getElementById('add-button').hidden = true;
     document.getElementById('parameter-2').hidden = true;
     document.getElementById('parameter-1').hidden = true;
